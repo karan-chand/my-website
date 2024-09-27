@@ -3,6 +3,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);  // Adjust pixel ratio for mobile devices
 
 // Star positions (scaled for better visibility)
 const starPositions = [
@@ -34,11 +35,13 @@ starPositions.forEach(star => {
 // Set up the camera position
 camera.position.z = 30;  // Start with a reasonable distance
 
-// Enable OrbitControls for mouse interaction
+// Enable OrbitControls for mouse and touch interaction
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;  // Smooth rotation effect
 controls.dampingFactor = 0.05;  // Damping speed
 controls.rotateSpeed = 0.7;     // Rotation speed
+controls.enableZoom = true;     // Enable pinch-to-zoom for mobile devices
+controls.enablePan = false;     // Disable panning to keep the focus on rotation
 
 // Animation loop
 function animate() {
@@ -48,7 +51,7 @@ function animate() {
 }
 animate();
 
-// Handle window resizing
+// Handle window resizing for mobile and desktop
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);  // Adjust renderer size
     camera.aspect = window.innerWidth / window.innerHeight;   // Adjust camera aspect ratio

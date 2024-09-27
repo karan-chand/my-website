@@ -8,32 +8,19 @@
         body, html {
             margin: 0;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: white;  /* White background for the whole page */
-        }
-
-        #container {
-            background-color: black;  /* Black box for the constellation */
-            width: 80vw;  /* 80% of the viewport width */
-            height: 80vh; /* 80% of the viewport height */
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow: hidden;  /* Ensure the page doesn't scroll */
+            background-color: white;  /* Set the background to white */
         }
 
         canvas {
             display: block;
-            width: 100%;
-            height: 100%;
+            width: 100vw;  /* Full viewport width */
+            height: 100vh; /* Full viewport height */
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <canvas id="virgo-constellation"></canvas>
-    </div>
+    <canvas id="virgo-constellation"></canvas>
 
     <!-- Load Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

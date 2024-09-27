@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virgo Constellation 3D Map</title>
     <style>
-        body { margin: 0; }
-        canvas { display: block; }
+        body { margin: 0; overflow: hidden; }  /* Remove scroll bars */
+        canvas { display: block; }  /* Ensure canvas takes up full window */
     </style>
 </head>
 <body>
-    <h1>Virgo Constellation 3D Map</h1>
-    <div id="container"></div>
+    <h1 style="color: white; text-align: center;">Virgo Constellation 3D Map</h1>
+    <canvas id="virgo-constellation"></canvas>
+
+    <!-- Load Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Load your app.js for rendering the constellation -->
     <script src="app.js"></script>
 </body>
 </html>

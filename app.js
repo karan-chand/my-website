@@ -2,7 +2,7 @@
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);  // Make sure the renderer matches the box size
 document.body.appendChild(renderer.domElement);
 
 // Star positions (scaled for better visibility)
@@ -31,12 +31,13 @@ starPositions.forEach(star => {
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaled for better visibility
     scene.add(starMesh);
 
-    // Log star positions to ensure they are being added
+    // Log star positions for debugging
     console.log(`Added star: ${star.name} at position (${star.x * 5}, ${star.y * 5}, ${star.z * 5})`);
 });
 
-// Set up the camera position
+// Center the camera to focus on the middle of the black box
 camera.position.z = 30;  // Move camera a bit further away to start with
+camera.lookAt(0, 0, 0);  // Ensure the camera is looking at the center
 
 // Animation loop
 function animate() {
@@ -57,7 +58,7 @@ window.addEventListener('wheel', function(event) {
 
 // Adjust the canvas size dynamically on window resize
 window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
+    renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);  // Adjust based on container size
+    camera.aspect = (window.innerWidth * 0.8) / (window.innerHeight * 0.8);
     camera.updateProjectionMatrix();
 });

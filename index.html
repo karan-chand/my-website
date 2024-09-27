@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virgo Constellation 3D Map</title>
     <style>
-        body { margin: 0; overflow: hidden; }  /* Remove scroll bars */
-        canvas { display: block; }  /* Ensure canvas takes up full window */
+        body, html {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;  /* Remove scroll bars */
+        }
+        canvas {
+            display: block;
+            width: 100vw;  /* Full screen width */
+            height: 100vh; /* Full screen height */
+        }
     </style>
 </head>
 <body>

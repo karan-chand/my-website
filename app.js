@@ -1,15 +1,16 @@
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);  // Setting aspect ratio to 1 initially
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
-renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);  // Ensure the renderer matches the black box size
-document.body.appendChild(renderer.domElement);
 
-// Adjust the camera aspect ratio to fit the black box
+// Set the renderer size to match 80% of the viewport
+renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);
+
+// Adjust the camera's aspect ratio to the container size
 camera.aspect = (window.innerWidth * 0.8) / (window.innerHeight * 0.8);
 camera.updateProjectionMatrix();
 
-// Star positions (scaled for better visibility)
+// Star positions (scaled for better visibility and centered relative to 0, 0, 0)
 const starPositions = [
     { name: '109 Virginis', x: 2, y: -4, z: 1 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5 },
@@ -27,18 +28,20 @@ const starPositions = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1 }
 ];
 
-// Create stars (small spheres) in the scene
+// Create stars (small spheres) and add them to the scene
 starPositions.forEach(star => {
     const geometry = new THREE.SphereGeometry(0.5, 32, 32);  // Adjust size to make stars visible
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaled for better visibility
+    
+    // Position the stars based on the given data, centered around 0,0,0
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
 });
 
-// Center the camera to focus on the middle of the black box
-camera.position.z = 30;  // Move camera a bit further away to start with
-camera.lookAt(0, 0, 0);  // Ensure the camera is looking at the center
+// Center the camera to focus on the middle of the star positions
+camera.position.z = 30;  // Set the camera a bit further back
+camera.lookAt(0, 0, 0);  // Ensure the camera is looking at the center of the stars
 
 // Animation loop
 function animate() {

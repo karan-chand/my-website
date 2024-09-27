@@ -8,18 +8,30 @@
         body, html {
             margin: 0;
             height: 100%;
-            overflow: hidden;  /* Remove scroll bars */
-            background-color: black;  /* Black background for space effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;  /* White background for the whole page */
+        }
+        #container {
+            background-color: black;  /* Black box for the constellation */
+            width: 80vw;  /* Adjust width to fit on screen */
+            height: 80vh; /* Adjust height to fit on screen */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         canvas {
             display: block;
-            width: 100vw;  /* Full screen width */
-            height: 100vh; /* Full screen height */
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <canvas id="virgo-constellation"></canvas>
+    <div id="container">
+        <canvas id="virgo-constellation"></canvas>
+    </div>
 
     <!-- Load Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

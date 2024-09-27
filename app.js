@@ -5,7 +5,7 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Star positions from your data (scaled down for better visibility on the webpage)
+// Star positions from your data (scaled for better visibility)
 const starPositions = [
     { name: '109 Virginis', x: 2, y: -4, z: 1 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5 },
@@ -25,18 +25,18 @@ const starPositions = [
 
 // Create stars (small spheres) in the scene
 starPositions.forEach(star => {
-    const geometry = new THREE.SphereGeometry(0.5, 32, 32);  // Adjust size to make stars larger
+    const geometry = new THREE.SphereGeometry(0.5, 32, 32);  // Adjust size to make stars visible
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaled for better visibility
     scene.add(starMesh);
 
-    // Log to ensure stars are being added
+    // Log star positions to ensure they are being added
     console.log(`Added star: ${star.name} at position (${star.x * 5}, ${star.y * 5}, ${star.z * 5})`);
 });
 
 // Set up the camera position
-camera.position.z = 20;  // Move camera closer for better visibility
+camera.position.z = 30;  // Move camera a bit further away to start with
 
 // Animation loop
 function animate() {
@@ -44,6 +44,16 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// Scroll event listener to zoom in and out
+window.addEventListener('wheel', function(event) {
+    if (event.deltaY > 0) {
+        camera.position.z += 2;  // Zoom out (move camera back)
+    } else {
+        camera.position.z -= 2;  // Zoom in (move camera closer)
+    }
+    camera.position.z = Math.max(10, Math.min(100, camera.position.z));  // Set zoom limits
+});
 
 // Adjust the canvas size dynamically on window resize
 window.addEventListener('resize', () => {

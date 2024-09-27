@@ -42,13 +42,6 @@ starPositions.forEach(star => {
     starMeshes.push({ mesh: starMesh, material: material });
 });
 
-// Create connecting lines between stars
-const points = starPositions.map(star => new THREE.Vector3(star.x * 5, star.y * 5, star.z * 5));
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
-const material = new THREE.LineBasicMaterial({ color: 0xffffff });
-const line = new THREE.Line(geometry, material);
-scene.add(line);
-
 // Set up the camera position
 camera.position.z = 30;  // Adjust camera distance
 

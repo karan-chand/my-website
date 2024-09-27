@@ -23,59 +23,57 @@ const starPositions = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1 }
 ];
 
+// Store star meshes for animation
+let starMeshes = [];
+
 // Create stars (small glowing spheres) in the scene
 starPositions.forEach(star => {
     const geometry = new THREE.SphereGeometry(0.5, 32, 32);  // Star size
     const material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
-        emissive: 0xffff00,  // Glow effect
-        emissiveIntensity: 0.9
+        emissive: 0xffff00,  // Glow color
+        emissiveIntensity: 0.6
     });
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaling for better visibility
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaling for visibility
     scene.add(starMesh);
 
-    // Create a label for each star
-    const starLabel = document.createElement('div');
-    starLabel.className = 'star-label';
-    starLabel.style.position = 'absolute';
-    starLabel.style.color = 'white';
-    starLabel.style.fontFamily = 'Arial';
-    starLabel.style.fontSize = '12px';
-    starLabel.innerHTML = star.name;
-    document.body.appendChild(starLabel);
-
-    // Update the label position based on the 3D position
-    function updateLabelPosition() {
-        const vector = starMesh.position.clone().project(camera);
-        const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
-        const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
-        starLabel.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
-    }
-
-    // Update label positions on each frame
-    function animateLabel() {
-        requestAnimationFrame(animateLabel);
-        updateLabelPosition();
-    }
-    animateLabel();
+    // Store star mesh for pulsating effect
+    starMeshes.push({ mesh: starMesh, material: material });
 });
 
+// Create connecting lines between stars
+const points = starPositions.map(star => new THREE.Vector3(star.x * 5, star.y * 5, star.z * 5));
+const geometry = new THREE.BufferGeometry().setFromPoints(points);
+const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+const line = new THREE.Line(geometry, material);
+scene.add(line);
+
 // Set up the camera position
-camera.position.z = 30;  // Adjust camera distance for visibility
+camera.position.z = 30;  // Adjust camera distance
 
 // Enable OrbitControls for mouse and touch interaction
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;  // Smooth rotation effect
 controls.dampingFactor = 0.05;  // Damping speed
 controls.rotateSpeed = 0.7;     // Rotation speed
-controls.enableZoom = true;     // Enable pinch-to-zoom for mobile devices
-controls.enablePan = false;     // Disable panning to keep the focus on rotation
+controls.enableZoom = true;     // Enable zoom
+controls.enablePan = false;     // Disable panning
 
 // Animation loop
+let glowSpeed = 0.02;  // Control pulsating speed
 function animate() {
     requestAnimationFrame(animate);
-    controls.update();  // Ensure the camera updates continuously
+
+    // Pulsating glow effect
+    starMeshes.forEach(star => {
+        star.material.emissiveIntensity += glowSpeed;
+        if (star.material.emissiveIntensity > 1 || star.material.emissiveIntensity < 0.6) {
+            glowSpeed *= -1;  // Reverse direction to create pulsating effect
+        }
+    });
+
+    controls.update();  // Ensure camera updates
     renderer.render(scene, camera);
 }
 animate();

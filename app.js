@@ -3,7 +3,10 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);  // Adjust pixel ratio for mobile devices
+renderer.setPixelRatio(window.devicePixelRatio);  // Adjust for mobile screens
+
+// Log the camera's initial position
+console.log("Camera initial position:", camera.position);
 
 // Star positions (scaled for better visibility)
 const starPositions = [
@@ -30,6 +33,9 @@ starPositions.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaling for visibility
     scene.add(starMesh);
+
+    // Log the star positions to ensure they are added
+    console.log(`Added star: ${star.name} at (${star.x * 5}, ${star.y * 5}, ${star.z * 5})`);
 });
 
 // Set up the camera position
@@ -48,6 +54,9 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();  // Ensure the camera updates continuously
     renderer.render(scene, camera);
+
+    // Log the camera position as it moves
+    console.log("Camera current position:", camera.position);
 }
 animate();
 

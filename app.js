@@ -5,6 +5,9 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Log to ensure the canvas is initialized correctly
+console.log('Renderer attached to canvas:', document.getElementById('virgo-constellation'));
+
 // Star positions from your data
 const starPositions = [
     { name: '109 Virginis', x: 5.08, y: -10, z: 1.4 },
@@ -30,10 +33,13 @@ starPositions.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 10, star.y * 10, star.z * 10); // Scaling up for visibility
     scene.add(starMesh);
+
+    // Log to ensure stars are being added to the scene
+    console.log(`Adding star: ${star.name} at position (${star.x}, ${star.y}, ${star.z})`);
 });
 
 // Set up the camera position
-camera.position.z = 50;  // Adjust distance for visibility
+camera.position.z = 100;  // Move camera back to see all stars more clearly
 
 // Animation loop
 function animate() {
@@ -41,3 +47,10 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// Adjust the canvas size dynamically on window resize
+window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+});

@@ -5,38 +5,38 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Star positions from your data (scaled for better visibility)
+// Star positions recalculated relative to the box dimensions (scaled to fit)
 const starPositions = [
-    { name: '109 Virginis', x: 2, y: -4, z: 1 },
-    { name: 'Auva', x: 1.5, y: 1.5, z: 1.5 },
-    { name: 'Heze', x: 3, y: -1, z: 0.5 },
-    { name: 'Nu Virginis', x: -2.5, y: 4, z: 2 },
-    { name: 'Omnicron Virginis', x: 2, y: 4, z: 3 },
-    { name: 'Porrima', x: 4.5, y: 2, z: 0 },
-    { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1 },
-    { name: 'Spica', x: -2, y: -1, z: -2 },
-    { name: 'Syrma', x: 4, y: 3, z: -1 },
-    { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2 },
-    { name: 'Theta Virginis', x: -4, y: 0.5, z: -2 },
-    { name: 'Vindemiatrix', x: 2.5, y: 1.2, z: 2.5 },
-    { name: 'Zaniah', x: -1.5, y: 3, z: 0.5 },
-    { name: 'Zavijava', x: 5, y: 4.5, z: 1 }
+    { name: '109 Virginis', x: 30, y: -40, z: 10 },
+    { name: 'Auva', x: 15, y: 15, z: 20 },
+    { name: 'Heze', x: 45, y: -10, z: 5 },
+    { name: 'Nu Virginis', x: -25, y: 40, z: 25 },
+    { name: 'Omnicron Virginis', x: 20, y: 40, z: 35 },
+    { name: 'Porrima', x: 50, y: 20, z: 0 },
+    { name: 'Rijl Al Awwa', x: 45, y: -40, z: -5 },
+    { name: 'Spica', x: -20, y: -10, z: -20 },
+    { name: 'Syrma', x: 40, y: 30, z: -10 },
+    { name: 'Tau Virginis', x: 10, y: -20, z: 15 },
+    { name: 'Theta Virginis', x: -45, y: 5, z: -25 },
+    { name: 'Vindemiatrix', x: 25, y: 15, z: 30 },
+    { name: 'Zaniah', x: -15, y: 30, z: 10 },
+    { name: 'Zavijava', x: 50, y: 45, z: 20 }
 ];
 
-// Create stars (small spheres) in the scene
+// Create stars (small spheres) in the scene, positioned relative to the black box
 starPositions.forEach(star => {
-    const geometry = new THREE.SphereGeometry(0.5, 32, 32);  // Adjust size to make stars visible
+    const geometry = new THREE.SphereGeometry(0.8, 32, 32);  // Adjust size to make stars visible
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaled for better visibility
+    starMesh.position.set(star.x, star.y, star.z); // No need to scale excessively now
     scene.add(starMesh);
 
-    // Log star positions to ensure they are being added
-    console.log(`Added star: ${star.name} at position (${star.x * 5}, ${star.y * 5}, ${star.z * 5})`);
+    // Log star positions for debugging
+    console.log(`Added star: ${star.name} at position (${star.x}, ${star.y}, ${star.z})`);
 });
 
 // Set up the camera position
-camera.position.z = 30;  // Move camera a bit further away to start with
+camera.position.z = 70;  // Start further away so all stars are visible
 
 // Animation loop
 function animate() {
@@ -48,11 +48,11 @@ animate();
 // Scroll event listener to zoom in and out
 window.addEventListener('wheel', function(event) {
     if (event.deltaY > 0) {
-        camera.position.z += 2;  // Zoom out (move camera back)
+        camera.position.z += 5;  // Zoom out (move camera back)
     } else {
-        camera.position.z -= 2;  // Zoom in (move camera closer)
+        camera.position.z -= 5;  // Zoom in (move camera closer)
     }
-    camera.position.z = Math.max(10, Math.min(100, camera.position.z));  // Set zoom limits
+    camera.position.z = Math.max(20, Math.min(150, camera.position.z));  // Set zoom limits
 });
 
 // Adjust the canvas size dynamically on window resize

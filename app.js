@@ -1,4 +1,4 @@
-// Import OrbitControls from the Three.js examples
+// Import OrbitControls from the official Three.js CDN
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js';
 
 // Initialize the scene, camera, and renderer
@@ -55,16 +55,6 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
-
-// Scroll event listener to zoom in and out (Optional, OrbitControls already handles zoom)
-window.addEventListener('wheel', function(event) {
-    if (event.deltaY > 0) {
-        camera.position.z += 2;  // Zoom out
-    } else {
-        camera.position.z -= 2;  // Zoom in
-    }
-    camera.position.z = Math.max(10, Math.min(100, camera.position.z));  // Set zoom limits
-});
 
 // Handle window resizing
 window.addEventListener('resize', () => {

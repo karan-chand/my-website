@@ -29,27 +29,19 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Add lighting to the scene for glow effect
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft ambient light
-scene.add(ambientLight);
-
-const pointLight = new THREE.PointLight(0xffffff, 1); // Add stronger point light
-pointLight.position.set(50, 50, 50);
-scene.add(pointLight);
-
 // Create stars (small glowing spheres with different sizes) in the scene
 starData.forEach(star => {
     let material;
-
+    
     if (star.name === 'Spica') {
-        material = new THREE.MeshStandardMaterial({
+        material = new THREE.MeshBasicMaterial({
             color: 0x0000ff,         // Blue color for Spica
             emissive: 0x0000ff,      // Blue glow
             emissiveIntensity: 0.8,  // Glow effect
             wireframe: false
         });
     } else {
-        material = new THREE.MeshStandardMaterial({
+        material = new THREE.MeshBasicMaterial({
             color: 0xffffff,         // White color for other stars
             emissive: 0xffff00,      // Yellowish glow
             emissiveIntensity: 0.6,  // Glow effect

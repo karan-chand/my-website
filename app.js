@@ -8,28 +8,6 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
 
-// Import necessary elements for bloom effect
-const composer = new THREE.EffectComposer(renderer);
-const renderPass = new THREE.RenderPass(scene, camera);
-composer.addPass(renderPass);
-
-const bloomPass = new THREE.UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,  // Strength of the bloom
-    0.4,  // Radius of the bloom
-    0.85  // Threshold of brightness to apply the bloom effect
-);
-composer.addPass(bloomPass);
-
-// Add a directional light for the stars
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-scene.add(directionalLight);
-
-// Add a point light to act as a light source for the stars
-const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-pointLight.position.set(0, 10, 20);
-scene.add(pointLight);
-
 // Star positions and relative sizes (Spica at default size, others smaller)
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
@@ -54,10 +32,10 @@ let starMeshes = [];
 // Create stars (small glowing spheres) in the scene
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
-    const material = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow
-        emissiveIntensity: 0.8,   // Glow effect
+        emissiveIntensity: 0.8,   // Soft glow effect
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -112,7 +90,7 @@ window.addEventListener('click', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    composer.render();  // Use composer to render the bloom effect
+    renderer.render(scene, camera);
 }
 animate();
 
@@ -121,5 +99,4 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    composer.setSize(window.innerWidth, window.innerHeight);
 });

@@ -8,6 +8,9 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
 
+// Golden ratio constant
+const goldenRatio = 1.618;
+
 // Import necessary elements for bloom effect
 const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
@@ -48,7 +51,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 1.0,   // Higher emissive intensity for bloom effect
+        emissiveIntensity: 1.0,   // Base emissive intensity for bloom effect
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -94,9 +97,18 @@ window.addEventListener('mousemove', event => {
         starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
+
+                // Apply golden ratio to emissive intensity and bloom strength
+                star.mesh.material.emissiveIntensity = 1.0 * goldenRatio;  // Increase glow effect when hovered
+                bloomPass.strength = 1.0 * goldenRatio;  // Increase bloom intensity when hovered
             }
         });
     } else {
+        // Restore the default emissive intensity and bloom effect when not hovered
+        starMeshes.forEach(star => {
+            star.mesh.material.emissiveIntensity = 1.0;  // Default glow
+        });
+        bloomPass.strength = 1.0;  // Restore default bloom strength
         starNameElement.innerHTML = "Hover over a star...";
     }
 });

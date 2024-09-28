@@ -73,8 +73,8 @@ controls.enablePan = false;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Detect click on the star
-window.addEventListener('click', event => {
+// Detect hover over the star
+window.addEventListener('mousemove', event => {
     // Calculate mouse position in normalized device coordinates (-1 to +1)
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -86,15 +86,19 @@ window.addEventListener('click', event => {
     const intersects = raycaster.intersectObjects(scene.children);
 
     if (intersects.length > 0) {
-        const clickedStar = intersects[0].object;
+        const hoveredStar = intersects[0].object;
 
-        // Check if the clicked star is Spica, then play the audio
+        // Update the text in the top-right corner with the star's name
+        const starNameDiv = document.getElementById('star-name');
         starMeshes.forEach(star => {
-            if (star.mesh === clickedStar && star.name === 'Spica') {
-                spicaAudio.play();  // Play the audio track for Spica
-                console.log('Spica clicked! Playing audio...');
+            if (star.mesh === hoveredStar) {
+                starNameDiv.innerText = star.name;  // Set the text to the star's name
             }
         });
+    } else {
+        // Reset the text when not hovering over any star
+        const starNameDiv = document.getElementById('star-name');
+        starNameDiv.innerText = 'Hover over a star...';
     }
 });
 

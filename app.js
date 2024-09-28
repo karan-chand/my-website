@@ -13,12 +13,11 @@ const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-// Tweak bloom settings for softer effect
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.8,  // Strength of the bloom
-    0.6,  // Radius of the bloom
-    0.9   // Threshold of brightness to apply the bloom effect
+    1.0,  // Strength of the bloom
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -45,11 +44,11 @@ let starMeshes = [];
 
 // Create stars (small glowing spheres with bloom effect) in the scene
 starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 64, 64);  // Increased segments for smoother spheres
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.8,   // Default glow intensity (soft)
+        emissiveIntensity: 0.8,   // Default emissive intensity
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -57,7 +56,7 @@ starData.forEach(star => {
     scene.add(starMesh);
 
     // Store reference to the star's mesh and name for later interaction
-    starMeshes.push({ mesh: starMesh, name: star.name, size: star.size });
+    starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
 // Set up the camera position
@@ -91,22 +90,21 @@ window.addEventListener('mousemove', event => {
     if (intersects.length > 0) {
         const hoveredStar = intersects[0].object;
 
-        // Display the name of the hovered star and apply the glow intensity based on size
+        // Display the name of the hovered star
         starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
 
-                // Strengthen the glow on hover
-                star.mesh.material.emissiveIntensity = 1.5;  // Stronger glow on hover
+                // Increase emissive intensity using Fibonacci-like ratio (1.618)
+                star.mesh.material.emissiveIntensity = 1.3;  // Increased intensity
             }
         });
     } else {
-        starNameElement.innerHTML = "Hover over a star...";
-
-        // Reset all stars' glow intensity to the default
         starMeshes.forEach(star => {
-            star.mesh.material.emissiveIntensity = 0.8;  // Default glow
+            // Reset emissive intensity to default when not hovered
+            star.mesh.material.emissiveIntensity = 0.8;
         });
+        starNameElement.innerHTML = "Hover over a star...";
     }
 });
 

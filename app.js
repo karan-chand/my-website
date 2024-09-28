@@ -16,9 +16,9 @@ composer.addPass(renderPass);
 // Tweak bloom settings for softer effect
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.8,  // Lowered strength for softer bloom
-    0.6,  // Increased radius for a more diffused effect
-    0.9   // Slightly higher threshold to apply bloom only to the brightest stars
+    0.8,  // Strength of the bloom
+    0.6,  // Radius of the bloom
+    0.9   // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -49,7 +49,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.6,   // Lowered emissive intensity for a subtler glow
+        emissiveIntensity: 0.4,   // Default emissive intensity for subtle glow
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -57,7 +57,7 @@ starData.forEach(star => {
     scene.add(starMesh);
 
     // Store reference to the star's mesh and name for later interaction
-    starMeshes.push({ mesh: starMesh, name: star.name });
+    starMeshes.push({ mesh: starMesh, name: star.name, size: star.size });
 });
 
 // Set up the camera position
@@ -76,15 +76,6 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
 
-// Fibonacci Sequence Helper Function
-function fibonacci(n) {
-    const sequence = [1, 1];
-    for (let i = 2; i < n; i++) {
-        sequence.push(sequence[i - 1] + sequence[i - 2]);
-    }
-    return sequence[n - 1];
-}
-
 // Detect hover on the star
 window.addEventListener('mousemove', event => {
     // Calculate mouse position in normalized device coordinates (-1 to +1)
@@ -100,13 +91,13 @@ window.addEventListener('mousemove', event => {
     if (intersects.length > 0) {
         const hoveredStar = intersects[0].object;
 
-        // Display the name of the hovered star and apply the Fibonacci glow intensity
-        starMeshes.forEach((star, index) => {
+        // Display the name of the hovered star and apply the glow intensity based on size
+        starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
 
-                // Apply Fibonacci based intensity glow
-                star.mesh.material.emissiveIntensity = fibonacci(index + 3) / 10;  // Dividing to keep intensity in a reasonable range
+                // Intensify the glow based on the size of the star
+                star.mesh.material.emissiveIntensity = 1.2 + (star.size * 1.5);  // Stronger glow for larger stars
             }
         });
     } else {
@@ -114,7 +105,7 @@ window.addEventListener('mousemove', event => {
 
         // Reset all stars' glow intensity to the default
         starMeshes.forEach(star => {
-            star.mesh.material.emissiveIntensity = 0.6;
+            star.mesh.material.emissiveIntensity = 0.4;  // Subtle default glow
         });
     }
 });

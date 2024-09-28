@@ -21,6 +21,15 @@ const bloomPass = new THREE.UnrealBloomPass(
 );
 composer.addPass(bloomPass);
 
+// Add a directional light for the stars
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+scene.add(directionalLight);
+
+// Add a point light to act as a light source for the stars
+const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+pointLight.position.set(0, 10, 20);
+scene.add(pointLight);
+
 // Star positions and relative sizes (Spica at default size, others smaller)
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
@@ -42,13 +51,13 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (small glowing spheres with bloom effect) in the scene
+// Create stars (small glowing spheres) in the scene
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
-    const material = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshBasicMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow
-        emissiveIntensity: 0.8,   // Stronger emissive for the bloom effect
+        emissiveIntensity: 0.8,   // Glow effect
     });
 
     const starMesh = new THREE.Mesh(geometry, material);

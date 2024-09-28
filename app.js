@@ -8,14 +8,14 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
 
-// Set up the composer for bloom effect
+// Import necessary elements for bloom effect
 const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,  // Strength of the bloom
+    1.0,  // Strength of the bloom, adjust later for fine-tuning
     0.4,  // Radius of the bloom
     0.85  // Threshold of brightness to apply the bloom effect
 );

@@ -63,7 +63,7 @@ starData.forEach(star => {
 });
 
 // Set up the camera position
-camera.position.z = 50;
+camera.position.z = -50;
 
 // Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);

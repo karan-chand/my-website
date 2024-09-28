@@ -5,6 +5,9 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
+// Get the div element to display the star name
+const starNameDiv = document.getElementById('star-name');
+
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
 
@@ -69,12 +72,12 @@ controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
 
-// Add Raycaster for detecting mouse clicks on stars
+// Add Raycaster for detecting mouse hover
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Detect click on the star
-window.addEventListener('click', event => {
+// Detect mouse movement over stars
+window.addEventListener('mousemove', event => {
     // Calculate mouse position in normalized device coordinates (-1 to +1)
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -86,15 +89,17 @@ window.addEventListener('click', event => {
     const intersects = raycaster.intersectObjects(scene.children);
 
     if (intersects.length > 0) {
-        const clickedStar = intersects[0].object;
+        const hoveredStar = intersects[0].object;
 
-        // Check if the clicked star is Spica, then play the audio
+        // Check which star is being hovered over and update the name
         starMeshes.forEach(star => {
-            if (star.mesh === clickedStar && star.name === 'Spica') {
-                spicaAudio.play();  // Play the audio track for Spica
-                console.log('Spica clicked! Playing audio...');
+            if (star.mesh === hoveredStar) {
+                starNameDiv.textContent = star.name;  // Display star name in the top-right
             }
         });
+    } else {
+        // Reset to default text if not hovering over any star
+        starNameDiv.textContent = 'Hover over a star...';
     }
 });
 

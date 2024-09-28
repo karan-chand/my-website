@@ -31,19 +31,10 @@ let starMeshes = [];
 
 // Create stars (small glowing spheres with different sizes) in the scene
 starData.forEach(star => {
-    let material;
-    
-    if (star.name === 'Spica') {
-        material = new THREE.MeshBasicMaterial({
-            color: 0x0000ff,         // Blue color for Spica
-            wireframe: false
-        });
-    } else {
-        material = new THREE.MeshBasicMaterial({
-            color: 0xffffff,         // White color for other stars
-            wireframe: false
-        });
-    }
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,  // All stars are white now, including Spica
+        wireframe: false
+    });
 
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);

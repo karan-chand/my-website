@@ -1,12 +1,25 @@
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation'), antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
+
+// Import necessary elements for bloom effect
+const composer = new THREE.EffectComposer(renderer);
+const renderPass = new THREE.RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new THREE.UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    1.0,  // Strength of the bloom, adjust later for fine-tuning
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
+);
+composer.addPass(bloomPass);
 
 // Star positions and relative sizes (Spica at default size, others smaller)
 const starData = [
@@ -29,14 +42,15 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (small glowing spheres with different sizes) in the scene
+// Create stars (small glowing spheres with bloom effect) in the scene
 starData.forEach(star => {
-    const material = new THREE.MeshBasicMaterial({
-        color: 0xffffff,  // All stars are white now, including Spica
-        wireframe: false
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
+    const material = new THREE.MeshStandardMaterial({
+        color: 0xffffff,          // White color for all stars
+        emissive: 0xffffff,       // White glow for emissive light
+        emissiveIntensity: 1.0,   // Higher emissive intensity for bloom effect
     });
 
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
@@ -116,7 +130,7 @@ window.addEventListener('click', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    renderer.render(scene, camera);
+    composer.render();  // Use composer to render the bloom effect
 }
 animate();
 
@@ -125,31 +139,5 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-});
-
-// Detect touch for mobile (simulate hover with touchstart)
-window.addEventListener('touchstart', event => {
-    // Calculate touch position in normalized device coordinates (-1 to +1)
-    const touch = event.touches[0];
-    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
-
-    // Update the picking ray with the camera and touch position
-    raycaster.setFromCamera(mouse, camera);
-
-    // Calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(scene.children);
-
-    if (intersects.length > 0) {
-        const touchedStar = intersects[0].object;
-
-        // Display the name of the touched star
-        starMeshes.forEach(star => {
-            if (star.mesh === touchedStar) {
-                starNameElement.innerHTML = star.name;
-            }
-        });
-    } else {
-        starNameElement.innerHTML = "Hover over a star...";
-    }
+    composer.setSize(window.innerWidth, window.innerHeight);
 });

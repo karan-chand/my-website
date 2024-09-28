@@ -5,10 +5,10 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-// Create audio element for Spica
-const audio = new Audio('Audio/Kahin Deep Jale Kahin Dil.mp3');
+// Create an audio element and load the track for Spica
+const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
 
-// Star positions and sizes
+// Star positions and relative sizes (Spica at default size, others smaller)
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -17,7 +17,7 @@ const starData = [
     { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
     { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
     { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },  // Spica star linked to the audio
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },  // Spica star
     { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
     { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
     { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },
@@ -26,61 +26,75 @@ const starData = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
 
-// Create stars (small spheres) in the scene
-starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Star size
-    let material = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        emissive: 0xffff00,
-        emissiveIntensity: 0.6
-    });
+// Store star meshes for interaction
+let starMeshes = [];
 
+// Create stars (small glowing spheres with different sizes) in the scene
+starData.forEach(star => {
+    let material;
+    
     if (star.name === 'Spica') {
-        material.color.set(0x0000ff);  // Make Spica blue
-        material.emissive.set(0x0000ff);  // Spica emissive color
+        material = new THREE.MeshBasicMaterial({
+            color: 0x0000ff,         // Blue color for Spica
+            emissive: 0x0000ff,      // Blue glow
+            emissiveIntensity: 0.8,  // Glow effect
+            wireframe: false
+        });
+    } else {
+        material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,         // White color for other stars
+            emissive: 0xffff00,      // Yellowish glow
+            emissiveIntensity: 0.6,  // Glow effect
+            wireframe: false
+        });
     }
 
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);  // Scaling positions for better visibility
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
 
-    // Add event listener for Spica to play audio on click
-    if (star.name === 'Spica') {
-        starMesh.userData = { isSpica: true };  // Mark Spica to distinguish it
-    }
+    // Store reference to the star's mesh and name for later interaction
+    starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
 // Set up the camera position
-camera.position.z = 30;  // Set camera distance
+camera.position.z = 30;
 
-// Orbit controls to rotate the scene
+// Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.rotateSpeed = 0.7;
+controls.enableZoom = true;
+controls.enablePan = false;
 
-// Raycaster for detecting star clicks
+// Add Raycaster for detecting mouse clicks on stars
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-window.addEventListener('click', (event) => {
-    // Calculate mouse position in normalized device coordinates
+// Detect click on the star
+window.addEventListener('click', event => {
+    // Calculate mouse position in normalized device coordinates (-1 to +1)
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // Update the raycaster with the camera and mouse position
+    // Update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
 
-    // Get the objects that intersect with the ray
+    // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
 
-    // Check if Spica was clicked and play the audio
-    if (intersects.length > 0 && intersects[0].object.userData.isSpica) {
-        if (audio.paused) {
-            audio.play();
-        } else {
-            audio.pause();
-        }
+    if (intersects.length > 0) {
+        const clickedStar = intersects[0].object;
+
+        // Check if the clicked star is Spica, then play the audio
+        starMeshes.forEach(star => {
+            if (star.mesh === clickedStar && star.name === 'Spica') {
+                spicaAudio.play();  // Play the audio track for Spica
+                console.log('Spica clicked! Playing audio...');
+            }
+        });
     }
 });
 

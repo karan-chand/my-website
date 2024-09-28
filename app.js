@@ -18,9 +18,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.1,  // Strength of the bloom, adjust later for fine-tuning
-    50,  // Radius of the bloom
-    0.01  // Threshold of brightness to apply the bloom effect
+    1.5,  // Strength of the bloom, adjust later for fine-tuning
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -63,7 +63,15 @@ starData.forEach(star => {
 });
 
 // Set up the camera position
-camera.position.z = -50;
+camera.position.z = 100;
+
+// Use Higher Resolution Render Targets
+const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+    format: THREE.RGBAFormat,
+    antialias: true // Note: This property may not apply directly, check the documentation
+});
 
 // Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);

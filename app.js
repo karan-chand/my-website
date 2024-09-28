@@ -5,10 +5,7 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-// Create an audio element and load the track for Spica
-const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
-
-// Star positions and relative sizes (Spica at default size, others smaller)
+// Star positions and relative sizes (All stars with white light effect)
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -26,40 +23,40 @@ const starData = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
 
-// Store star meshes for interaction
+// Store star meshes and lights for interaction
 let starMeshes = [];
+let lights = [];
 
-// Create stars (small glowing spheres with different sizes) in the scene
+// Create stars with point lights for glowing effect
 starData.forEach(star => {
-    let material;
-    
-    if (star.name === 'Spica') {
-        material = new THREE.MeshStandardMaterial({
-            color: 0x0000ff,         // Blue color for Spica
-            emissive: 0x0000ff,      // Blue emissive glow for Spica
-            emissiveIntensity: 0.2,  // Default soft glow
-            wireframe: false
-        });
-    } else {
-        material = new THREE.MeshStandardMaterial({
-            color: 0xffffff,         // White color for other stars
-            emissive: 0xffffff,      // White emissive glow
-            emissiveIntensity: 0.2,  // Default soft glow
-            wireframe: false
-        });
-    }
+    // Star material and geometry
+    const material = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xffffff,       // White emissive glow
+        emissiveIntensity: 0.2,   // Soft glow by default
+    });
 
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
 
+    // Create a point light for each star (for the glow)
+    const pointLight = new THREE.PointLight(0xffffff, 0.5, 50);  // Soft white light
+    pointLight.position.set(star.x * 5, star.y * 5, star.z * 5);
+    scene.add(pointLight);
+
     // Store reference to the star's mesh and name for later interaction
     starMeshes.push({ mesh: starMesh, name: star.name });
+    lights.push(pointLight);  // Store light reference to modify later
 });
 
 // Set up the camera position
 camera.position.z = 30;
+
+// Add Ambient Light for overall lighting
+const ambientLight = new THREE.AmbientLight(0x404040); // Soft ambient light
+scene.add(ambientLight);
 
 // Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -91,46 +88,36 @@ window.addEventListener('mousemove', event => {
     if (intersects.length > 0) {
         hoveredStar = intersects[0].object;
 
-        // Intensify emissive glow when hovered over
+        // Intensify emissive glow and light when hovered over
         starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
                 star.mesh.material.emissiveIntensity = 1;  // Increase glow intensity on hover
+                lights.forEach(light => {
+                    if (light.position.equals(star.mesh.position)) {
+                        light.intensity = 2;  // Increase light intensity on hover
+                    }
+                });
                 starNameElement.innerHTML = star.name;     // Show star name
             } else {
                 star.mesh.material.emissiveIntensity = 0.2;  // Default emissive intensity
+                lights.forEach(light => {
+                    if (light.position.equals(star.mesh.position)) {
+                        light.intensity = 0.5;  // Default light intensity
+                    }
+                });
             }
         });
     } else {
-        // Reset emissive intensity if no star is hovered
+        // Reset emissive intensity and light if no star is hovered
         starMeshes.forEach(star => {
             star.mesh.material.emissiveIntensity = 0.2;
+            lights.forEach(light => {
+                if (light.position.equals(star.mesh.position)) {
+                    light.intensity = 0.5;  // Default light intensity
+                }
+            });
         });
         starNameElement.innerHTML = "Hover over a star...";
-    }
-});
-
-// Detect click on the star
-window.addEventListener('click', event => {
-    // Calculate mouse position in normalized device coordinates (-1 to +1)
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Update the picking ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera);
-
-    // Calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(scene.children);
-
-    if (intersects.length > 0) {
-        const clickedStar = intersects[0].object;
-
-        // Check if the clicked star is Spica, then play the audio
-        starMeshes.forEach(star => {
-            if (star.mesh === clickedStar && star.name === 'Spica') {
-                spicaAudio.play();  // Play the audio track for Spica
-                console.log('Spica clicked! Playing audio...');
-            }
-        });
     }
 });
 

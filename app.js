@@ -5,22 +5,22 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-// Star positions and sizes (relative sizes for better visibility)
+// Star positions and relative sizes (Spica at default size, others scaled down)
 const starData = [
-    { name: '109 Virginis', x: 2, y: -4, z: 1, size: 1 }, // Smaller star
-    { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 2 },    // Medium star
-    { name: 'Heze', x: 3, y: -1, z: 0.5, size: 1.5 },     // Medium-small star
-    { name: 'Nu Virginis', x: -2.5, y: 4, z: 2, size: 1.2 },  // Smaller star
-    { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 2 }, // Medium star
-    { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 1.8 },   // Medium star
-    { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 1.7 }, // Medium star
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 4 },      // Largest star (Spica)
-    { name: 'Syrma', x: 4, y: 3, z: -1, size: 1.5 },      // Medium-small star
-    { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 1.3 }, // Small star
-    { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 1.4 }, // Small star
-    { name: 'Vindemiatrix', x: 2.5, y: 1.2, z: 2.5, size: 3 }, // Second-largest star
-    { name: 'Zaniah', x: -1.5, y: 3, z: 0.5, size: 1.6 },  // Medium star
-    { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 1.2 }   // Small star
+    { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 }, // Smaller star
+    { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },    // Slightly larger
+    { name: 'Heze', x: 3, y: -1, z: 0.5, size: 0.35 },     // Smaller star
+    { name: 'Nu Virginis', x: -2.5, y: 4, z: 2, size: 0.3 },  // Smaller star
+    { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 }, // Medium star
+    { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },   // Larger star
+    { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 }, // Larger star
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },      // Default size for Spica
+    { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },      // Medium-small
+    { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 }, // Small
+    { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 }, // Small
+    { name: 'Vindemiatrix', x: 2.5, y: 1.2, z: 2.5, size: 0.6 }, // Larger star
+    { name: 'Zaniah', x: -1.5, y: 3, z: 0.5, size: 0.4 },  // Medium
+    { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }   // Smaller
 ];
 
 // Store star meshes for animation
@@ -34,22 +34,22 @@ starData.forEach(star => {
     if (star.name === 'Spica') {
         material = new THREE.MeshBasicMaterial({
             color: 0x0000ff,         // Bright Blue color for Spica
-            emissive: 0x0000ff,      // Blue glow
-            emissiveIntensity: 1.5,  // Strong glow for visibility
-            wireframe: false         // Solid star (no wireframe)
+            emissive: 0x0000ff,      // Blue glow for Spica
+            emissiveIntensity: 0.8,  // Glow effect for Spica
+            wireframe: false         // Solid star
         });
     } else {
         material = new THREE.MeshBasicMaterial({
             color: 0xffffff,         // White color for other stars
             emissive: 0xffff00,      // Yellowish glow
-            emissiveIntensity: 1,    // Glow intensity for other stars
-            wireframe: false         // Solid star (no wireframe)
+            emissiveIntensity: 0.6,  // Glow effect for other stars
+            wireframe: false         // Solid star
         });
     }
 
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Star size based on 'size' property
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Scaling for visibility
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
 
     // Store star mesh for pulsating effect
@@ -75,7 +75,7 @@ function animate() {
     // Pulsating glow effect
     starMeshes.forEach(star => {
         star.material.emissiveIntensity += glowSpeed;
-        if (star.material.emissiveIntensity > 2 || star.material.emissiveIntensity < 0.6) {
+        if (star.material.emissiveIntensity > 0.9 || star.material.emissiveIntensity < 0.5) {
             glowSpeed *= -1;  // Reverse direction to create pulsating effect
         }
     });

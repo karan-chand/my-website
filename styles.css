@@ -1,28 +1,61 @@
-/* Import the Spyro 2 font */
+/* Import the custom font */
 @font-face {
-    font-family: 'Spyro';
-    src: url('fonts/Spyro%202.ttf') format('truetype');
+    font-family: 'Spyro2';
+    src: url('fonts/Spyro 2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
-/* Apply the Spyro font to the whole body */
-body {
-    font-family: 'Spyro', sans-serif;
+/* Apply the custom font globally to the body */
+body, html {
+    font-family: 'Spyro2', Arial, sans-serif;
     margin: 0;
-    background-color: white; /* Background color of the page */
+    padding: 0;
 }
 
-/* Styling for headings and text */
-h1, h2, h3, p {
-    font-family: 'Spyro', sans-serif; /* Use the Spyro font for headings and paragraphs */
+/* Center the homepage text */
+h1, p {
+    font-family: 'Spyro2', Arial, sans-serif;
+    text-align: center;
+    margin: 0;
 }
 
-/* Static text for the top-right corner */
-#staticText {
+/* Style for the homepage content */
+.homepage-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'Spyro2', Arial, sans-serif;
+}
+
+/* Style for the Virgo Constellation page */
+canvas {
+    display: block;
+    width: 80vw;  /* 80% of the viewport width */
+    height: 80vh; /* 80% of the viewport height */
+    margin: 10vh auto;  /* Center the canvas with space on top and bottom */
+    border: 2px solid #000000;  /* Optional: Add a black border around the canvas */
+}
+
+/* Static text styling for the Virgo page */
+.static-text {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 20px;
     color: white;
     font-size: 18px;
-    font-family: 'Spyro', sans-serif;
-    z-index: 100;
+    font-family: 'Spyro2', Arial, sans-serif;
+    z-index: 10;  /* Ensure the text is above the canvas */
+}
+
+/* Links on homepage */
+a {
+    color: #0000ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }

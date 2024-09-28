@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
+    <title>Virgo Constellation 3D Map</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        body, html {
             margin: 0;
+            height: 100%;
+            overflow: hidden;  /* Ensure the page doesn't scroll */
+            background-color: white;  /* Set the background to white */
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;  /* Full viewport width */
+            height: 100vh; /* Full viewport height */
         }
     </style>
 </head>
 <body>
-    <div>
-        <h1>This is my new website!</h1>
-        <p><a href="virgo.html">Check out the Virgo Constellation 3D Map.</a></p>
-    </div>
+    <canvas id="virgo-constellation"></canvas>
+
+    <!-- Load Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Load OrbitControls from your local repository -->
+    <script src="OrbitControls.js"></script>
+    <!-- Load your app.js for rendering the constellation -->
+    <script src="app.js"></script>
 </body>
 </html>

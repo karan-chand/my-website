@@ -10,34 +10,31 @@
             height: 100%;
             overflow: hidden;
         }
-        canvas {
-            display: block;
-            width: 80vw;  /* Set canvas to 80% of the screen */
-            height: 80vh;
-            margin: auto;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
-        #star-name {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 18px;
-            color: #ffffff;
-            background-color: rgba(0, 0, 0, 0.5);  /* Semi-transparent background */
-            padding: 5px;
-            border-radius: 5px;
-            z-index: 10;
+        canvas {
+            width: 80vw; /* Use 80% of the viewport width */
+            height: 80vh; /* Use 80% of the viewport height */
+            background-color: black; /* Ensure background color is black */
         }
     </style>
 </head>
 <body>
-    <canvas id="virgo-constellation"></canvas>
-    <div id="star-name">Hover over a star...</div> <!-- This will display star names -->
+    <div id="container">
+        <canvas id="virgo-constellation"></canvas>
+    </div>
 
+    <!-- Include Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Include OrbitControls for mouse interaction -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Load the app.js for rendering the constellation -->
     <script src="app.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virgo Constellation 3D Map</title>
@@ -32,6 +33,12 @@
             z-index: 10;  /* Ensure text is above the canvas */
         }
     </style>
+
+    <!-- Load the necessary scripts for bloom effect -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    
 </head>
 <body>
     <canvas id="virgo-constellation"></canvas>

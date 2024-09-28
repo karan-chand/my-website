@@ -48,7 +48,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.8,   // Default emissive intensity
+        emissiveIntensity: 1.3,   // Default intensity is what was previously on hover
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -95,16 +95,17 @@ window.addEventListener('mousemove', event => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
 
-                // Increase emissive intensity using Fibonacci-like ratio (1.618)
-                star.mesh.material.emissiveIntensity = 1.3;  // Increased intensity
+                // Increase glow on hover by the golden ratio (1.618)
+                star.mesh.material.emissiveIntensity = 1.3 * 1.618;
             }
         });
     } else {
-        starMeshes.forEach(star => {
-            // Reset emissive intensity to default when not hovered
-            star.mesh.material.emissiveIntensity = 0.8; // Ensure they glow at default level
-        });
         starNameElement.innerHTML = "Hover over a star...";
+
+        // Reset all star emissive intensities to default (1.3)
+        starMeshes.forEach(star => {
+            star.mesh.material.emissiveIntensity = 1.3;
+        });
     }
 });
 

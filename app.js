@@ -34,13 +34,17 @@ starData.forEach(star => {
     let material;
     
     if (star.name === 'Spica') {
-        material = new THREE.MeshBasicMaterial({
+        material = new THREE.MeshStandardMaterial({
             color: 0x0000ff,         // Blue color for Spica
+            emissive: 0x0000ff,      // Blue emissive glow for Spica
+            emissiveIntensity: 0.2,  // Default soft glow
             wireframe: false
         });
     } else {
-        material = new THREE.MeshBasicMaterial({
+        material = new THREE.MeshStandardMaterial({
             color: 0xffffff,         // White color for other stars
+            emissive: 0xffffff,      // White emissive glow
+            emissiveIntensity: 0.2,  // Default soft glow
             wireframe: false
         });
     }
@@ -82,16 +86,25 @@ window.addEventListener('mousemove', event => {
     // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
 
-    if (intersects.length > 0) {
-        const hoveredStar = intersects[0].object;
+    let hoveredStar = null;
 
-        // Display the name of the hovered star
+    if (intersects.length > 0) {
+        hoveredStar = intersects[0].object;
+
+        // Intensify emissive glow when hovered over
         starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
-                starNameElement.innerHTML = star.name;
+                star.mesh.material.emissiveIntensity = 1;  // Increase glow intensity on hover
+                starNameElement.innerHTML = star.name;     // Show star name
+            } else {
+                star.mesh.material.emissiveIntensity = 0.2;  // Default emissive intensity
             }
         });
     } else {
+        // Reset emissive intensity if no star is hovered
+        starMeshes.forEach(star => {
+            star.mesh.material.emissiveIntensity = 0.2;
+        });
         starNameElement.innerHTML = "Hover over a star...";
     }
 });
@@ -134,31 +147,4 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-});
-
-// Detect touch for mobile (simulate hover with touchstart)
-window.addEventListener('touchstart', event => {
-    // Calculate touch position in normalized device coordinates (-1 to +1)
-    const touch = event.touches[0];
-    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
-
-    // Update the picking ray with the camera and touch position
-    raycaster.setFromCamera(mouse, camera);
-
-    // Calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects(scene.children);
-
-    if (intersects.length > 0) {
-        const touchedStar = intersects[0].object;
-
-        // Display the name of the touched star
-        starMeshes.forEach(star => {
-            if (star.mesh === touchedStar) {
-                starNameElement.innerHTML = star.name;
-            }
-        });
-    } else {
-        starNameElement.innerHTML = "Hover over a star...";
-    }
 });

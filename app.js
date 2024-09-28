@@ -13,10 +13,9 @@ const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-// Unreal bloom pass for adding glow effect
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,  // Strength of the bloom (can be increased on hover)
+    1.0,  // Strength of the bloom
     0.4,  // Radius of the bloom
     0.85  // Threshold of brightness to apply the bloom effect
 );
@@ -49,7 +48,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.8,   // Soft emissive intensity for default state
+        emissiveIntensity: 1.0,   // Higher emissive intensity for bloom effect
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -95,18 +94,9 @@ window.addEventListener('mousemove', event => {
         starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
-
-                // Increase emissive intensity and bloom effect on hover using the golden ratio
-                star.mesh.material.emissiveIntensity = 1.8;  // Boost the glow effect when hovered
-                bloomPass.strength = 1.5;  // Increase bloom intensity when hovered
             }
         });
     } else {
-        // Restore the default emissive intensity and bloom effect when not hovered
-        starMeshes.forEach(star => {
-            star.mesh.material.emissiveIntensity = 0.8;  // Default glow
-        });
-        bloomPass.strength = 1.0;  // Restore default bloom strength
         starNameElement.innerHTML = "Hover over a star...";
     }
 });

@@ -6,9 +6,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Create an audio element and load the track for Spica
-const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3'); 
+const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
 
-// Star positions and relative sizes
+// Star positions and relative sizes (Spica at default size, others smaller)
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -26,39 +26,50 @@ const starData = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
 
-// Store star meshes for animation
+// Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (with pulsating glow) in the scene
+// Add lighting to the scene for glow effect
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft ambient light
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0xffffff, 1); // Add stronger point light
+pointLight.position.set(50, 50, 50);
+scene.add(pointLight);
+
+// Create stars (small glowing spheres with different sizes) in the scene
 starData.forEach(star => {
     let material;
-    
+
     if (star.name === 'Spica') {
         material = new THREE.MeshStandardMaterial({
-            color: 0x0000ff,         // Blue for Spica
+            color: 0x0000ff,         // Blue color for Spica
             emissive: 0x0000ff,      // Blue glow
-            emissiveIntensity: 0.5,  // Glow effect
+            emissiveIntensity: 0.8,  // Glow effect
+            wireframe: false
         });
     } else {
         material = new THREE.MeshStandardMaterial({
             color: 0xffffff,         // White color for other stars
             emissive: 0xffff00,      // Yellowish glow
-            emissiveIntensity: 0.3,  // Glow effect
+            emissiveIntensity: 0.6,  // Glow effect
+            wireframe: false
         });
     }
 
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Star sizes
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
 
-    starMeshes.push({ mesh: starMesh, name: star.name, pulseSpeed: 0.01 });
+    // Store reference to the star's mesh and name for later interaction
+    starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
 // Set up the camera position
 camera.position.z = 30;
 
-// Enable OrbitControls for rotation
+// Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -72,30 +83,32 @@ const mouse = new THREE.Vector2();
 
 // Detect click on the star
 window.addEventListener('click', event => {
+    // Calculate mouse position in normalized device coordinates (-1 to +1)
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
+
+    // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
-    
+
     if (intersects.length > 0) {
         const clickedStar = intersects[0].object;
+
+        // Check if the clicked star is Spica, then play the audio
         starMeshes.forEach(star => {
             if (star.mesh === clickedStar && star.name === 'Spica') {
-                spicaAudio.play();  // Play audio
+                spicaAudio.play();  // Play the audio track for Spica
+                console.log('Spica clicked! Playing audio...');
             }
         });
     }
 });
 
-// Animation loop with pulsating stars
+// Animation loop
 function animate() {
     requestAnimationFrame(animate);
-
-    // Pulsate stars by changing their emissive intensity
-    starMeshes.forEach(star => {
-        star.mesh.material.emissiveIntensity = 0.3 + Math.sin(Date.now() * star.pulseSpeed) * 0.2;
-    });
-
     controls.update();
     renderer.render(scene, camera);
 }

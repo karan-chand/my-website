@@ -5,7 +5,7 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virg
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-// Star positions and sizes (removing hover functionality for now)
+// Star positions and sizes
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -22,9 +22,6 @@ const starData = [
     { name: 'Zaniah', x: -1.5, y: 3, z: 0.5, size: 0.4 },
     { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
-
-// Store star meshes
-let starMeshes = [];
 
 // Create stars (small spheres) in the scene
 starData.forEach(star => {
@@ -43,7 +40,6 @@ starData.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);  // Scaling positions for better visibility
     scene.add(starMesh);
-    starMeshes.push(starMesh);  // Store reference to star
 });
 
 // Set up the camera position

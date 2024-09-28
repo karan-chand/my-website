@@ -6,9 +6,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Create an audio element and load the track for Spica
-const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
+const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3'); 
 
-// Star positions and relative sizes (Spica at default size, others smaller)
+// Star positions and relative sizes
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -26,42 +26,39 @@ const starData = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
 
-// Store star meshes for interaction
+// Store star meshes for animation
 let starMeshes = [];
 
-// Create stars (small glowing spheres with different sizes) in the scene
+// Create stars (with pulsating glow) in the scene
 starData.forEach(star => {
     let material;
     
     if (star.name === 'Spica') {
-        material = new THREE.MeshBasicMaterial({
-            color: 0x0000ff,         // Blue color for Spica
+        material = new THREE.MeshStandardMaterial({
+            color: 0x0000ff,         // Blue for Spica
             emissive: 0x0000ff,      // Blue glow
-            emissiveIntensity: 0.8,  // Glow effect
-            wireframe: false
+            emissiveIntensity: 0.5,  // Glow effect
         });
     } else {
-        material = new THREE.MeshBasicMaterial({
+        material = new THREE.MeshStandardMaterial({
             color: 0xffffff,         // White color for other stars
             emissive: 0xffff00,      // Yellowish glow
-            emissiveIntensity: 0.6,  // Glow effect
-            wireframe: false
+            emissiveIntensity: 0.3,  // Glow effect
         });
     }
 
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Star sizes
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
 
-    // Store reference to the star's mesh and name for later interaction
-    starMeshes.push({ mesh: starMesh, name: star.name });
+    starMeshes.push({ mesh: starMesh, name: star.name, pulseSpeed: 0.01 });
 });
 
 // Set up the camera position
 camera.position.z = 30;
 
-// Enable OrbitControls for rotation and zoom
+// Enable OrbitControls for rotation
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -73,38 +70,32 @@ controls.enablePan = false;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Detect hover over the star
-window.addEventListener('mousemove', event => {
-    // Calculate mouse position in normalized device coordinates (-1 to +1)
+// Detect click on the star
+window.addEventListener('click', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
-
-    // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
-
+    
     if (intersects.length > 0) {
-        const hoveredStar = intersects[0].object;
-
-        // Update the text in the top-right corner with the star's name
-        const starNameDiv = document.getElementById('star-name');
+        const clickedStar = intersects[0].object;
         starMeshes.forEach(star => {
-            if (star.mesh === hoveredStar) {
-                starNameDiv.innerText = star.name;  // Set the text to the star's name
+            if (star.mesh === clickedStar && star.name === 'Spica') {
+                spicaAudio.play();  // Play audio
             }
         });
-    } else {
-        // Reset the text when not hovering over any star
-        const starNameDiv = document.getElementById('star-name');
-        starNameDiv.innerText = 'Hover over a star...';
     }
 });
 
-// Animation loop
+// Animation loop with pulsating stars
 function animate() {
     requestAnimationFrame(animate);
+
+    // Pulsate stars by changing their emissive intensity
+    starMeshes.forEach(star => {
+        star.mesh.material.emissiveIntensity = 0.3 + Math.sin(Date.now() * star.pulseSpeed) * 0.2;
+    });
+
     controls.update();
     renderer.render(scene, camera);
 }

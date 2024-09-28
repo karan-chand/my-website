@@ -1,1 +1,28 @@
+/* Import the Spyro 2 font */
+@font-face {
+    font-family: 'Spyro';
+    src: url('fonts/Spyro%202.ttf') format('truetype');
+}
 
+/* Apply the Spyro font to the whole body */
+body {
+    font-family: 'Spyro', sans-serif;
+    margin: 0;
+    background-color: white; /* Background color of the page */
+}
+
+/* Styling for headings and text */
+h1, h2, h3, p {
+    font-family: 'Spyro', sans-serif; /* Use the Spyro font for headings and paragraphs */
+}
+
+/* Static text for the top-right corner */
+#staticText {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-size: 18px;
+    font-family: 'Spyro', sans-serif;
+    z-index: 100;
+}

@@ -43,13 +43,13 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (smoother spheres with bloom effect) in the scene
+// Create stars (small glowing spheres with bloom effect) in the scene
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 64, 64);  // Increased segments for smoother spheres
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.4,   // Default emissive intensity for subtle glow
+        emissiveIntensity: 0.8,   // Default glow intensity (soft)
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -96,8 +96,8 @@ window.addEventListener('mousemove', event => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
 
-                // Intensify the glow based on the size of the star
-                star.mesh.material.emissiveIntensity = 1.2 + (star.size * 1.5);  // Stronger glow for larger stars
+                // Strengthen the glow on hover
+                star.mesh.material.emissiveIntensity = 1.5;  // Stronger glow on hover
             }
         });
     } else {
@@ -105,7 +105,7 @@ window.addEventListener('mousemove', event => {
 
         // Reset all stars' glow intensity to the default
         starMeshes.forEach(star => {
-            star.mesh.material.emissiveIntensity = 0.4;  // Subtle default glow
+            star.mesh.material.emissiveIntensity = 0.8;  // Default glow
         });
     }
 });

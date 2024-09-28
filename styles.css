@@ -8,22 +8,23 @@
 body, html {
     margin: 0;
     height: 100%;
-    overflow: hidden;  /* Ensure the page doesn't scroll */
-    background-color: white;  /* Set the background to white */
+    overflow: hidden;
+    background-color: white;
+    font-family: 'Spyro2', Arial, sans-serif;  /* Apply the font to the body */
 }
 
 canvas {
     display: block;
-    width: 100vw;  /* Full viewport width */
-    height: 100vh; /* Full viewport height */
+    width: 100vw;
+    height: 100vh;
 }
 
 .static-text {
     position: absolute;
     top: 10px;
     right: 20px;
-    color: white;  /* White text to stand out against the black canvas */
+    color: white;
     font-size: 18px;
-    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font */
-    z-index: 10;  /* Ensure text is above the canvas */
-}  
+    font-family: 'Spyro2', Arial, sans-serif;  /* Ensure this element also uses the Spyro font */
+    z-index: 10;
+}

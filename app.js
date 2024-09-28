@@ -1,7 +1,7 @@
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation'), antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -29,15 +29,23 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (small glowing spheres) in the scene
+// Create stars (small glowing spheres with different sizes) in the scene
 starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff,          // White color for all stars
-        emissive: 0xffffff,       // White glow
-        emissiveIntensity: 0.8,   // Soft glow effect
-    });
+    let material;
+    
+    if (star.name === 'Spica') {
+        material = new THREE.MeshBasicMaterial({
+            color: 0x0000ff,         // Blue color for Spica
+            wireframe: false
+        });
+    } else {
+        material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,         // White color for other stars
+            wireframe: false
+        });
+    }
 
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
@@ -57,9 +65,36 @@ controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
 
-// Add Raycaster for detecting mouse clicks on stars
+// Add Raycaster for detecting mouse hover and clicks on stars
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+const starNameElement = document.getElementById('star-name');
+
+// Detect hover on the star
+window.addEventListener('mousemove', event => {
+    // Calculate mouse position in normalized device coordinates (-1 to +1)
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Update the picking ray with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera);
+
+    // Calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const hoveredStar = intersects[0].object;
+
+        // Display the name of the hovered star
+        starMeshes.forEach(star => {
+            if (star.mesh === hoveredStar) {
+                starNameElement.innerHTML = star.name;
+            }
+        });
+    } else {
+        starNameElement.innerHTML = "Hover over a star...";
+    }
+});
 
 // Detect click on the star
 window.addEventListener('click', event => {
@@ -99,4 +134,31 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+});
+
+// Detect touch for mobile (simulate hover with touchstart)
+window.addEventListener('touchstart', event => {
+    // Calculate touch position in normalized device coordinates (-1 to +1)
+    const touch = event.touches[0];
+    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+
+    // Update the picking ray with the camera and touch position
+    raycaster.setFromCamera(mouse, camera);
+
+    // Calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const touchedStar = intersects[0].object;
+
+        // Display the name of the touched star
+        starMeshes.forEach(star => {
+            if (star.mesh === touchedStar) {
+                starNameElement.innerHTML = star.name;
+            }
+        });
+    } else {
+        starNameElement.innerHTML = "Hover over a star...";
+    }
 });

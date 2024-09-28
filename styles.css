@@ -6,37 +6,22 @@
     font-style: normal;
 }
 
-/* Apply the custom font globally to the body */
+/* Apply the custom font globally */
 body, html {
     font-family: 'Spyro2', Arial, sans-serif;
     margin: 0;
     padding: 0;
+    height: 100%;
+    background-color: white; /* Ensure the background is white for the entire page */
 }
 
-/* Center the homepage text */
-h1, p {
-    font-family: 'Spyro2', Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-}
-
-/* Style for the homepage content */
-.homepage-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    font-family: 'Spyro2', Arial, sans-serif;
-}
-
-/* Style for the Virgo Constellation page */
+/* Remove any white bars by ensuring no margins/padding on the canvas */
 canvas {
     display: block;
     width: 80vw;  /* 80% of the viewport width */
     height: 80vh; /* 80% of the viewport height */
-    margin: 10vh auto;  /* Center the canvas with space on top and bottom */
-    border: 2px solid #000000;  /* Optional: Add a black border around the canvas */
+    margin: 10vh auto;  /* Center the canvas vertically and horizontally */
+    border: 2px solid black; /* Optional: Add a border to make the canvas stand out */
 }
 
 /* Static text styling for the Virgo page */
@@ -44,7 +29,7 @@ canvas {
     position: absolute;
     top: 10px;
     right: 20px;
-    color: white;
+    color: black;  /* Ensure the text is black to contrast with the white background */
     font-size: 18px;
     font-family: 'Spyro2', Arial, sans-serif;
     z-index: 10;  /* Ensure the text is above the canvas */
@@ -58,4 +43,4 @@ a {
 
 a:hover {
     text-decoration: underline;
-}  
+}

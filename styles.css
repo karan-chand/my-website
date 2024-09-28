@@ -1,32 +1,44 @@
+/* Load .woff2 first for better performance, then .woff, and .ttf as fallback */
 @font-face {
-    /* Load .woff2 first for better performance */
     font-family: 'Spyro2';
-    src: url('fonts/Spyro2HD.woff2') format('woff2'),  /* Modern browsers */
-         url('fonts/Spyro2HD.woff') format('woff');    /* Fallback for older browsers */
+    src: url('fonts/Spyro2HD.woff2') format('woff2'),
+         url('fonts/Spyro2HD.woff') format('woff'),
+         url('fonts/Spyro 2.ttf') format('truetype');  /* TrueType fallback */
     font-weight: normal;
     font-style: normal;
 }
 
+/* Apply the Spyro2 font across the whole website */
 body, html {
-    font-family: 'Spyro2', Arial, sans-serif;  /* Fallback to Arial or sans-serif if Spyro2 isn't available */
+    font-family: 'Spyro2', Arial, sans-serif;
     margin: 0;
     height: 100%;
     overflow: hidden;
     background-color: white;
 }
 
+/* Canvas styling */
 canvas {
     display: block;
     width: 100vw;
     height: 100vh;
 }
 
+/* Static text for the Virgo page */
 .static-text {
     position: absolute;
     top: 10px;
     right: 20px;
-    color: white;  /* Ensure text is visible on the black canvas */
+    color: white;
     font-size: 18px;
-    font-family: 'Spyro2', Arial, sans-serif;
-    z-index: 10;
+    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font */
+    z-index: 10;  /* Ensure text is above the canvas */
 }
+
+/* Optional: Include styling for homepage text */
+h1, p {
+    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font for headers and paragraphs */
+}
+
+/* Link the favicon if you have one */
+@import url('favicon.ico');

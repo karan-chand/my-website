@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'Spyro2';
-    src: url('fonts/Spyro2hd.woff2') format('woff2'),   /* Load .woff2 first for better performance */
-         url('fonts/Spyro2hd.woff') format('woff');     /* Fallback to .woff if needed */
+    src: url('fonts/Spyro2HD.woff2') format('woff2'),   /* Load .woff2 first for better performance */
+         url('fonts/Spyro2HD.woff') format('woff');     /* Fallback to .woff if needed */
     font-weight: normal;
     font-style: normal;
 }

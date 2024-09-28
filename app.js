@@ -19,7 +19,7 @@ composer.addPass(renderPass);
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1.5,  // Strength of the bloom, adjust later for fine-tuning
-    0.4,  // Radius of the bloom
+    10,  // Radius of the bloom
     0.85  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
@@ -63,7 +63,7 @@ starData.forEach(star => {
 });
 
 // Set up the camera position
-camera.position.z = 100;
+camera.position.z = 70;
 
 // Use Higher Resolution Render Targets
 const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {

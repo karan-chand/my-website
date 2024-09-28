@@ -1,30 +1,32 @@
 @font-face {
+    /* Load .woff2 first for better performance */
     font-family: 'Spyro2';
-    src: url('fonts/Spyro2HD.woff2') format('woff2'),   /* Load .woff2 first for better performance */
-         url('fonts/Spyro2HD.woff') format('woff');     /* Fallback to .woff if needed */
+    src: url('fonts/Spyro2HD.woff2') format('woff2'),  /* Modern browsers */
+         url('fonts/Spyro2HD.woff') format('woff');    /* Fallback for older browsers */
     font-weight: normal;
     font-style: normal;
 }
 
 body, html {
+    font-family: 'Spyro2', Arial, sans-serif;  /* Fallback to Arial or sans-serif if Spyro2 isn't available */
     margin: 0;
     height: 100%;
-    overflow: hidden;  /* Ensure the page doesn't scroll */
-    background-color: white;  /* Set the background to white */
+    overflow: hidden;
+    background-color: white;
 }
 
 canvas {
     display: block;
-    width: 100vw;  /* Full viewport width */
-    height: 100vh; /* Full viewport height */
+    width: 100vw;
+    height: 100vh;
 }
 
 .static-text {
     position: absolute;
     top: 10px;
     right: 20px;
-    color: white;  /* White text to stand out against the black canvas */
+    color: white;  /* Ensure text is visible on the black canvas */
     font-size: 18px;
-    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font */
-    z-index: 10;  /* Ensure text is above the canvas */
+    font-family: 'Spyro2', Arial, sans-serif;
+    z-index: 10;
 }

@@ -102,7 +102,7 @@ window.addEventListener('mousemove', event => {
     } else {
         starMeshes.forEach(star => {
             // Reset emissive intensity to default when not hovered
-            star.mesh.material.emissiveIntensity = 0.8;
+            star.mesh.material.emissiveIntensity = 0.8; // Ensure they glow at default level
         });
         starNameElement.innerHTML = "Hover over a star...";
     }

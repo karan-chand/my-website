@@ -1,11 +1,27 @@
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation'), antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-// Star positions and relative sizes (All stars with white light effect)
+// Create an audio element and load the track for Spica
+const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
+
+// Import necessary elements for bloom effect
+const composer = new THREE.EffectComposer(renderer);
+const renderPass = new THREE.RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new THREE.UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    1.5,  // Strength of the bloom
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
+);
+composer.addPass(bloomPass);
+
+// Star positions and relative sizes (Spica at default size, others smaller)
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -23,40 +39,28 @@ const starData = [
     { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
 
-// Store star meshes and lights for interaction
+// Store star meshes for interaction
 let starMeshes = [];
-let lights = [];
 
-// Create stars with point lights for glowing effect
+// Create stars (small glowing spheres with bloom effect) in the scene
 starData.forEach(star => {
-    // Star material and geometry
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        emissive: 0xffffff,       // White emissive glow
-        emissiveIntensity: 0.2,   // Soft glow by default
+        color: 0xffffff,          // White color for all stars
+        emissive: 0xffffff,       // White glow
+        emissiveIntensity: 0.8,   // Stronger emissive for the bloom effect
     });
 
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
     scene.add(starMesh);
 
-    // Create a point light for each star (for the glow)
-    const pointLight = new THREE.PointLight(0xffffff, 0.5, 50);  // Soft white light
-    pointLight.position.set(star.x * 5, star.y * 5, star.z * 5);
-    scene.add(pointLight);
-
     // Store reference to the star's mesh and name for later interaction
     starMeshes.push({ mesh: starMesh, name: star.name });
-    lights.push(pointLight);  // Store light reference to modify later
 });
 
 // Set up the camera position
 camera.position.z = 30;
-
-// Add Ambient Light for overall lighting
-const ambientLight = new THREE.AmbientLight(0x404040); // Soft ambient light
-scene.add(ambientLight);
 
 // Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -66,13 +70,12 @@ controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
 
-// Add Raycaster for detecting mouse hover and clicks on stars
+// Add Raycaster for detecting mouse clicks on stars
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-const starNameElement = document.getElementById('star-name');
 
-// Detect hover on the star
-window.addEventListener('mousemove', event => {
+// Detect click on the star
+window.addEventListener('click', event => {
     // Calculate mouse position in normalized device coordinates (-1 to +1)
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -83,41 +86,16 @@ window.addEventListener('mousemove', event => {
     // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
 
-    let hoveredStar = null;
-
     if (intersects.length > 0) {
-        hoveredStar = intersects[0].object;
+        const clickedStar = intersects[0].object;
 
-        // Intensify emissive glow and light when hovered over
+        // Check if the clicked star is Spica, then play the audio
         starMeshes.forEach(star => {
-            if (star.mesh === hoveredStar) {
-                star.mesh.material.emissiveIntensity = 1;  // Increase glow intensity on hover
-                lights.forEach(light => {
-                    if (light.position.equals(star.mesh.position)) {
-                        light.intensity = 2;  // Increase light intensity on hover
-                    }
-                });
-                starNameElement.innerHTML = star.name;     // Show star name
-            } else {
-                star.mesh.material.emissiveIntensity = 0.2;  // Default emissive intensity
-                lights.forEach(light => {
-                    if (light.position.equals(star.mesh.position)) {
-                        light.intensity = 0.5;  // Default light intensity
-                    }
-                });
+            if (star.mesh === clickedStar && star.name === 'Spica') {
+                spicaAudio.play();  // Play the audio track for Spica
+                console.log('Spica clicked! Playing audio...');
             }
         });
-    } else {
-        // Reset emissive intensity and light if no star is hovered
-        starMeshes.forEach(star => {
-            star.mesh.material.emissiveIntensity = 0.2;
-            lights.forEach(light => {
-                if (light.position.equals(star.mesh.position)) {
-                    light.intensity = 0.5;  // Default light intensity
-                }
-            });
-        });
-        starNameElement.innerHTML = "Hover over a star...";
     }
 });
 
@@ -125,7 +103,7 @@ window.addEventListener('mousemove', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    renderer.render(scene, camera);
+    composer.render();  // Use composer to render the bloom effect
 }
 animate();
 
@@ -134,4 +112,5 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    composer.setSize(window.innerWidth, window.innerHeight);
 });

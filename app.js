@@ -18,9 +18,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.5,  // Strength of the bloom, adjust later for fine-tuning
-    0.3,  // Radius of the bloom
-    0.85  // Threshold of brightness to apply the bloom effect
+    0.3,  // Strength of the bloom, adjust later for fine-tuning
+    0.2,  // Radius of the bloom
+    0.01  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -51,7 +51,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.8,   // Base emissive intensity for bloom effect
+        emissiveIntensity: 0.4,   // Base emissive intensity for bloom effect
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -63,7 +63,7 @@ starData.forEach(star => {
 });
 
 // Set up the camera position
-camera.position.z = 20;
+camera.position.z = 50;
 
 // Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);

@@ -13,11 +13,12 @@ const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
+// Tweak bloom settings for softer effect
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,  // Strength of the bloom
-    0.4,  // Radius of the bloom
-    0.85  // Threshold of brightness to apply the bloom effect
+    0.8,  // Lowered strength for softer bloom
+    0.6,  // Increased radius for a more diffused effect
+    0.9   // Slightly higher threshold to apply bloom only to the brightest stars
 );
 composer.addPass(bloomPass);
 
@@ -42,13 +43,13 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (small glowing spheres with bloom effect) in the scene
+// Create stars (smoother spheres with bloom effect) in the scene
 starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
+    const geometry = new THREE.SphereGeometry(star.size, 64, 64);  // Increased segments for smoother spheres
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,          // White color for all stars
         emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 1.0,   // Higher emissive intensity for bloom effect
+        emissiveIntensity: 0.6,   // Lowered emissive intensity for a subtler glow
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
@@ -75,6 +76,15 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
 
+// Fibonacci Sequence Helper Function
+function fibonacci(n) {
+    const sequence = [1, 1];
+    for (let i = 2; i < n; i++) {
+        sequence.push(sequence[i - 1] + sequence[i - 2]);
+    }
+    return sequence[n - 1];
+}
+
 // Detect hover on the star
 window.addEventListener('mousemove', event => {
     // Calculate mouse position in normalized device coordinates (-1 to +1)
@@ -90,14 +100,22 @@ window.addEventListener('mousemove', event => {
     if (intersects.length > 0) {
         const hoveredStar = intersects[0].object;
 
-        // Display the name of the hovered star
-        starMeshes.forEach(star => {
+        // Display the name of the hovered star and apply the Fibonacci glow intensity
+        starMeshes.forEach((star, index) => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
+
+                // Apply Fibonacci based intensity glow
+                star.mesh.material.emissiveIntensity = fibonacci(index + 3) / 10;  // Dividing to keep intensity in a reasonable range
             }
         });
     } else {
         starNameElement.innerHTML = "Hover over a star...";
+
+        // Reset all stars' glow intensity to the default
+        starMeshes.forEach(star => {
+            star.mesh.material.emissiveIntensity = 0.6;
+        });
     }
 });
 

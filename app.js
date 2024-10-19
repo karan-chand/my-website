@@ -17,7 +17,7 @@ const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1.0,  // Base bloom strength
     0.4,  // Base bloom radius
-    1.15  // Threshold of brightness to apply the bloom effect
+    1.05  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -41,7 +41,7 @@ const starData = [
 
 let starMeshes = [];
 const baseEmissiveIntensity = 1.0;
-const hoverEmissiveMultiplier = 3;
+const hoverEmissiveMultiplier = 1.618;
 const clickEmissiveMultiplier = 10;
 let currentlyHoveredStar = null;
 
@@ -135,7 +135,7 @@ window.addEventListener('click', event => {
             gsap.to(bloomPass, {
                 strength: 1.5,  // Temporarily increase bloom strength
                 radius: 1.0,  // Increase bloom radius
-                duration: 1.0,
+                duration: 0.5,
                 ease: "power2.inOut",
                 onComplete: () => {
                     // Return the bloom radius and strength back to normal
@@ -181,5 +181,4 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    composer.setSize(window.innerWidth, window.innerHeight);
-});
+    composer.setSize

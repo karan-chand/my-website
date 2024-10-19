@@ -131,18 +131,18 @@ window.addEventListener('click', event => {
             spicaAudio.play();
             console.log('Spica clicked! Playing audio...');
 
-            // Increase the bloom radius and glow for a moment on click
+            // Temporarily increase the bloom strength and radius for a more intense effect
             gsap.to(bloomPass, {
-                strength: 1.5,  // Temporarily increase bloom strength
-                radius: 2.0,  // Increase bloom radius
-                duration: 3,
+                strength: 2.0,  // Increase the strength for a more pronounced effect
+                radius: 1.5,  // Increase the radius slightly
+                duration: 1.0,  // Shorter duration for the bloom peak
                 ease: "power2.inOut",
                 onComplete: () => {
-                    // Return the bloom radius and strength back to normal
+                    // Return the bloom radius and strength back to normal gradually
                     gsap.to(bloomPass, {
                         strength: 1.0,
                         radius: 0.4,
-                        duration: 3,
+                        duration: 3.0,
                         ease: "power4.out"
                     });
                 }
@@ -151,7 +151,7 @@ window.addEventListener('click', event => {
             // Increase the glow of the star on click
             gsap.to(clickedStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
-                duration: 0.5,
+                duration: 1.0,  // Match the duration with the bloom peak
                 ease: "power2.inOut",
                 onComplete: () => {
                     const isHovered = currentlyHoveredStar === clickedStar;
@@ -159,7 +159,7 @@ window.addEventListener('click', event => {
                         emissiveIntensity: isHovered
                             ? baseEmissiveIntensity * hoverEmissiveMultiplier
                             : baseEmissiveIntensity,
-                        duration: 3,
+                        duration: 3.0,  // Gradual fade back to the normal state
                         ease: "power4.out"
                     });
                 }
@@ -167,6 +167,7 @@ window.addEventListener('click', event => {
         }
     }
 });
+
 
 // Animation loop
 function animate() {

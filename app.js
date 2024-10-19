@@ -40,9 +40,9 @@ const starData = [
 ];
 
 let starMeshes = [];
-const baseEmissiveIntensity = 0.8;
-const hoverEmissiveMultiplier = 1.618;
-const clickEmissiveMultiplier = 10;
+const baseEmissiveIntensity = 0.5;
+const hoverEmissiveMultiplier = 1.5;
+const clickEmissiveMultiplier = 3;
 let currentlyHoveredStar = null;
 
 // Create stars in the scene

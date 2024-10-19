@@ -87,8 +87,8 @@ window.addEventListener('mousemove', event => {
             if (currentlyHoveredStar) {
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
-                    duration: 12,
-                    ease: "power2.out"
+                    duration: 12,  // Updated to 12 seconds for a slower fade out
+                    ease: "power4.out"  // Slows down more toward the end for a smoother transition
                 });
             }
 

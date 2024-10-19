@@ -40,10 +40,11 @@ const starData = [
 ];
 
 let starMeshes = [];
+let hoveredStar = null;  // Track the currently hovered star
 
 const baseEmissiveIntensity = 0.8;
 const hoverEmissiveMultiplier = 1.618;
-const hoverBloomStrength = 1.5;  // Strength of the bloom effect on hover
+const hoverBloomStrength = 1.5;
 
 // Create stars in the scene
 starData.forEach(star => {
@@ -81,26 +82,37 @@ window.addEventListener('mousemove', event => {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children);
 
-    let isHovered = false;
+    if (intersects.length > 0) {
+        const hoveredMesh = intersects[0].object;
 
-    starMeshes.forEach(star => {
-        if (intersects.length > 0 && intersects[0].object === star.mesh) {
-            gsap.to(star.mesh.material, {
+        // Check if the hovered star is different from the previously hovered one
+        if (hoveredStar !== hoveredMesh) {
+            // Reset previous star's emissive intensity if it exists
+            if (hoveredStar) {
+                gsap.to(hoveredStar.material, {
+                    emissiveIntensity: baseEmissiveIntensity,
+                    duration: 3
+                });
+            }
+
+            // Update the hovered star and apply glow
+            hoveredStar = hoveredMesh;
+            gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                 duration: 0.5
             });
-            starNameElement.innerHTML = star.name;
-            isHovered = true;
+            starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
             bloomPass.strength = hoverBloomStrength;  // Apply bloom when hovering
-        } else {
-            gsap.to(star.mesh.material, {
+        }
+    } else {
+        // If no star is hovered, reset the bloom and star glow
+        if (hoveredStar) {
+            gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity,
                 duration: 3
             });
+            hoveredStar = null;
         }
-    });
-
-    if (!isHovered) {
         bloomPass.strength = 0.0;  // Remove bloom when not hovering over any star
         starNameElement.innerHTML = "Hover over a star...";
     }

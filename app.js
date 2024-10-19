@@ -41,7 +41,7 @@ const starData = [
 
 let starMeshes = [];
 const baseEmissiveIntensity = 0.5;
-const hoverEmissiveMultiplier = 2;  // Increase for a stronger glow on hover
+const hoverEmissiveMultiplier = 3;  // Increase for a stronger glow on hover
 let currentlyHoveredStar = null;
 
 // Create stars in the scene

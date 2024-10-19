@@ -9,7 +9,18 @@ renderer.setPixelRatio(window.devicePixelRatio);
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
 // Set up the composer for bloom effect
-const composer = new THREE.EffectComposer(renderer);
+const renderTarget = new THREE.WebGLRenderTarget(
+    window.innerWidth * 2,
+    window.innerHeight * 2,
+    {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding,
+    }
+);
+
+const composer = new THREE.EffectComposer(renderer, renderTarget);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
@@ -20,6 +31,14 @@ const bloomPass = new THREE.UnrealBloomPass(
     0.85  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
+
+// Set up FXAA for smoother edges
+const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+fxaaPass.uniforms['resolution'].value.set(
+    1 / window.innerWidth,
+    1 / window.innerHeight
+);
+composer.addPass(fxaaPass);
 
 // Star positions and relative sizes
 const starData = [
@@ -59,7 +78,7 @@ starData.forEach(star => {
 });
 
 // Adjust the camera to make sure it covers all the stars
-camera.position.z = 50; 
+camera.position.z = 50;
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -146,5 +165,11 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+
     composer.setSize(window.innerWidth, window.innerHeight);
+    renderTarget.setSize(window.innerWidth * 2, window.innerHeight * 2);
+    fxaaPass.uniforms['resolution'].value.set(
+        1 / window.innerWidth,
+        1 / window.innerHeight
+    );
 });

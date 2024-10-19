@@ -15,9 +15,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.0,  // Start with no bloom effect
+    1.0,  // Base bloom strength
     0.4,  // Base bloom radius
-    0.0   // Low threshold to respond to all brightness levels
+    1.01  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -41,10 +41,8 @@ const starData = [
 
 let starMeshes = [];
 const baseEmissiveIntensity = 1.0;
-const hoverEmissiveMultiplier = 2.5;
-const clickEmissiveMultiplier = 4.0;
-const hoverBloomStrength = 1.0;
-const clickBloomStrength = 2.0;
+const hoverEmissiveMultiplier = 3;
+const clickEmissiveMultiplier = 10;
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -93,21 +91,11 @@ window.addEventListener('mousemove', event => {
                     duration: 12,
                     ease: "power4.out"
                 });
-                gsap.to(bloomPass, {
-                    strength: 0.0,
-                    duration: 12,
-                    ease: "power4.out"
-                });
             }
 
             gsap.killTweensOf(hoveredStar.material);
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
-                duration: 0.5,
-                ease: "power2.inOut"
-            });
-            gsap.to(bloomPass, {
-                strength: hoverBloomStrength,
                 duration: 0.5,
                 ease: "power2.inOut"
             });
@@ -119,11 +107,6 @@ window.addEventListener('mousemove', event => {
         gsap.killTweensOf(currentlyHoveredStar.material);
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: baseEmissiveIntensity,
-            duration: 12,
-            ease: "power4.out"
-        });
-        gsap.to(bloomPass, {
-            strength: 0.0,
             duration: 12,
             ease: "power4.out"
         });
@@ -144,10 +127,28 @@ window.addEventListener('click', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.name === 'Spica') {
+            // Play the audio for Spica
             spicaAudio.play();
             console.log('Spica clicked! Playing audio...');
 
-            // Increase the glow and bloom effect temporarily on click
+            // Increase the bloom radius and glow for a moment on click
+            gsap.to(bloomPass, {
+                strength: 1.5,  // Temporarily increase bloom strength
+                radius: 1.0,  // Increase bloom radius
+                duration: 1.0,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    // Return the bloom radius and strength back to normal
+                    gsap.to(bloomPass, {
+                        strength: 1.0,
+                        radius: 0.4,
+                        duration: 3,
+                        ease: "power4.out"
+                    });
+                }
+            });
+
+            // Increase the glow of the star on click
             gsap.to(clickedStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                 duration: 0.5,
@@ -158,19 +159,6 @@ window.addEventListener('click', event => {
                         emissiveIntensity: isHovered
                             ? baseEmissiveIntensity * hoverEmissiveMultiplier
                             : baseEmissiveIntensity,
-                        duration: 3,
-                        ease: "power4.out"
-                    });
-                }
-            });
-            gsap.to(bloomPass, {
-                strength: clickBloomStrength,
-                duration: 0.5,
-                ease: "power2.inOut",
-                onComplete: () => {
-                    const isHovered = currentlyHoveredStar === clickedStar;
-                    gsap.to(bloomPass, {
-                        strength: isHovered ? hoverBloomStrength : 0.0,
                         duration: 3,
                         ease: "power4.out"
                     });

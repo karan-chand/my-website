@@ -15,9 +15,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,
-    0.4,
-    0.85
+    1.0, // Base bloom strength
+    0.4, // Radius of the bloom
+    0.85 // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -127,17 +127,15 @@ window.addEventListener('click', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.name === 'Spica') {
-            // Play the audio for Spica
             spicaAudio.play();
             console.log('Spica clicked! Playing audio...');
 
-            // Increase the glow for a moment on click
+            // Increase glow for Spica on click
             gsap.to(clickedStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                 duration: 0.5,
                 ease: "power2.inOut",
                 onComplete: () => {
-                    // Check if the star is still hovered after the click glow fades
                     const isHovered = currentlyHoveredStar === clickedStar;
                     gsap.to(clickedStar.material, {
                         emissiveIntensity: isHovered

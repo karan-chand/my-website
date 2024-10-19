@@ -11,6 +11,15 @@
     <!-- Include GSAP for animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
+    <!-- Include Three.js extensions for post-processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <!-- Load OrbitControls from your local repository -->
+    <script src="OrbitControls.js"></script>
+
     <style>
         body, html {
             margin: 0;
@@ -44,10 +53,6 @@
         Hover over a star...
     </div>
 
-    <!-- Load Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Load OrbitControls from your local repository -->
-    <script src="OrbitControls.js"></script>
     <!-- Load your app.js for rendering the constellation -->
     <script src="app.js"></script>
 </body>

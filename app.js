@@ -1,12 +1,25 @@
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation'), antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
+
+// Set up the composer for bloom effect
+const composer = new THREE.EffectComposer(renderer);
+const renderPass = new THREE.RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new THREE.UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    0.0,  // Start with no bloom strength by default
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
+);
+composer.addPass(bloomPass);
 
 // Star positions and relative sizes
 const starData = [
@@ -17,7 +30,7 @@ const starData = [
     { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
     { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
     { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },  // Spica star
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },
     { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
     { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
     { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },
@@ -30,6 +43,7 @@ let starMeshes = [];
 
 const baseEmissiveIntensity = 0.8;
 const hoverEmissiveMultiplier = 1.618;
+const hoverBloomStrength = 1.5;  // Strength of the bloom effect on hover
 
 // Create stars in the scene
 starData.forEach(star => {
@@ -46,7 +60,7 @@ starData.forEach(star => {
 });
 
 // Adjust the camera to make sure it covers all the stars
-camera.position.z = 50; // Increase the z-value to make sure all stars fit in the view
+camera.position.z = 50;
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -67,6 +81,8 @@ window.addEventListener('mousemove', event => {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children);
 
+    let isHovered = false;
+
     starMeshes.forEach(star => {
         if (intersects.length > 0 && intersects[0].object === star.mesh) {
             gsap.to(star.mesh.material, {
@@ -74,6 +90,8 @@ window.addEventListener('mousemove', event => {
                 duration: 0.5
             });
             starNameElement.innerHTML = star.name;
+            isHovered = true;
+            bloomPass.strength = hoverBloomStrength;  // Apply bloom when hovering
         } else {
             gsap.to(star.mesh.material, {
                 emissiveIntensity: baseEmissiveIntensity,
@@ -81,6 +99,11 @@ window.addEventListener('mousemove', event => {
             });
         }
     });
+
+    if (!isHovered) {
+        bloomPass.strength = 0.0;  // Remove bloom when not hovering over any star
+        starNameElement.innerHTML = "Hover over a star...";
+    }
 });
 
 // Detect clicks for playing Spica's audio
@@ -105,7 +128,7 @@ window.addEventListener('click', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    renderer.render(scene, camera);
+    composer.render();  // Use composer to render the bloom effect
 }
 animate();
 
@@ -114,4 +137,5 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    composer.setSize(window.innerWidth, window.innerHeight);
 });

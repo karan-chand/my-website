@@ -85,27 +85,30 @@ window.addEventListener('mousemove', event => {
 
         if (currentlyHoveredStar !== hoveredStar) {
             if (currentlyHoveredStar) {
+                gsap.killTweensOf(currentlyHoveredStar.material);  // Stop any ongoing tweens
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
-                    duration: 7,  // Updated to 12 seconds for a slower fade out
-                    ease: "power4.out"  // Slows down more toward the end for a smoother transition
+                    duration: 12,
+                    ease: "power4.out"
                 });
             }
 
+            gsap.killTweensOf(hoveredStar.material);  // Stop any ongoing tweens on the new star
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
-                duration: 7,
-                ease: "power4.inOut"
+                duration: 0.5,
+                ease: "power2.inOut"
             });
 
             currentlyHoveredStar = hoveredStar;
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
         }
     } else if (currentlyHoveredStar) {
+        gsap.killTweensOf(currentlyHoveredStar.material);  // Ensure smooth transition back
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: baseEmissiveIntensity,
-            duration: 3,
-            ease: "power2.out"
+            duration: 12,
+            ease: "power4.out"
         });
         currentlyHoveredStar = null;
         starNameElement.innerHTML = "Hover over a star...";

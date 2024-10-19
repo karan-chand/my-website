@@ -17,7 +17,7 @@ const starData = [
     { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
     { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
     { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },  // Spica star
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },
     { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
     { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
     { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },
@@ -29,25 +29,62 @@ const starData = [
 let starMeshes = [];
 
 const baseEmissiveIntensity = 0.8;
-const hoverEmissiveMultiplier = 1.618;
+const hoverEmissiveMultiplier = 1.618; // Golden ratio for hover effect
 
-// Create stars in the scene
+// Shader for a glowing halo
+const haloShader = {
+    uniforms: {
+        'c': { type: 'f', value: 1.0 },
+        'p': { type: 'f', value: 3.0 },
+        glowColor: { type: 'c', value: new THREE.Color(0xffffff) },
+        viewVector: { type: 'v3', value: camera.position }
+    },
+    vertexShader: `
+        uniform vec3 viewVector;
+        varying float intensity;
+        void main() {
+            vec3 vNormal = normalize(normalMatrix * normal);
+            vec3 vNormView = normalize(viewVector - (modelViewMatrix * vec4(position, 1.0)).xyz);
+            intensity = pow(c - dot(vNormal, vNormView), p);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `,
+    fragmentShader: `
+        uniform vec3 glowColor;
+        varying float intensity;
+        void main() {
+            gl_FragColor = vec4(glowColor, intensity);
+        }
+    `,
+    transparent: true,
+    depthWrite: false
+};
+
+// Create stars in the scene with a halo effect
 starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);
-    const material = new THREE.MeshStandardMaterial({
+    // Create the halo
+    const haloGeometry = new THREE.SphereGeometry(star.size * 1.8, 32, 32);
+    const haloMaterial = new THREE.ShaderMaterial(haloShader);
+    const haloMesh = new THREE.Mesh(haloGeometry, haloMaterial);
+    haloMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
+    scene.add(haloMesh);
+
+    // Create the star mesh as the core
+    const starGeometry = new THREE.SphereGeometry(star.size, 32, 32);
+    const starMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
-        emissiveIntensity: baseEmissiveIntensity,
+        emissiveIntensity: baseEmissiveIntensity
     });
-    const starMesh = new THREE.Mesh(geometry, material);
+    const starMesh = new THREE.Mesh(starGeometry, starMaterial);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
-    starMeshes.push({ mesh: starMesh, name: star.name });
+
+    starMeshes.push({ mesh: starMesh, halo: haloMesh, name: star.name, defaultIntensity: baseEmissiveIntensity });
 });
 
-// Adjust the camera to make sure it covers all the stars
-camera.position.z = 50; // Increase the z-value to make sure all stars fit in the view
-
+// Set up the camera position
+camera.position.z = 30;
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -69,12 +106,14 @@ window.addEventListener('mousemove', event => {
 
     starMeshes.forEach(star => {
         if (intersects.length > 0 && intersects[0].object === star.mesh) {
+            // Intensify the glow when hovered
             gsap.to(star.mesh.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                 duration: 0.5
             });
             starNameElement.innerHTML = star.name;
         } else {
+            // Gradually revert to default intensity when not hovered
             gsap.to(star.mesh.material, {
                 emissiveIntensity: baseEmissiveIntensity,
                 duration: 3

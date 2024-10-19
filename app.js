@@ -40,8 +40,8 @@ const starData = [
 ];
 
 let starMeshes = [];
-const baseEmissiveIntensity = 0.5;
-const hoverEmissiveMultiplier = 1.5;
+const baseEmissiveIntensity = 1;
+const hoverEmissiveMultiplier = 2;
 const clickEmissiveMultiplier = 3;
 let currentlyHoveredStar = null;
 

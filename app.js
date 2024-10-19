@@ -58,7 +58,8 @@ starData.forEach(star => {
     starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
-camera.position.z = 50;
+// Adjust the camera to make sure it covers all the stars
+camera.position.z = 50; 
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -82,31 +83,29 @@ window.addEventListener('mousemove', event => {
     if (intersects.length > 0) {
         const hoveredStar = intersects[0].object;
 
-        // Check if this is a new hovered star
         if (currentlyHoveredStar !== hoveredStar) {
-            // If there was a previously hovered star, return its glow to normal
             if (currentlyHoveredStar) {
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
-                    duration: 3  // Smooth transition back to default over 3 seconds
+                    duration: 3,
+                    ease: "power2.out"
                 });
             }
 
-            // Intensify the glow for the new hovered star
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
-                duration: 0.5
+                duration: 0.5,
+                ease: "power2.inOut"
             });
 
-            // Update the name display and set the new currently hovered star
             currentlyHoveredStar = hoveredStar;
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
         }
     } else if (currentlyHoveredStar) {
-        // If no stars are hovered, reduce the glow of the previously hovered star
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: baseEmissiveIntensity,
-            duration: 3  // Smooth transition back to default over 3 seconds
+            duration: 3,
+            ease: "power2.out"
         });
         currentlyHoveredStar = null;
         starNameElement.innerHTML = "Hover over a star...";

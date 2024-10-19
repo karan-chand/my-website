@@ -15,19 +15,11 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,  // Base bloom strength
-    0.4,  // Radius of the bloom
-    0.85  // Threshold of brightness to apply the bloom effect
+    1.5,  // Bloom strength (increase for more glow)
+    0.6,  // Bloom radius (increase for wider spread)
+    0.75  // Bloom threshold (lower to include more light sources)
 );
 composer.addPass(bloomPass);
-
-// FXAA setup for smoother edges
-const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
-fxaaPass.uniforms['resolution'].value.set(
-    1 / window.innerWidth,
-    1 / window.innerHeight
-);
-composer.addPass(fxaaPass);
 
 // Star positions and relative sizes
 const starData = [
@@ -154,10 +146,5 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     composer.setSize(window.innerWidth, window.innerHeight);
-    fxaaPass.uniforms['resolution'].value.set(
-        1 / window.innerWidth,
-        1 / window.innerHeight
-    );
 });

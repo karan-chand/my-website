@@ -17,7 +17,7 @@ const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1.0,  // Base bloom strength
     0.4,  // Base bloom radius
-    1.1  // Threshold of brightness to apply the bloom effect
+    1.15  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 

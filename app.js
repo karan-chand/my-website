@@ -9,18 +9,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
 // Set up the composer for bloom effect
-const renderTarget = new THREE.WebGLRenderTarget(
-    window.innerWidth * 2,
-    window.innerHeight * 2,
-    {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-        encoding: THREE.sRGBEncoding,
-    }
-);
-
-const composer = new THREE.EffectComposer(renderer, renderTarget);
+const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
@@ -32,7 +21,7 @@ const bloomPass = new THREE.UnrealBloomPass(
 );
 composer.addPass(bloomPass);
 
-// Set up FXAA for smoother edges
+// FXAA setup for smoother edges
 const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
 fxaaPass.uniforms['resolution'].value.set(
     1 / window.innerWidth,
@@ -167,7 +156,6 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
 
     composer.setSize(window.innerWidth, window.innerHeight);
-    renderTarget.setSize(window.innerWidth * 2, window.innerHeight * 2);
     fxaaPass.uniforms['resolution'].value.set(
         1 / window.innerWidth,
         1 / window.innerHeight

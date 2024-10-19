@@ -15,7 +15,7 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.0,  // Start with no bloom strength by default
+    1.0,  // Base bloom strength
     0.4,  // Radius of the bloom
     0.85  // Threshold of brightness to apply the bloom effect
 );
@@ -40,11 +40,9 @@ const starData = [
 ];
 
 let starMeshes = [];
-let hoveredStar = null;  // Track the currently hovered star
-
 const baseEmissiveIntensity = 0.8;
 const hoverEmissiveMultiplier = 1.618;
-const hoverBloomStrength = 1.5;
+let currentlyHoveredStar = null;
 
 // Create stars in the scene
 starData.forEach(star => {
@@ -60,7 +58,6 @@ starData.forEach(star => {
     starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
-// Adjust the camera to make sure it covers all the stars
 camera.position.z = 50;
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -83,37 +80,35 @@ window.addEventListener('mousemove', event => {
     const intersects = raycaster.intersectObjects(scene.children);
 
     if (intersects.length > 0) {
-        const hoveredMesh = intersects[0].object;
+        const hoveredStar = intersects[0].object;
 
-        // Check if the hovered star is different from the previously hovered one
-        if (hoveredStar !== hoveredMesh) {
-            // Reset previous star's emissive intensity if it exists
-            if (hoveredStar) {
-                gsap.to(hoveredStar.material, {
+        // Check if this is a new hovered star
+        if (currentlyHoveredStar !== hoveredStar) {
+            // If there was a previously hovered star, return its glow to normal
+            if (currentlyHoveredStar) {
+                gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
-                    duration: 3
+                    duration: 3  // Smooth transition back to default over 3 seconds
                 });
             }
 
-            // Update the hovered star and apply glow
-            hoveredStar = hoveredMesh;
+            // Intensify the glow for the new hovered star
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                 duration: 0.5
             });
+
+            // Update the name display and set the new currently hovered star
+            currentlyHoveredStar = hoveredStar;
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
-            bloomPass.strength = hoverBloomStrength;  // Apply bloom when hovering
         }
-    } else {
-        // If no star is hovered, reset the bloom and star glow
-        if (hoveredStar) {
-            gsap.to(hoveredStar.material, {
-                emissiveIntensity: baseEmissiveIntensity,
-                duration: 3
-            });
-            hoveredStar = null;
-        }
-        bloomPass.strength = 0.0;  // Remove bloom when not hovering over any star
+    } else if (currentlyHoveredStar) {
+        // If no stars are hovered, reduce the glow of the previously hovered star
+        gsap.to(currentlyHoveredStar.material, {
+            emissiveIntensity: baseEmissiveIntensity,
+            duration: 3  // Smooth transition back to default over 3 seconds
+        });
+        currentlyHoveredStar = null;
         starNameElement.innerHTML = "Hover over a star...";
     }
 });
@@ -140,7 +135,7 @@ window.addEventListener('click', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    composer.render();  // Use composer to render the bloom effect
+    composer.render();
 }
 animate();
 

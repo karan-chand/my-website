@@ -87,15 +87,15 @@ window.addEventListener('mousemove', event => {
             if (currentlyHoveredStar) {
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
-                    duration: 12,  // Updated to 12 seconds for a slower fade out
+                    duration: 7,  // Updated to 12 seconds for a slower fade out
                     ease: "power4.out"  // Slows down more toward the end for a smoother transition
                 });
             }
 
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
-                duration: 0.5,
-                ease: "power2.inOut"
+                duration: 7,
+                ease: "power4.inOut"
             });
 
             currentlyHoveredStar = hoveredStar;

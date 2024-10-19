@@ -6,25 +6,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Create an audio element and load the track for Spica
-const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');  // Path to your audio file
+const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
-// Golden ratio constant
-const goldenRatio = 1.618;
-
-// Import necessary elements for bloom effect
-const composer = new THREE.EffectComposer(renderer);
-const renderPass = new THREE.RenderPass(scene, camera);
-composer.addPass(renderPass);
-
-const bloomPass = new THREE.UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,  // Strength of the bloom, adjust later for fine-tuning
-    0.2,  // Radius of the bloom
-    0.85  // Threshold of brightness to apply the bloom effect
-);
-composer.addPass(bloomPass);
-
-// Star positions and relative sizes (Spica at default size, others smaller)
+// Star positions and relative sizes
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -33,7 +17,7 @@ const starData = [
     { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
     { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
     { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },  // Spica star
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },
     { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
     { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
     { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },
@@ -45,33 +29,23 @@ const starData = [
 // Store star meshes for interaction
 let starMeshes = [];
 
-// Create stars (small glowing spheres with bloom effect) in the scene
+// Create stars (small glowing spheres) in the scene
 starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);  // Scaled-down star sizes
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff,          // White color for all stars
-        emissive: 0xffffff,       // White glow for emissive light
-        emissiveIntensity: 0.4,   // Base emissive intensity for bloom effect
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        wireframe: false
     });
 
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5); // Adjust position for visibility
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
 
-    // Store reference to the star's mesh and name for later interaction
-    starMeshes.push({ mesh: starMesh, name: star.name });
+    starMeshes.push({ mesh: starMesh, name: star.name, originalColor: 0xffffff });
 });
 
 // Set up the camera position
-camera.position.z = 70;
-
-// Use Higher Resolution Render Targets
-const renderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, {
-    minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter,
-    format: THREE.RGBAFormat,
-    antialias: true // Note: This property may not apply directly, check the documentation
-});
+camera.position.z = 30;
 
 // Enable OrbitControls for rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -98,6 +72,11 @@ window.addEventListener('mousemove', event => {
     // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
 
+    // Reset all stars to their original color
+    starMeshes.forEach(star => {
+        star.mesh.material.color.setHex(star.originalColor);
+    });
+
     if (intersects.length > 0) {
         const hoveredStar = intersects[0].object;
 
@@ -105,38 +84,25 @@ window.addEventListener('mousemove', event => {
         starMeshes.forEach(star => {
             if (star.mesh === hoveredStar) {
                 starNameElement.innerHTML = star.name;
-
-                // Apply golden ratio to emissive intensity and bloom strength
-                star.mesh.material.emissiveIntensity = 1.0 * goldenRatio;  // Increase glow effect when hovered
-                bloomPass.strength = 1.0 * goldenRatio;  // Increase bloom intensity when hovered
+                hoveredStar.material.color.set(0xffff00);  // Set hovered star to yellow
             }
         });
     } else {
-        // Restore the default emissive intensity and bloom effect when not hovered
-        starMeshes.forEach(star => {
-            star.mesh.material.emissiveIntensity = 1.0;  // Default glow
-        });
-        bloomPass.strength = 1.0;  // Restore default bloom strength
         starNameElement.innerHTML = "Hover over a star...";
     }
 });
 
 // Detect click on the star
 window.addEventListener('click', event => {
-    // Calculate mouse position in normalized device coordinates (-1 to +1)
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // Update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
-
-    // Calculate objects intersecting the picking ray
     const intersects = raycaster.intersectObjects(scene.children);
 
     if (intersects.length > 0) {
         const clickedStar = intersects[0].object;
 
-        // Check if the clicked star is Spica, then play the audio
         starMeshes.forEach(star => {
             if (star.mesh === clickedStar && star.name === 'Spica') {
                 spicaAudio.play();  // Play the audio track for Spica
@@ -150,7 +116,7 @@ window.addEventListener('click', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    composer.render();  // Use composer to render the bloom effect
+    renderer.render(scene, camera);
 }
 animate();
 
@@ -159,5 +125,4 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    composer.setSize(window.innerWidth, window.innerHeight);
 });

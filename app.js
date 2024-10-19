@@ -15,9 +15,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,  // Bloom strength (increase for more glow)
-    0.6,  // Bloom radius (increase for wider spread)
-    0.75  // Bloom threshold (lower to include more light sources)
+    0.5,  // Base bloom strength for subtle default glow
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -40,8 +40,8 @@ const starData = [
 ];
 
 let starMeshes = [];
-const baseEmissiveIntensity = 0.8;
-const hoverEmissiveMultiplier = 1.618;
+const baseEmissiveIntensity = 0.5;
+const hoverEmissiveMultiplier = 2;  // Increase for a stronger glow on hover
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -50,7 +50,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
-        emissiveIntensity: baseEmissiveIntensity,
+        emissiveIntensity: baseEmissiveIntensity,  // Subtle default glow
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);

@@ -17,7 +17,7 @@ const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1.0,  // Base bloom strength
     0.4,  // Base bloom radius
-    0.85  // Threshold of brightness to apply the bloom effect
+    0.55  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
@@ -40,8 +40,8 @@ const starData = [
 ];
 
 let starMeshes = [];
-const baseEmissiveIntensity = 0.8;
-const hoverEmissiveMultiplier = 1.618;
+const baseEmissiveIntensity = 0.3;
+const hoverEmissiveMultiplier = 5;
 const clickEmissiveMultiplier = 10;
 let currentlyHoveredStar = null;
 

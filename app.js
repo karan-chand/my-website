@@ -15,13 +15,13 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,
-    0.4,
-    0.85
+    0.5,  // Base bloom strength for subtle default glow
+    0.4,  // Radius of the bloom
+    0.85  // Threshold of brightness to apply the bloom effect
 );
 composer.addPass(bloomPass);
 
-// Star data and creation
+// Star positions and relative sizes
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
@@ -40,9 +40,8 @@ const starData = [
 ];
 
 let starMeshes = [];
-const baseEmissiveIntensity = 0.8;
-const hoverEmissiveMultiplier = 1.618;
-const clickEmissiveMultiplier = 10;
+const baseEmissiveIntensity = 0.5;
+const hoverEmissiveMultiplier = 2;  // Increase for a stronger glow on hover
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -51,7 +50,7 @@ starData.forEach(star => {
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
-        emissiveIntensity: baseEmissiveIntensity,
+        emissiveIntensity: baseEmissiveIntensity,  // Subtle default glow
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
@@ -59,8 +58,9 @@ starData.forEach(star => {
     starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
-// Adjust camera and controls
+// Adjust the camera to make sure it covers all the stars
 camera.position.z = 50;
+
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -73,7 +73,7 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
 
-// Handle hover logic
+// Detect hover over a star
 window.addEventListener('mousemove', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -85,7 +85,7 @@ window.addEventListener('mousemove', event => {
 
         if (currentlyHoveredStar !== hoveredStar) {
             if (currentlyHoveredStar) {
-                gsap.killTweensOf(currentlyHoveredStar.material);
+                gsap.killTweensOf(currentlyHoveredStar.material);  // Stop any ongoing tweens
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
                     duration: 12,
@@ -93,7 +93,7 @@ window.addEventListener('mousemove', event => {
                 });
             }
 
-            gsap.killTweensOf(hoveredStar.material);
+            gsap.killTweensOf(hoveredStar.material);  // Stop any ongoing tweens on the new star
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                 duration: 0.5,
@@ -104,7 +104,7 @@ window.addEventListener('mousemove', event => {
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
         }
     } else if (currentlyHoveredStar) {
-        gsap.killTweensOf(currentlyHoveredStar.material);
+        gsap.killTweensOf(currentlyHoveredStar.material);  // Ensure smooth transition back
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: baseEmissiveIntensity,
             duration: 12,
@@ -115,7 +115,7 @@ window.addEventListener('mousemove', event => {
     }
 });
 
-// Handle click logic for Spica
+// Detect clicks for playing Spica's audio
 window.addEventListener('click', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -124,31 +124,12 @@ window.addEventListener('click', event => {
 
     if (intersects.length > 0) {
         const clickedStar = intersects[0].object;
-        const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
-
-        if (clickedStarData && clickedStarData.name === 'Spica') {
-            // Play the audio for Spica
-            spicaAudio.play();
-            console.log('Spica clicked! Playing audio...');
-
-            // Increase the glow for a moment on click
-            gsap.to(clickedStar.material, {
-                emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
-                duration: 0.5,
-                ease: "power2.inOut",
-                onComplete: () => {
-                    // Check if the star is still hovered after the click glow fades
-                    const isHovered = currentlyHoveredStar === clickedStar;
-                    gsap.to(clickedStar.material, {
-                        emissiveIntensity: isHovered
-                            ? baseEmissiveIntensity * hoverEmissiveMultiplier
-                            : baseEmissiveIntensity,
-                        duration: 3,
-                        ease: "power4.out"
-                    });
-                }
-            });
-        }
+        starMeshes.forEach(star => {
+            if (star.mesh === clickedStar && star.name === 'Spica') {
+                spicaAudio.play();
+                console.log('Spica clicked! Playing audio...');
+            }
+        });
     }
 });
 

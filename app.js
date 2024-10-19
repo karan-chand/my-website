@@ -1,39 +1,35 @@
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation'), antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation') });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
-// Set up the composer for bloom effect
-const composer = new THREE.EffectComposer(renderer);
-const renderPass = new THREE.RenderPass(scene, camera);
-composer.addPass(renderPass);
-
-const bloomPass = new THREE.UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.0,  // Base strength of the bloom
-    0.4,  // Radius of the bloom
-    0.6   // Threshold of brightness to apply the bloom effect
-);
-composer.addPass(bloomPass);
-
 // Star positions and relative sizes
 const starData = [
     { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
     { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
     { name: 'Heze', x: 3, y: -1, z: 0.5, size: 0.35 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },
-    // ... other stars
+    { name: 'Nu Virginis', x: -2.5, y: 4, z: 2, size: 0.3 },
+    { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
+    { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },  // Spica star
+    { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
+    { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
+    { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },
+    { name: 'Vindemiatrix', x: 2.5, y: 1.2, z: 2.5, size: 0.6 },
+    { name: 'Zaniah', x: -1.5, y: 3, z: 0.5, size: 0.4 },
+    { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
 ];
 
 let starMeshes = [];
 
 const baseEmissiveIntensity = 0.8;
-const hoverEmissiveMultiplier = 1.618; // Golden ratio for hover effect
+const hoverEmissiveMultiplier = 1.618;
 
 // Create stars in the scene
 starData.forEach(star => {
@@ -46,10 +42,12 @@ starData.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
-    starMeshes.push({ mesh: starMesh, name: star.name, defaultIntensity: baseEmissiveIntensity });
+    starMeshes.push({ mesh: starMesh, name: star.name });
 });
 
-camera.position.z = 30;
+// Adjust the camera to make sure it covers all the stars
+camera.position.z = 50; // Increase the z-value to make sure all stars fit in the view
+
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -71,17 +69,15 @@ window.addEventListener('mousemove', event => {
 
     starMeshes.forEach(star => {
         if (intersects.length > 0 && intersects[0].object === star.mesh) {
-            // Intensify the glow when hovered
             gsap.to(star.mesh.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                 duration: 0.5
             });
             starNameElement.innerHTML = star.name;
         } else {
-            // Gradually revert to default intensity when not hovered
             gsap.to(star.mesh.material, {
                 emissiveIntensity: baseEmissiveIntensity,
-                duration: 3  // Smooth transition back to default over 3 seconds
+                duration: 3
             });
         }
     });
@@ -109,7 +105,7 @@ window.addEventListener('click', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    composer.render();  // Use composer to render the bloom effect
+    renderer.render(scene, camera);
 }
 animate();
 
@@ -118,5 +114,4 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    composer.setSize(window.innerWidth, window.innerHeight);
 });

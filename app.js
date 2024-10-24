@@ -195,3 +195,18 @@ window.addEventListener('click', event => {
     }
 });
 
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    composer.render();
+}
+animate();
+
+// Handle window resizing
+window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    composer.setSize(window.innerWidth, window.innerHeight);
+});

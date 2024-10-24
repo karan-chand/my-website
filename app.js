@@ -130,41 +130,39 @@ window.addEventListener('click', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.link) {
-            // If the link is an audio file, play it; otherwise, open it as a URL
-            if (clickedStarData.link.endsWith('.mp3')) {
-                const audio = new Audio(clickedStarData.link);
-                audio.play();
-                console.log(`${clickedStarData.name} clicked! Playing audio...`);
-
+            // If the clicked star is Spica, use the existing spicaAudio element.
+            if (clickedStarData.name === 'Spica') {
+                spicaAudio.play();
+                console.log('Spica clicked! Playing audio...');
+                
+                // Handle the glow and pulse effects for Spica as before.
                 // Cancel any existing pulse tween to avoid overlap
                 if (activePulseTween) {
                     activePulseTween.kill();
                 }
-
-                // Increase the glow of the star on click with a temporary burst
+        
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        // Create a pulsing effect between 50% and 100% while the audio is playing
+                        // Create a pulsing effect while the audio is playing
                         activePulseTween = gsap.to(clickedStar.material, {
                             emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                             duration: 1.5,
-                            repeat: -1, // Infinite repeat for continuous pulsing
-                            yoyo: true, // Make the animation reverse after each iteration
-                            ease: "sine.inOut", // Smooth ease for gentle pulsing
+                            repeat: -1,
+                            yoyo: true,
+                            ease: "sine.inOut",
                         });
                     }
                 });
-
+        
                 // Stop the pulsing effect when the audio ends
-                audio.onended = () => {
+                spicaAudio.onended = () => {
                     if (activePulseTween) {
                         activePulseTween.kill();
                         activePulseTween = null;
                     }
-                    // Transition back to the base or hovered state
                     const isHovered = currentlyHoveredStar === clickedStar;
                     gsap.to(clickedStar.material, {
                         emissiveIntensity: isHovered
@@ -175,7 +173,7 @@ window.addEventListener('click', event => {
                     });
                 };
             } else {
-                // Open the link as a URL in a new tab if it's not an audio file
+                // For other stars with links, open the URL
                 window.open(clickedStarData.link, '_blank');
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
                 
@@ -185,7 +183,6 @@ window.addEventListener('click', event => {
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        // Create a pulsing effect between 50% and 100%
                         activePulseTween = gsap.to(clickedStar.material, {
                             emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                             duration: 1.5,
@@ -197,8 +194,7 @@ window.addEventListener('click', event => {
                 });
             }
         }
-    }
-});
+        
 
 
 // Animation loop

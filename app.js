@@ -73,6 +73,10 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
 
+// Define a variable to store the GSAP pulse tween
+let activePulseTween = null;
+let activeStar = null; // Track the currently active star (clicked and playing audio)
+
 // Handle hover logic
 window.addEventListener('mousemove', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -84,7 +88,7 @@ window.addEventListener('mousemove', event => {
         const hoveredStar = intersects[0].object;
 
         if (currentlyHoveredStar !== hoveredStar) {
-            if (currentlyHoveredStar) {
+            if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
                 gsap.killTweensOf(currentlyHoveredStar.material);
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
@@ -103,7 +107,7 @@ window.addEventListener('mousemove', event => {
             currentlyHoveredStar = hoveredStar;
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
         }
-    } else if (currentlyHoveredStar) {
+    } else if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
         gsap.killTweensOf(currentlyHoveredStar.material);
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: baseEmissiveIntensity,
@@ -114,9 +118,6 @@ window.addEventListener('mousemove', event => {
         starNameElement.innerHTML = "Hover over a star...";
     }
 });
-
-// Define a variable to store the GSAP pulse tween
-let activePulseTween = null;
 
 // Handle click logic for stars with a link
 window.addEventListener('click', event => {
@@ -140,6 +141,7 @@ window.addEventListener('click', event => {
             if (clickedStarData.name === 'Spica') {
                 spicaAudio.play();
                 console.log('Spica clicked! Playing audio...');
+                activeStar = clickedStar;
 
                 // Create a pulsing effect on the bloom strength
                 gsap.to(bloomPass, {
@@ -164,6 +166,7 @@ window.addEventListener('click', event => {
                         activePulseTween.kill();
                         activePulseTween = null;
                     }
+                    activeStar = null;
                     gsap.to(bloomPass, {
                         strength: 1.0,
                         duration: 3,
@@ -174,6 +177,7 @@ window.addEventListener('click', event => {
                 // For other stars with links, open the URL
                 window.open(clickedStarData.link, '_blank');
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
+                activeStar = clickedStar;
 
                 // Apply the pulsing bloom effect without the audio control
                 gsap.to(bloomPass, {

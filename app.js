@@ -130,21 +130,23 @@ window.addEventListener('click', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.link) {
+            // If there's an active pulse tween from a previous star, kill it before starting a new one
+            if (activePulseTween) {
+                activePulseTween.kill();
+                activePulseTween = null;
+            }
+
             // If the clicked star is Spica, use the existing spicaAudio element.
             if (clickedStarData.name === 'Spica') {
                 spicaAudio.play();
                 console.log('Spica clicked! Playing audio...');
-                
-                // Handle the glow and pulse effects for Spica as before.
-                if (activePulseTween) {
-                    activePulseTween.kill();
-                }
 
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
+                        // Create a pulsing effect between 50% and 100% while the audio is playing
                         activePulseTween = gsap.to(clickedStar.material, {
                             emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                             duration: 1.5,
@@ -170,9 +172,11 @@ window.addEventListener('click', event => {
                     });
                 };
             } else {
+                // For other stars with links, open the URL
                 window.open(clickedStarData.link, '_blank');
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
-                
+
+                // Apply the glow effect without the audio control
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                     duration: 1.0,

@@ -141,14 +141,15 @@ window.addEventListener('click', event => {
                 spicaAudio.play();
                 console.log('Spica clicked! Playing audio...');
 
-                gsap.to(clickedStar.material, {
-                    emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
+                // Create a pulsing effect on the bloom strength
+                gsap.to(bloomPass, {
+                    strength: 2.0, // Increase bloom strength temporarily
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        // Create a pulsing effect between 50% and 100% while the audio is playing
-                        activePulseTween = gsap.to(clickedStar.material, {
-                            emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
+                        // Create a pulsing effect while the audio is playing
+                        activePulseTween = gsap.to(bloomPass, {
+                            strength: 1.5, // Adjust this for how intense the pulsing is
                             duration: 1.5,
                             repeat: -1,
                             yoyo: true,
@@ -157,16 +158,14 @@ window.addEventListener('click', event => {
                     }
                 });
 
+                // Stop the pulsing effect when the audio ends
                 spicaAudio.onended = () => {
                     if (activePulseTween) {
                         activePulseTween.kill();
                         activePulseTween = null;
                     }
-                    const isHovered = currentlyHoveredStar === clickedStar;
-                    gsap.to(clickedStar.material, {
-                        emissiveIntensity: isHovered
-                            ? baseEmissiveIntensity * hoverEmissiveMultiplier
-                            : baseEmissiveIntensity,
+                    gsap.to(bloomPass, {
+                        strength: 1.0,
                         duration: 3,
                         ease: "power4.out"
                     });
@@ -176,14 +175,14 @@ window.addEventListener('click', event => {
                 window.open(clickedStarData.link, '_blank');
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
 
-                // Apply the glow effect without the audio control
-                gsap.to(clickedStar.material, {
-                    emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
+                // Apply the pulsing bloom effect without the audio control
+                gsap.to(bloomPass, {
+                    strength: 2.0,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        activePulseTween = gsap.to(clickedStar.material, {
-                            emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
+                        activePulseTween = gsap.to(bloomPass, {
+                            strength: 1.5,
                             duration: 1.5,
                             repeat: -1,
                             yoyo: true,
@@ -196,18 +195,3 @@ window.addEventListener('click', event => {
     }
 });
 
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    composer.render();
-}
-animate();
-
-// Handle window resizing
-window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    composer.setSize(window.innerWidth, window.innerHeight);
-});

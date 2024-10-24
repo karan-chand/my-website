@@ -30,7 +30,7 @@ const starData = [
     { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
     { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
     { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1 },
+    { name: 'Spica', x: -2, y: -1, z: -2, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
     { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
     { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
     { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },

@@ -56,7 +56,7 @@ starData.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
-    starMeshes.push({ mesh: starMesh, name: star.name });
+    starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
 });
 
 // Adjust camera and controls
@@ -136,17 +136,15 @@ window.addEventListener('click', event => {
                 console.log('Spica clicked! Playing audio...');
                 
                 // Handle the glow and pulse effects for Spica as before.
-                // Cancel any existing pulse tween to avoid overlap
                 if (activePulseTween) {
                     activePulseTween.kill();
                 }
-        
+
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        // Create a pulsing effect while the audio is playing
                         activePulseTween = gsap.to(clickedStar.material, {
                             emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
                             duration: 1.5,
@@ -156,8 +154,7 @@ window.addEventListener('click', event => {
                         });
                     }
                 });
-        
-                // Stop the pulsing effect when the audio ends
+
                 spicaAudio.onended = () => {
                     if (activePulseTween) {
                         activePulseTween.kill();
@@ -173,11 +170,9 @@ window.addEventListener('click', event => {
                     });
                 };
             } else {
-                // For other stars with links, open the URL
                 window.open(clickedStarData.link, '_blank');
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
                 
-                // Apply the glow effect without the audio control
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
                     duration: 1.0,
@@ -194,8 +189,8 @@ window.addEventListener('click', event => {
                 });
             }
         }
-        
-
+    }
+});
 
 // Animation loop
 function animate() {

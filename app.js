@@ -40,9 +40,9 @@ const starData = [
 ];
 
 let starMeshes = [];
-const baseEmissiveIntensity = 0.1;
-const hoverEmissiveMultiplier = 16.18;
-const clickEmissiveMultiplier = 10;
+const baseEmissiveIntensity = 1; // Keep the base at 1 for a subtle default glow
+const hoverEmissiveMultiplier = 1.618; // Increase slightly on hover
+const clickEmissiveMultiplier = 3; // Increase further on click
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -88,17 +88,17 @@ window.addEventListener('mousemove', event => {
         const hoveredStar = intersects[0].object;
 
         if (currentlyHoveredStar !== hoveredStar) {
-            // If there was a previously hovered star and it's not the active one, fade it back
+            // If a different star was previously hovered and is not the active star, fade it back
             if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
                 gsap.killTweensOf(currentlyHoveredStar.material);
                 gsap.to(currentlyHoveredStar.material, {
                     emissiveIntensity: baseEmissiveIntensity,
-                    duration: 12,
+                    duration: 1.5,
                     ease: "power4.out"
                 });
             }
 
-            // Apply hover effect to the newly hovered star
+            // Increase the glow of the hovered star
             gsap.killTweensOf(hoveredStar.material);
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: baseEmissiveIntensity * hoverEmissiveMultiplier,
@@ -110,11 +110,11 @@ window.addEventListener('mousemove', event => {
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
         }
     } else if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
-        // Only fade out the hover effect if the star is not the active one
+        // If no star is hovered and it is not the active star, fade back to base
         gsap.killTweensOf(currentlyHoveredStar.material);
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: baseEmissiveIntensity,
-            duration: 12,
+            duration: 1.5,
             ease: "power4.out"
         });
         currentlyHoveredStar = null;
@@ -146,24 +146,21 @@ window.addEventListener('click', event => {
                 console.log('Spica clicked! Playing audio...');
                 activeStar = clickedStar;
 
-                // Create a pulsing effect on the bloom strength
+                // Temporarily increase bloom strength and apply pulsing while the audio is playing
                 gsap.to(bloomPass, {
-                    strength: 2.0, // Increase bloom strength temporarily
-                    duration: 1.0,
-                    ease: "power2.inOut",
-                    onComplete: () => {
-                        // Create a pulsing effect while the audio is playing
-                        activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.5, // Adjust this for how intense the pulsing is
-                            duration: 1.5,
-                            repeat: -1,
-                            yoyo: true,
-                            ease: "sine.inOut",
-                        });
-                    }
+                    strength: 1.5, // Temporarily increase bloom strength
+                    duration: 0.5,
+                    ease: "power2.inOut"
                 });
 
-                // Stop the pulsing effect when the audio ends
+                // Increase the glow of the star on click
+                gsap.to(clickedStar.material, {
+                    emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
+                    duration: 0.5,
+                    ease: "power2.inOut"
+                });
+
+                // When the audio ends, fade back down
                 spicaAudio.onended = () => {
                     if (activePulseTween) {
                         activePulseTween.kill();
@@ -172,7 +169,12 @@ window.addEventListener('click', event => {
                     activeStar = null;
                     gsap.to(bloomPass, {
                         strength: 1.0,
-                        duration: 3,
+                        duration: 1.5,
+                        ease: "power4.out"
+                    });
+                    gsap.to(clickedStar.material, {
+                        emissiveIntensity: baseEmissiveIntensity,
+                        duration: 1.5,
                         ease: "power4.out"
                     });
                 };
@@ -182,20 +184,18 @@ window.addEventListener('click', event => {
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
                 activeStar = clickedStar;
 
-                // Apply the pulsing bloom effect without the audio control
+                // Apply a temporary bloom effect on click
                 gsap.to(bloomPass, {
-                    strength: 2.0,
-                    duration: 1.0,
-                    ease: "power2.inOut",
-                    onComplete: () => {
-                        activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.5,
-                            duration: 1.5,
-                            repeat: -1,
-                            yoyo: true,
-                            ease: "sine.inOut",
-                        });
-                    }
+                    strength: 1.5,
+                    duration: 0.5,
+                    ease: "power2.inOut"
+                });
+
+                // Increase the glow of the star on click
+                gsap.to(clickedStar.material, {
+                    emissiveIntensity: baseEmissiveIntensity * clickEmissiveMultiplier,
+                    duration: 0.5,
+                    ease: "power2.inOut"
                 });
             }
         }

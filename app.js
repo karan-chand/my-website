@@ -49,9 +49,11 @@ let currentlyHoveredStar = null;
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
+        color: 0xe0e0ff, // Light blue-white color, feels like bright stars
         emissive: 0xffffff,
-        emissiveIntensity: baseEmissiveIntensity,
+        emissiveIntensity: baseEmissiveIntensity, // Keep this low for default
+        metalness: 0.5, // Adds a bit of shine
+        roughness: 0.1  // Makes the surface smoother, reflecting more light
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);

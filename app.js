@@ -1,7 +1,5 @@
 // Custom cursor element for mobile and tablet
 const customCursor = document.getElementById('custom-cursor');
-
-// Update cursor position on pointermove (for mobile/touch support)
 window.addEventListener('pointermove', (event) => {
     customCursor.style.left = `${event.pageX}px`;
     customCursor.style.top = `${event.pageY}px`;
@@ -17,23 +15,32 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
-// Set up the composer and bloom composer for dual rendering
+// Define layers
+const bloomLayer = 1; // Only clickable stars like Spica are assigned this layer
+const defaultLayer = 0; // Other stars remain on the default layer
+
+// Set up the composer for selective bloom
 const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-// Bloom Composer specifically for stars with a click state
-const bloomComposer = new THREE.EffectComposer(renderer);
-const bloomRenderPass = new THREE.RenderPass(scene, camera);
-bloomComposer.addPass(bloomRenderPass);
-
+// Bloom pass for the selective bloom layer
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.6,  // Base bloom strength for the default glow
-    0.2,  // Bloom radius for the default state
-    0.08  // Threshold for capturing emissive intensity
+    0.6,  // Default bloom strength
+    0.2,  // Bloom radius
+    0.08  // Bloom threshold
 );
-bloomComposer.addPass(bloomPass);
+bloomPass.renderToScreen = false;
+composer.addPass(bloomPass);
+
+// Mask pass setup for selective bloom
+const maskPass = new THREE.MaskPass(scene, camera);
+maskPass.inverse = false;
+composer.addPass(maskPass);
+
+const clearMaskPass = new THREE.ClearMaskPass();
+composer.addPass(clearMaskPass);
 
 // Star data and creation
 const starData = [
@@ -56,11 +63,9 @@ const starData = [
 let starMeshes = [];
 const defaultIntensity = 0.4;
 const hoverIntensityMultiplier = 1.8;
-const clickIntensityMultiplier = 1.5;
+const clickIntensityMultiplier = 1.8;
 let currentlyHoveredStar = null;
-let activeStar = null;
 
-// Create stars in the scene with unique materials for each
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
@@ -70,17 +75,18 @@ starData.forEach(star => {
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
-    scene.add(starMesh);
 
-    // Assign only clickable stars to the bloom layer
-    if (star.link) {
-        starMesh.layers.enable(1); // Bloom layer
+    // Set Spica to bloomLayer; others stay on default layer
+    if (star.name === 'Spica' && star.link) {
+        starMesh.layers.set(bloomLayer);
+    } else {
+        starMesh.layers.set(defaultLayer);
     }
 
+    scene.add(starMesh);
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
 });
 
-// Adjust camera and controls
 camera.position.z = 50;
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -89,15 +95,13 @@ controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
 
-// Raycaster for hover detection
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
 
-// Define GSAP pulse tween for click effect
 let activePulseTween = null;
+let activeStar = null;
 
-// Handle hover logic
 window.addEventListener('pointermove', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -139,7 +143,6 @@ window.addEventListener('pointermove', event => {
     }
 });
 
-// Handle click logic for stars with a link
 window.addEventListener('pointerdown', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -155,72 +158,74 @@ window.addEventListener('pointerdown', event => {
                 activePulseTween.kill();
                 activePulseTween = null;
             }
-            if (activeStar) {
-                gsap.to(activeStar.material, {
-                    emissiveIntensity: defaultIntensity,
-                    duration: 1.2,
-                    ease: "power4.out"
-                });
-                activeStar = null;
-            }
 
             activeStar = clickedStar;
 
-            // Play audio and set bloom pulse for clicked star
-            spicaAudio.play();
-            gsap.to(bloomPass, {
-                strength: 1.6,
-                duration: 1.0,
-                ease: "power2.inOut",
-                onComplete: () => {
-                    activePulseTween = gsap.to(bloomPass, {
-                        strength: 1.4,
-                        duration: 1.8,
-                        repeat: -1,
-                        yoyo: true,
-                        ease: "sine.inOut"
-                    });
-                }
-            });
+            if (clickedStarData.name === 'Spica') {
+                spicaAudio.play();
+                console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
-            gsap.to(clickedStar.material, {
-                emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
-                duration: 0.5,
-                ease: "power2.inOut"
-            });
-
-            spicaAudio.onended = () => {
-                if (activePulseTween) activePulseTween.kill();
-                activePulseTween = null;
                 gsap.to(bloomPass, {
-                    strength: 0.6,
-                    duration: 1.5,
-                    ease: "power4.out"
+                    strength: 1.6,
+                    duration: 1.0,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        activePulseTween = gsap.to(bloomPass, {
+                            strength: 1.4,
+                            duration: 1.8,
+                            repeat: -1,
+                            yoyo: true,
+                            ease: "sine.inOut"
+                        });
+                    }
                 });
+
                 gsap.to(clickedStar.material, {
-                    emissiveIntensity: defaultIntensity,
-                    duration: 1.5,
-                    ease: "power4.out"
+                    emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
+                    duration: 0.5,
+                    ease: "power2.inOut"
                 });
-                activeStar = null;
-            };
+
+                spicaAudio.onended = () => {
+                    if (activePulseTween) {
+                        activePulseTween.kill();
+                        activePulseTween = null;
+                    }
+                    activeStar = null;
+                    gsap.to(bloomPass, {
+                        strength: 0.6,
+                        duration: 1.5,
+                        ease: "power4.out",
+                    });
+                    gsap.to(clickedStar.material, {
+                        emissiveIntensity: defaultIntensity,
+                        duration: 1.5,
+                        ease: "power4.out"
+                    });
+                };
+            }
         }
     }
 });
 
-// Animation loop
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
+
+    // Render default layer
+    camera.layers.set(defaultLayer);
+    renderer.autoClear = true;
+    composer.render();
+
+    // Render bloom layer
+    camera.layers.set(bloomLayer);
     renderer.autoClear = false;
-    renderer.clear();
-    renderer.render(scene, camera);
-    renderer.clearDepth();
-    bloomComposer.render();
+    bloomPass.enabled = true;
+    composer.render();
+    bloomPass.enabled = false;
 }
 animate();
 
-// Handle window resizing
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;

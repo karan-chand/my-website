@@ -57,6 +57,7 @@ const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.8;
 let currentlyHoveredStar = null;
 
+// Create stars in the scene
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
@@ -188,7 +189,7 @@ window.addEventListener('pointerdown', event => {
                     gsap.to(bloomPass, {
                         strength: 0.6,
                         duration: 1.5,
-                        ease: "power4.out",
+                        ease: "power4.out"
                     });
                     gsap.to(clickedStar.material, {
                         emissiveIntensity: defaultIntensity,

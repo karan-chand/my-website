@@ -241,3 +241,54 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     composer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// Audio player container and controls
+const audioPlayerContainer = document.getElementById('audio-player-container');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const stopBtn = document.getElementById('stop-btn');
+const waveVisualizer = document.getElementById('wave-visualizer');
+
+let isPlaying = false;
+let audio = new Audio();
+audio.loop = false;  // Prevent looping by default
+
+// Play/pause button functionality
+playPauseBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        audio.pause();
+        playPauseBtn.textContent = 'Play';
+    } else {
+        audio.play();
+        playPauseBtn.textContent = 'Pause';
+    }
+    isPlaying = !isPlaying;
+});
+
+// Stop button functionality
+stopBtn.addEventListener('click', () => {
+    audio.pause();
+    audio.currentTime = 0;  // Reset the audio to the beginning
+    playPauseBtn.textContent = 'Play';
+    isPlaying = false;
+    hideAudioPlayer();
+});
+
+// Show audio player
+function showAudioPlayer(audioSrc) {
+    audio.src = audioSrc;
+    audioPlayerContainer.style.display = 'flex';
+    audio.play();
+    playPauseBtn.textContent = 'Pause';
+    isPlaying = true;
+}
+
+// Hide audio player
+function hideAudioPlayer() {
+    audioPlayerContainer.style.display = 'none';
+}
+
+// Event listener for audio start on star click
+document.addEventListener("playAudio", (event) => {
+    const audioSrc = event.detail.audioSrc;
+    showAudioPlayer(audioSrc);
+});

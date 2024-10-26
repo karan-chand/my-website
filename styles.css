@@ -36,21 +36,32 @@ canvas {
     z-index: 10;  /* Ensure text is above the canvas */
 }
 
-/* Custom cursor */
+/* Custom cursor for desktop */
 #custom-cursor {
     position: absolute;
-    width: 24px; /* Adjust size for visibility */
+    width: 24px;
     height: 24px;
-    background: url('assets/cursor.cur') no-repeat center center; /* Windows 95 cursor */
-    background-size: contain; /* Scales the cursor image appropriately */
-    display: none; /* Initially hidden; controlled by JavaScript */
+    background: url('assets/cursor.cur'), auto; /* Windows 95 cursor */
+    display: none; /* Initially hidden, JavaScript will control visibility */
     z-index: 20;
     pointer-events: none; /* Ensures cursor does not block interactions */
+    border-radius: 50%; /* Circular shape */
+    background-color: rgba(0, 0, 0, 0.2); /* Fallback circular cursor */
 }
 
-/* Show the custom cursor on touch devices */
+/* iPhone-specific cursor */
 @media (hover: none) and (pointer: coarse) {
     #custom-cursor {
-        display: block; /* Display the cursor on touch devices */
+        display: block; /* Display circular cursor for mobile devices */
+        background: rgba(0, 0, 0, 0.2); /* Simple circular cursor */
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Hide the cursor on iPad but keep it on iPhone */
+@media (hover: none) and (pointer: coarse) and (min-width: 768px) {
+    #custom-cursor {
+        display: none; /* Hide custom cursor for iPad */
     }
 }

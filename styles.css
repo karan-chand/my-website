@@ -15,7 +15,6 @@ body, html {
     height: 100%;
     overflow: hidden;
     background-color: white;
-    cursor: url('assets/cursor.cur'), auto; /* Set custom Windows 95 cursor */
 }
 
 /* Canvas styling */
@@ -23,6 +22,7 @@ canvas {
     display: block;
     width: 100vw;
     height: 100vh;
+    cursor: none;  /* Hides default cursor */
 }
 
 /* Static text for the Virgo page */
@@ -32,14 +32,23 @@ canvas {
     right: 20px;
     color: white;
     font-size: 18px;
-    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font */
+    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font for text */
     z-index: 10;  /* Ensure text is above the canvas */
 }
 
-/* Optional: Include styling for homepage text */
-h1, p {
-    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font for headers and paragraphs */
+/* Custom cursor */
+#custom-cursor {
+    position: absolute;
+    width: 24px; /* Adjust size for visibility */
+    height: 24px;
+    background: url('assets/cursor.cur'), auto; /* Windows 95 cursor */
+    display: none; /* Initially hidden, JavaScript will control visibility */
+    z-index: 20;
+    pointer-events: none; /* Ensures cursor does not block interactions */
 }
 
-/* Link the favicon if you have one */
-@import url('favicon.ico');
+@media (hover: none) and (pointer: coarse) {
+    #custom-cursor {
+        display: none; /* Hide custom cursor for iPad/mobile if not visible */
+    }
+}

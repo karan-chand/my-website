@@ -1,31 +1,41 @@
-/* Body and Canvas Styling */
+/* Load .woff2 first for better performance, then .woff, and .ttf as fallback */
+@font-face {
+    font-family: 'Spyro2';
+    src: url('fonts/Spyro2HD.woff2') format('woff2'),
+         url('fonts/Spyro2HD.woff') format('woff'),
+         url('fonts/Spyro 2.ttf') format('truetype');  /* TrueType fallback */
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Apply the Spyro2 font across the whole website */
 body, html {
+    font-family: 'Spyro2', Arial, sans-serif;
     margin: 0;
     height: 100%;
     overflow: hidden;
     background-color: white;
-    touch-action: manipulation;
-    -webkit-text-size-adjust: 100%;
-    -webkit-tap-highlight-color: transparent;
 }
 
+/* Canvas styling */
 canvas {
     display: block;
     width: 100vw;
     height: 100vh;
 }
 
-/* Static text styling */
+/* Static text for the Virgo page */
 .static-text {
     position: absolute;
     top: 10px;
     right: 20px;
     color: white;
     font-size: 18px;
+    font-family: 'Spyro2', Arial, sans-serif;
     z-index: 10;
 }
 
-/* Custom cursor for mobile and tablet */
+/* Custom cursor */
 .custom-cursor {
     width: 10px;
     height: 10px;
@@ -53,44 +63,43 @@ canvas {
     transform: translateX(-50%);
     width: 300px;
     height: 100px;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    display: none; /* Hidden initially */
+    display: none;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
     z-index: 10;
     padding: 10px;
-    flex-direction: column;
+    font-family: 'Spyro2', Arial, sans-serif;
 }
 
-/* Styling for the audio control buttons */
+/* Styling for audio controls */
 .audio-controls {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-family: 'Spyro2', Arial, sans-serif;
 }
 
-/* Styling for the wave visualizer */
-.wave-visualizer {
-    width: 100%;
-    height: 50px;
-    background-color: #000000; /* Pure black background */
-    margin-top: 5px;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-/* Button Styling */
 .audio-controls button {
-    background: transparent;
+    background: none;
     border: none;
-    color: white;
-    font-size: 16px;
+    color: #00ffcc;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    padding: 5px;
 }
 
 .audio-controls button:hover {
-    color: #00ffcc;
+    color: #ffcc00;
+}
+
+.wave-visualizer {
+    width: 100%;
+    height: 50px;
+    background: black;
+    margin-top: 5px;
+    border-radius: 5px;
+    overflow: hidden;
 }

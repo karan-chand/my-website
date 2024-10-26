@@ -17,17 +17,19 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
-// Set up the composer for bloom effect
+// Set up composer with dual render passes for selective bloom
 const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
+// Bloom pass for selective layer (only applied to the clicked star)
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.6,  // Base bloom strength for the default glow
-    0.2,  // Bloom radius for default state
-    0.08  // Threshold for capturing emissive intensity
+    0.6, // Base bloom strength for default glow
+    0.2, // Bloom radius for default state
+    0.08 // Threshold for capturing emissive intensity
 );
+bloomPass.renderToScreen = true;
 composer.addPass(bloomPass);
 
 // Star data and creation
@@ -66,6 +68,10 @@ starData.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
+
+    // Assign a specific layer to stars with a link (clickable stars)
+    if (star.link) starMesh.layers.set(1); // Set to layer 1 for selective bloom
+
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
 });
 
@@ -156,52 +162,53 @@ window.addEventListener('pointerdown', event => {
 
             activeStar = clickedStar;
 
-            if (clickedStarData.name === 'Spica') {
-                spicaAudio.play();
-                console.log(`${clickedStarData.name} clicked! Playing audio...`);
+            // Update bloomPass to target only the selected layer (layer 1)
+            renderer.autoClear = false;
+            renderer.clear();
+            camera.layers.set(0); // Render the default scene
+            renderer.render(scene, camera);
+            camera.layers.set(1); // Render only stars with links (bloom layer)
+            composer.render();
 
+            // Play audio and set bloom pulse for clicked star
+            spicaAudio.play();
+            gsap.to(bloomPass, {
+                strength: 1.6,
+                duration: 1.0,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    activePulseTween = gsap.to(bloomPass, {
+                        strength: 1.4,
+                        duration: 1.5,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: "sine.inOut"
+                    });
+                }
+            });
+
+            gsap.to(clickedStar.material, {
+                emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+
+            spicaAudio.onended = () => {
+                if (activePulseTween) activePulseTween.kill();
+                activePulseTween = null;
                 gsap.to(bloomPass, {
-                    strength: 1.6,
-                    duration: 1.0,
-                    ease: "power2.inOut",
-                    onComplete: () => {
-                        activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.4, // Pulsing between 1.4 and 2.1
-                            duration: 1.8,
-                            repeat: -1,
-                            yoyo: true,
-                            ease: "sine.inOut"
-                        });
-                    }
+                    strength: 0.6,
+                    duration: 1.5,
+                    ease: "power4.out"
                 });
-
                 gsap.to(clickedStar.material, {
-                    emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
-                    duration: 0.5,
-                    ease: "power2.inOut"
+                    emissiveIntensity: defaultIntensity,
+                    duration: 1.5,
+                    ease: "power4.out"
                 });
-
-                spicaAudio.onended = () => {
-                    if (activePulseTween) {
-                        activePulseTween.kill();
-                        activePulseTween = null;
-                    }
-                    activeStar = null;
-                    gsap.to(bloomPass, {
-                        strength: 0.6,
-                        duration: 1.5,
-                        ease: "power4.out"
-                    });
-                    gsap.to(clickedStar.material, {
-                        emissiveIntensity: defaultIntensity,
-                        duration: 1.5,
-                        ease: "power4.out"
-                    });
-                };
-            } else {
-                window.open(clickedStarData.link, '_blank');
-                console.log(`${clickedStarData.name} clicked! Opening URL...`);
-            }
+                camera.layers.set(0); // Reset to render all layers
+                composer.render();
+            };
         }
     }
 });

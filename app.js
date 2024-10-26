@@ -27,20 +27,11 @@ composer.addPass(renderPass);
 // Bloom pass for the selective bloom layer
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.6,  // Default bloom strength
+    0.6,  // Default bloom strength for the entire scene
     0.2,  // Bloom radius
     0.08  // Bloom threshold
 );
-bloomPass.renderToScreen = false;
 composer.addPass(bloomPass);
-
-// Mask pass setup for selective bloom
-const maskPass = new THREE.MaskPass(scene, camera);
-maskPass.inverse = false;
-composer.addPass(maskPass);
-
-const clearMaskPass = new THREE.ClearMaskPass();
-composer.addPass(clearMaskPass);
 
 // Star data and creation
 const starData = [
@@ -76,7 +67,7 @@ starData.forEach(star => {
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
 
-    // Set Spica to bloomLayer; others stay on default layer
+    // Assign Spica to the bloom layer if it has a link
     if (star.name === 'Spica' && star.link) {
         starMesh.layers.set(bloomLayer);
     } else {
@@ -102,6 +93,7 @@ const starNameElement = document.getElementById('star-name');
 let activePulseTween = null;
 let activeStar = null;
 
+// Handle hover logic
 window.addEventListener('pointermove', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -143,6 +135,7 @@ window.addEventListener('pointermove', event => {
     }
 });
 
+// Handle click logic for stars with a link
 window.addEventListener('pointerdown', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -208,6 +201,7 @@ window.addEventListener('pointerdown', event => {
     }
 });
 
+// Animation loop
 function animate() {
     requestAnimationFrame(animate);
     controls.update();

@@ -17,20 +17,23 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
-// Set up composer with dual render passes for selective bloom
+// Set up the composer and bloom composer for dual rendering
 const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-// Bloom pass for selective layer (only applied to the clicked star)
+// Bloom Composer specifically for stars with a click state
+const bloomComposer = new THREE.EffectComposer(renderer);
+const bloomRenderPass = new THREE.RenderPass(scene, camera);
+bloomComposer.addPass(bloomRenderPass);
+
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.6, // Base bloom strength for default glow
-    0.2, // Bloom radius for default state
-    0.08 // Threshold for capturing emissive intensity
+    0.6,  // Base bloom strength for the default glow
+    0.2,  // Bloom radius for the default state
+    0.08  // Threshold for capturing emissive intensity
 );
-bloomPass.renderToScreen = true;
-composer.addPass(bloomPass);
+bloomComposer.addPass(bloomPass);
 
 // Star data and creation
 const starData = [
@@ -57,7 +60,7 @@ const clickIntensityMultiplier = 1.5;
 let currentlyHoveredStar = null;
 let activeStar = null;
 
-// Create stars in the scene
+// Create stars in the scene with unique materials for each
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
@@ -69,9 +72,8 @@ starData.forEach(star => {
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
 
-    // Assign clickable stars (like Spica) to both the main and bloom layers
+    // Assign only clickable stars to the bloom layer
     if (star.link) {
-        starMesh.layers.enable(0); // Main layer
         starMesh.layers.enable(1); // Bloom layer
     }
 
@@ -149,7 +151,6 @@ window.addEventListener('pointerdown', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.link) {
-            // Remove previous click effect
             if (activePulseTween) {
                 activePulseTween.kill();
                 activePulseTween = null;
@@ -174,9 +175,9 @@ window.addEventListener('pointerdown', event => {
                 onComplete: () => {
                     activePulseTween = gsap.to(bloomPass, {
                         strength: 1.4,
-                        duration: 1.5,
-                        yoyo: true,
+                        duration: 1.8,
                         repeat: -1,
+                        yoyo: true,
                         ease: "sine.inOut"
                     });
                 }
@@ -211,7 +212,11 @@ window.addEventListener('pointerdown', event => {
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    composer.render();
+    renderer.autoClear = false;
+    renderer.clear();
+    renderer.render(scene, camera);
+    renderer.clearDepth();
+    bloomComposer.render();
 }
 animate();
 

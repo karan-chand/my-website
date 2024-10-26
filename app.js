@@ -291,4 +291,4 @@ function hideAudioPlayer() {
 document.addEventListener("playAudio", (event) => {
     const audioSrc = event.detail.audioSrc;
     showAudioPlayer(audioSrc);
-});
+}); 

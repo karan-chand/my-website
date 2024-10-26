@@ -1,4 +1,4 @@
-/* General Styles */
+/* Body and Canvas Styling */
 body, html {
     margin: 0;
     height: 100%;
@@ -9,7 +9,6 @@ body, html {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Canvas styling */
 canvas {
     display: block;
     width: 100vw;
@@ -46,50 +45,52 @@ canvas {
     }
 }
 
-/* Audio Player Container Styling */
+/* Styling for the audio player container */
 .audio-player-container {
     position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 320px;
-    height: 140px;
-    background-color: rgba(0, 0, 0, 0.8);
+    width: 300px;
+    height: 100px;
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
     display: none; /* Hidden initially */
     align-items: center;
     justify-content: center;
-    flex-direction: column;
     border-radius: 10px;
     z-index: 10;
     padding: 10px;
+    flex-direction: column;
 }
 
-/* Audio Controls Styling */
+/* Styling for the audio control buttons */
 .audio-controls {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 10px;
+    gap: 10px;
 }
 
-button {
-    font-size: 1.2em;
+/* Styling for the wave visualizer */
+.wave-visualizer {
+    width: 100%;
+    height: 50px;
+    background-color: #000000; /* Pure black background */
+    margin-top: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Button Styling */
+.audio-controls button {
     background: transparent;
     border: none;
     color: white;
+    font-size: 16px;
     cursor: pointer;
+    padding: 5px;
 }
 
-button:focus {
-    outline: none;
-}
-
-/* Waveform Visualizer Styling */
-#waveform-visualizer {
-    width: 100%;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-    overflow: hidden;
+.audio-controls button:hover {
+    color: #00ffcc;
 }

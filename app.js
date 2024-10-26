@@ -243,13 +243,11 @@ window.addEventListener('resize', () => {
 });
 
 // Audio player container and controls
-// Audio player container and controls
 const audioPlayerContainer = document.getElementById('audio-player-container');
 const playPauseBtn = document.getElementById('play-pause-btn');
 const stopBtn = document.getElementById('stop-btn');
 const rewindBtn = document.getElementById('rewind-btn');
 const fastForwardBtn = document.getElementById('fast-forward-btn');
-const infoBtn = document.getElementById('info-btn');
 const waveVisualizer = document.getElementById('waveform-visualizer');
 
 let isPlaying = false;
@@ -268,11 +266,11 @@ analyzer.connect(audioContext.destination);
 playPauseBtn.addEventListener('click', () => {
     if (isPlaying) {
         audio.pause();
-        playPauseBtn.textContent = '⏵';  // Play symbol
+        playPauseBtn.textContent = 'play';
     } else {
         audio.play();
         audioContext.resume();
-        playPauseBtn.textContent = '⏸';  // Pause symbol
+        playPauseBtn.textContent = 'pause';
     }
     isPlaying = !isPlaying;
 });
@@ -281,7 +279,7 @@ playPauseBtn.addEventListener('click', () => {
 stopBtn.addEventListener('click', () => {
     audio.pause();
     audio.currentTime = 0;  // Reset the audio to the beginning
-    playPauseBtn.textContent = '⏵';
+    playPauseBtn.textContent = 'play';
     isPlaying = false;
     hideAudioPlayer();
 });
@@ -296,17 +294,12 @@ fastForwardBtn.addEventListener('click', () => {
     audio.currentTime = Math.min(audio.duration, audio.currentTime + 30);
 });
 
-// Info Button functionality (displays track information)
-infoBtn.addEventListener('click', () => {
-    alert("Currently playing: " + audio.src);  // Displays the current audio source
-});
-
 // Show audio player and play audio
 function showAudioPlayer(audioSrc) {
     audio.src = audioSrc;
     audioPlayerContainer.style.display = 'flex';
     audio.play();
-    playPauseBtn.textContent = '⏸';  // Set to pause symbol when playing
+    playPauseBtn.textContent = 'pause';  // Set to "pause" when playing
     isPlaying = true;
     drawWaveform();  // Start drawing waveform
 }

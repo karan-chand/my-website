@@ -89,7 +89,7 @@ canvas {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    font-family: 'Spyro2', Arial, sans-serif;
+    font-family: 'Spyro2', Arial, sans-serif;  /* Ensure Spyro font is applied */
 }
 
 .audio-controls button:hover {

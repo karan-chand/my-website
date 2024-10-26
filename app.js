@@ -69,8 +69,11 @@ starData.forEach(star => {
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
 
-    // Assign a specific layer to stars with a link (clickable stars)
-    if (star.link) starMesh.layers.set(1); // Set to layer 1 for selective bloom
+    // Assign clickable stars (like Spica) to both the main and bloom layers
+    if (star.link) {
+        starMesh.layers.enable(0); // Main layer
+        starMesh.layers.enable(1); // Bloom layer
+    }
 
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
 });
@@ -162,14 +165,6 @@ window.addEventListener('pointerdown', event => {
 
             activeStar = clickedStar;
 
-            // Update bloomPass to target only the selected layer (layer 1)
-            renderer.autoClear = false;
-            renderer.clear();
-            camera.layers.set(0); // Render the default scene
-            renderer.render(scene, camera);
-            camera.layers.set(1); // Render only stars with links (bloom layer)
-            composer.render();
-
             // Play audio and set bloom pulse for clicked star
             spicaAudio.play();
             gsap.to(bloomPass, {
@@ -206,8 +201,7 @@ window.addEventListener('pointerdown', event => {
                     duration: 1.5,
                     ease: "power4.out"
                 });
-                camera.layers.set(0); // Reset to render all layers
-                composer.render();
+                activeStar = null;
             };
         }
     }

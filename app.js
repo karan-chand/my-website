@@ -41,8 +41,8 @@ const starData = [
 
 let starMeshes = [];
 const defaultIntensity = 0.4; // Brighter base emissive intensity
-const hoverIntensityMultiplier = 1.5;
-const clickIntensityMultiplier = 2.2;
+const hoverIntensityMultiplier = 2.2;
+const clickIntensityMultiplier = 2.0; // Reduced for a more subtle effect
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -121,7 +121,7 @@ window.addEventListener('mousemove', event => {
 });
 
 // Handle click logic for stars with a link
-window.addEventListener('click', event => {
+window.addEventListener('pointerdown', event => {  // Replaced 'click' with 'pointerdown'
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
@@ -144,13 +144,13 @@ window.addEventListener('click', event => {
                 console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
                 gsap.to(bloomPass, {
-                    strength: 2.5, // Stronger initial bloom burst on click
+                    strength: 1.5, // Lowered initial bloom burst on click
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        // Create a stronger pulsing effect while the audio is playing
+                        // Pulsing effect while the audio is playing
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 2.0, // Pulses between 2.0 and 2.5 for more intensity
+                            strength: 1.8, // Pulses between 1.8 and 2.0 for reduced intensity
                             duration: 1.5,
                             repeat: -1,
                             yoyo: true,

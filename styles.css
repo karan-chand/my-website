@@ -3,12 +3,11 @@
     font-family: 'Spyro2';
     src: url('fonts/Spyro2HD.woff2') format('woff2'),
          url('fonts/Spyro2HD.woff') format('woff'),
-         url('fonts/Spyro 2.ttf') format('truetype');  /* TrueType fallback */
+         url('fonts/Spyro 2.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
-/* Apply the Spyro2 font across the whole website */
 body, html {
     font-family: 'Spyro2', Arial, sans-serif;
     margin: 0;
@@ -20,14 +19,12 @@ body, html {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Canvas styling */
 canvas {
     display: block;
     width: 100vw;
     height: 100vh;
 }
 
-/* Static text for the Virgo page */
 .static-text {
     position: absolute;
     top: 10px;
@@ -38,16 +35,10 @@ canvas {
     z-index: 10;
 }
 
-/* Adjustments for smaller screens */
 @media (max-width: 768px) {
     .static-text {
         font-size: 14px;
         top: 5px;
         right: 10px;
     }
-}
-
-/* Optional: Include styling for homepage text */
-h1, p {
-    font-family: 'Spyro2', Arial, sans-serif;
 }

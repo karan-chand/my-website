@@ -1,3 +1,12 @@
+// Custom cursor element for mobile and tablet
+const customCursor = document.getElementById('custom-cursor');
+
+// Update cursor position on pointermove (for mobile/touch support)
+window.addEventListener('pointermove', (event) => {
+    customCursor.style.left = `${event.pageX}px`;
+    customCursor.style.top = `${event.pageY}px`;
+});
+
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,9 +24,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.4,  // Enhanced default bloom strength for subtle ambient glow
-    0.25, // Slightly increased bloom radius
-    0.08  // Lower threshold for capturing more light
+    0.5,  // Base bloom strength for the default glow
+    0.2,  // Bloom radius for the default state
+    0.08  // Threshold for capturing emissive intensity
 );
 composer.addPass(bloomPass);
 
@@ -40,16 +49,16 @@ const starData = [
 ];
 
 let starMeshes = [];
-const defaultIntensity = 0.4; // Brighter base emissive intensity
-const hoverIntensityMultiplier = 2.2;
-const clickIntensityMultiplier = 2.0; // Reduced for a more subtle effect
+const defaultIntensity = 0.4; // Bright base glow
+const hoverIntensityMultiplier = 1.8;
+const clickIntensityMultiplier = 2.4; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
-        color: 0xe0e0ff, // Light color for a bright appearance
+        color: 0xe0e0ff,
         emissive: 0xffffff,
         emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
     });
@@ -68,17 +77,17 @@ controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
 
-// Add Raycaster for hover detection
+// Raycaster for hover detection
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
 
 // Define a variable to store the GSAP pulse tween
 let activePulseTween = null;
-let activeStar = null; // Track the currently active star (clicked and playing audio)
+let activeStar = null;
 
 // Handle hover logic
-window.addEventListener('mousemove', event => {
+window.addEventListener('pointermove', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
@@ -97,7 +106,6 @@ window.addEventListener('mousemove', event => {
                 });
             }
 
-            // Apply hover effect to the newly hovered star
             gsap.killTweensOf(hoveredStar.material);
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
@@ -121,7 +129,7 @@ window.addEventListener('mousemove', event => {
 });
 
 // Handle click logic for stars with a link
-window.addEventListener('pointerdown', event => {  // Replaced 'click' with 'pointerdown'
+window.addEventListener('pointerdown', event => {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
@@ -144,21 +152,20 @@ window.addEventListener('pointerdown', event => {  // Replaced 'click' with 'poi
                 console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
                 gsap.to(bloomPass, {
-                    strength: 1.5, // Lowered initial bloom burst on click
+                    strength: 1.2, // Mild initial bloom burst on click
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
-                        // Pulsing effect while the audio is playing
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.8, // Pulses between 1.8 and 2.0 for reduced intensity
-                            duration: 1.5,
+                            strength: 1.2, // Subtle pulsing between 1.2 and 1.5
+                            duration: 1.8,
                             repeat: -1,
                             yoyo: true,
                             ease: "sine.inOut"
                         });
                     }
                 });
-                
+
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
                     duration: 0.5,
@@ -172,7 +179,7 @@ window.addEventListener('pointerdown', event => {  // Replaced 'click' with 'poi
                     }
                     activeStar = null;
                     gsap.to(bloomPass, {
-                        strength: 0.4,
+                        strength: 0.5,
                         duration: 1.5,
                         ease: "power4.out"
                     });
@@ -192,11 +199,11 @@ window.addEventListener('pointerdown', event => {  // Replaced 'click' with 'poi
                     ease: "power2.inOut",
                     onComplete: () => {
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 0.8,
-                            duration: 1.5,
+                            strength: 1.0,
+                            duration: 1.8,
                             repeat: -1,
                             yoyo: true,
-                            ease: "sine.inOut",
+                            ease: "sine.inOut"
                         });
                     }
                 });

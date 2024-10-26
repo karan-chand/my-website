@@ -29,17 +29,17 @@
         body, html {
             margin: 0;
             height: 100%;
-            overflow: hidden;  /* Ensure the page doesn't scroll */
-            background-color: white;  /* Set the background to white */
-            touch-action: manipulation; /* Reduces touch delays */
-            -webkit-text-size-adjust: 100%; /* Prevent font scaling on iOS */
-            -webkit-tap-highlight-color: transparent; /* Removes tap highlight color on iOS */
+            overflow: hidden;
+            background-color: white;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
 
         canvas {
             display: block;
-            width: 100vw;  /* Full viewport width */
-            height: 100vh; /* Full viewport height */
+            width: 100vw;
+            height: 100vh;
         }
 
         /* Static text styling */
@@ -47,14 +47,37 @@
             position: absolute;
             top: 10px;
             right: 20px;
-            color: white;  /* White text to stand out against the black canvas */
+            color: white;
             font-size: 18px;
-            z-index: 10;  /* Ensure text is above the canvas */
+            z-index: 10;
+        }
+
+        /* Custom cursor for mobile and tablet */
+        .custom-cursor {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            position: absolute;
+            pointer-events: none;
+            z-index: 11;
+            transition: transform 0.1s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Hide custom cursor on larger screens */
+        @media (min-width: 768px) {
+            .custom-cursor {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
     <canvas id="virgo-constellation"></canvas>
+
+    <!-- Custom cursor for mobile devices -->
+    <div id="custom-cursor" class="custom-cursor"></div>
 
     <!-- Static text in the upper-right corner -->
     <div class="static-text" id="star-name">

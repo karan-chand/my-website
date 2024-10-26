@@ -17,8 +17,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
 
-// Set up selective bloom effect with layers
-camera.layers.enable(1); // Enable layer 1 for bloom effect isolation
+// Set up the composer for bloom effect
 const composer = new THREE.EffectComposer(renderer);
 const renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
@@ -54,7 +53,7 @@ const defaultIntensity = 0.4;
 const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.5;
 let currentlyHoveredStar = null;
-let activeStar = null; // Track the star in the clicked state
+let activeStar = null;
 
 // Create stars in the scene
 starData.forEach(star => {
@@ -147,21 +146,22 @@ window.addEventListener('pointerdown', event => {
                 activePulseTween = null;
             }
             if (activeStar) {
-                activeStar.layers.disable(1); // Disable bloom layer for previous star
+                gsap.to(activeStar.material, {
+                    emissiveIntensity: defaultIntensity,
+                    duration: 1.2,
+                    ease: "power4.out"
+                });
                 activeStar = null;
             }
 
-            // Set up the clicked star with bloom layer
             activeStar = clickedStar;
-            clickedStar.layers.enable(1);
 
             if (clickedStarData.name === 'Spica') {
                 spicaAudio.play();
                 console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
-                bloomPass.strength = 1.6;
                 gsap.to(bloomPass, {
-                    strength: 1.8,
+                    strength: 1.6,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
@@ -186,7 +186,7 @@ window.addEventListener('pointerdown', event => {
                         activePulseTween.kill();
                         activePulseTween = null;
                     }
-                    activeStar.layers.disable(1); // Reset layer
+                    activeStar = null;
                     gsap.to(bloomPass, {
                         strength: 0.6,
                         duration: 1.5,

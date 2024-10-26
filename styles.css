@@ -22,7 +22,7 @@ canvas {
     display: block;
     width: 100vw;
     height: 100vh;
-    cursor: none;  /* Hides default cursor */
+    /* Removed cursor: none; to ensure the default cursor is visible */
 }
 
 /* Static text for the Virgo page */
@@ -36,19 +36,24 @@ canvas {
     z-index: 10;  /* Ensure text is above the canvas */
 }
 
-/* Custom cursor */
+/* Custom cursor (if you decide to bring it back later) */
 #custom-cursor {
     position: absolute;
     width: 24px; /* Adjust size for visibility */
     height: 24px;
     background: url('assets/cursor.cur'), auto; /* Windows 95 cursor */
-    display: none; /* Initially hidden, JavaScript will control visibility */
+    display: none; /* Keep hidden for now */
     z-index: 20;
     pointer-events: none; /* Ensures cursor does not block interactions */
 }
 
 @media (hover: none) and (pointer: coarse) {
     #custom-cursor {
-        display: none; /* Hide custom cursor for iPad/mobile if not visible */
+        display: none; /* Hide custom cursor for iPad/mobile */
     }
+}
+
+/* Optional: Include styling for homepage text */
+h1, p {
+    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font for headers and paragraphs */
 }

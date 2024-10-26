@@ -148,7 +148,12 @@ window.addEventListener('pointerdown', event => {
             activeStar = clickedStar;
 
             if (clickedStarData.name === 'Spica') {
-                spicaAudio.play();
+                // Dispatch event to audioplayer.js with the audio source
+                const playAudioEvent = new CustomEvent("playAudio", {
+                    detail: { audioSrc: clickedStarData.link }
+                });
+                document.dispatchEvent(playAudioEvent);
+
                 console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
                 gsap.to(bloomPass, {

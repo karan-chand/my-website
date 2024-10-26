@@ -15,9 +15,9 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.3,  // Default bloom strength (subtle)
-    0.2,  // Bloom radius
-    0.1   // Bloom threshold
+    0.4,  // Enhanced default bloom strength for subtle ambient glow
+    0.25, // Slightly increased bloom radius
+    0.08  // Lower threshold for capturing more light
 );
 composer.addPass(bloomPass);
 
@@ -40,9 +40,9 @@ const starData = [
 ];
 
 let starMeshes = [];
-const defaultIntensity = 0.3;
-const hoverIntensityMultiplier = 2.0;
-const clickIntensityMultiplier = 3.0;
+const defaultIntensity = 0.4; // Brighter base emissive intensity
+const hoverIntensityMultiplier = 2.2;
+const clickIntensityMultiplier = 3.2;
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -97,6 +97,7 @@ window.addEventListener('mousemove', event => {
                 });
             }
 
+            // Apply hover effect to the newly hovered star
             gsap.killTweensOf(hoveredStar.material);
             gsap.to(hoveredStar.material, {
                 emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
@@ -143,20 +144,21 @@ window.addEventListener('click', event => {
                 console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
                 gsap.to(bloomPass, {
-                    strength: 0.7,
+                    strength: 2.5, // Stronger initial bloom burst on click
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
+                        // Create a stronger pulsing effect while the audio is playing
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 0.6,
+                            strength: 2.0, // Pulses between 2.0 and 2.5 for more intensity
                             duration: 1.5,
                             repeat: -1,
                             yoyo: true,
-                            ease: "sine.inOut",
+                            ease: "sine.inOut"
                         });
                     }
                 });
-
+                
                 gsap.to(clickedStar.material, {
                     emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
                     duration: 0.5,
@@ -170,7 +172,7 @@ window.addEventListener('click', event => {
                     }
                     activeStar = null;
                     gsap.to(bloomPass, {
-                        strength: 0.3,
+                        strength: 0.4,
                         duration: 1.5,
                         ease: "power4.out"
                     });
@@ -185,12 +187,12 @@ window.addEventListener('click', event => {
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
 
                 gsap.to(bloomPass, {
-                    strength: 0.7,
+                    strength: 1.0,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 0.6,
+                            strength: 0.8,
                             duration: 1.5,
                             repeat: -1,
                             yoyo: true,

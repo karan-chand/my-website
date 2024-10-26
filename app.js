@@ -156,8 +156,9 @@ window.addEventListener('pointerdown', event => {
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
+                        bloomPass.radius = 0.1; // Reduce radius specifically for clicked state to limit spillover
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.4, // Pulses between 1.4 and 2.1
+                            strength: 2.8, // Pulses between 1.3 and 2.8 for greater intensity
                             duration: 1.8,
                             repeat: -1,
                             yoyo: true,
@@ -179,9 +180,10 @@ window.addEventListener('pointerdown', event => {
                     }
                     activeStar = null;
                     gsap.to(bloomPass, {
-                        strength: 0.6,
+                        strength: 0.6, // Return to default strength
                         duration: 1.5,
-                        ease: "power4.out"
+                        ease: "power4.out",
+                        onComplete: () => { bloomPass.radius = 0.2; } // Reset bloom radius after click ends
                     });
                     gsap.to(clickedStar.material, {
                         emissiveIntensity: defaultIntensity,
@@ -194,12 +196,13 @@ window.addEventListener('pointerdown', event => {
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
 
                 gsap.to(bloomPass, {
-                    strength: 0.8,
+                    strength: 1.0,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
+                        bloomPass.radius = 0.1;
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 0.8,
+                            strength: 1.0,
                             duration: 1.8,
                             repeat: -1,
                             yoyo: true,

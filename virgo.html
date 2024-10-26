@@ -31,6 +31,9 @@
             height: 100%;
             overflow: hidden;  /* Ensure the page doesn't scroll */
             background-color: white;  /* Set the background to white */
+            touch-action: manipulation; /* Reduces touch delays */
+            -webkit-text-size-adjust: 100%; /* Prevent font scaling on iOS */
+            -webkit-tap-highlight-color: transparent; /* Removes tap highlight color on iOS */
         }
 
         canvas {

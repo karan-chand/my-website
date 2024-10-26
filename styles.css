@@ -1,20 +1,12 @@
-/* Load .woff2 first for better performance, then .woff, and .ttf as fallback */
-@font-face {
-    font-family: 'Spyro2';
-    src: url('fonts/Spyro2HD.woff2') format('woff2'),
-         url('fonts/Spyro2HD.woff') format('woff'),
-         url('fonts/Spyro 2.ttf') format('truetype');  /* TrueType fallback */
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* Apply the Spyro2 font across the whole website */
+/* General Styles */
 body, html {
-    font-family: 'Spyro2', Arial, sans-serif;
     margin: 0;
     height: 100%;
     overflow: hidden;
     background-color: white;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Canvas styling */
@@ -22,16 +14,82 @@ canvas {
     display: block;
     width: 100vw;
     height: 100vh;
-    cursor: auto;  /* Default cursor */
 }
 
-/* Static text for the Virgo page */
+/* Static text styling */
 .static-text {
     position: absolute;
     top: 10px;
     right: 20px;
     color: white;
     font-size: 18px;
-    font-family: 'Spyro2', Arial, sans-serif;  /* Use Spyro2 font for text */
-    z-index: 10;  /* Ensure text is above the canvas */
+    z-index: 10;
+}
+
+/* Custom cursor for mobile and tablet */
+.custom-cursor {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 102, 0, 0.8);
+    position: absolute;
+    pointer-events: none;
+    z-index: 11;
+    transition: transform 0.1s ease;
+    transform: translate(-50%, -50%);
+}
+
+/* Hide custom cursor on larger screens */
+@media (min-width: 768px) {
+    .custom-cursor {
+        display: none;
+    }
+}
+
+/* Audio Player Container Styling */
+.audio-player-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 140px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: none; /* Hidden initially */
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 10px;
+    z-index: 10;
+    padding: 10px;
+}
+
+/* Audio Controls Styling */
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+button {
+    font-size: 1.2em;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Waveform Visualizer Styling */
+#waveform-visualizer {
+    width: 100%;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
 }

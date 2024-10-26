@@ -274,12 +274,73 @@ stopBtn.addEventListener('click', () => {
 });
 
 // Show audio player
+// Audio player container and controls
+// Audio player container and controls
+const audioPlayerContainer = document.getElementById('audio-player-container');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const stopBtn = document.getElementById('stop-btn');
+const rewindBtn = document.getElementById('rewind-btn');
+const fastForwardBtn = document.getElementById('fast-forward-btn');
+const infoBtn = document.getElementById('info-btn');
+const waveVisualizer = document.getElementById('waveform-visualizer');
+
+let isPlaying = false;
+let audio = new Audio();
+audio.loop = false;  // Prevent looping by default
+
+// Initialize audio context for waveform visualization
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const analyzer = audioContext.createAnalyser();
+analyzer.fftSize = 1024;
+const source = audioContext.createMediaElementSource(audio);
+source.connect(analyzer);
+analyzer.connect(audioContext.destination);
+
+// Play/Pause Button functionality
+playPauseBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        audio.pause();
+        playPauseBtn.textContent = '⏵';  // Play symbol
+    } else {
+        audio.play();
+        audioContext.resume();
+        playPauseBtn.textContent = '⏸';  // Pause symbol
+    }
+    isPlaying = !isPlaying;
+});
+
+// Stop Button functionality
+stopBtn.addEventListener('click', () => {
+    audio.pause();
+    audio.currentTime = 0;  // Reset the audio to the beginning
+    playPauseBtn.textContent = '⏵';
+    isPlaying = false;
+    hideAudioPlayer();
+});
+
+// Rewind 30 seconds
+rewindBtn.addEventListener('click', () => {
+    audio.currentTime = Math.max(0, audio.currentTime - 30);
+});
+
+// Fast forward 30 seconds
+fastForwardBtn.addEventListener('click', () => {
+    audio.currentTime = Math.min(audio.duration, audio.currentTime + 30);
+});
+
+// Info Button functionality (displays track information)
+infoBtn.addEventListener('click', () => {
+    alert("Currently playing: " + audio.src);  // Displays the current audio source
+});
+
+// Show audio player and play audio
 function showAudioPlayer(audioSrc) {
     audio.src = audioSrc;
     audioPlayerContainer.style.display = 'flex';
     audio.play();
-    playPauseBtn.textContent = 'Pause';
+    playPauseBtn.textContent = '⏸';  // Set to pause symbol when playing
     isPlaying = true;
+    drawWaveform();  // Start drawing waveform
 }
 
 // Hide audio player
@@ -291,4 +352,38 @@ function hideAudioPlayer() {
 document.addEventListener("playAudio", (event) => {
     const audioSrc = event.detail.audioSrc;
     showAudioPlayer(audioSrc);
-}); 
+});
+
+// Visualization Loop for Waveform
+function drawWaveform() {
+    requestAnimationFrame(drawWaveform);
+    const bufferLength = analyzer.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyzer.getByteTimeDomainData(dataArray);
+
+    const canvas = waveVisualizer;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#00ffcc';
+    ctx.beginPath();
+
+    const sliceWidth = canvas.width / bufferLength;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * canvas.height) / 2;
+
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+    }
+
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+}

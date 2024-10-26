@@ -143,7 +143,7 @@ window.addEventListener('click', event => {
             // If the clicked star is Spica, use the existing spicaAudio element.
             if (clickedStarData.name === 'Spica') {
                 spicaAudio.play();
-                console.log('Spica clicked! Playing audio...');
+                console.log(`${clickedStarData.name} clicked! Playing audio...`);
                 activeStar = clickedStar;
 
                 // Create a pulsing effect on the bloom strength
@@ -179,7 +179,7 @@ window.addEventListener('click', event => {
             } else {
                 // For other stars with links, open the URL
                 window.open(clickedStarData.link, '_blank');
-                console.log(${clickedStarData.name} clicked! Opening URL...);
+                console.log(`${clickedStarData.name} clicked! Opening URL...`);
                 activeStar = clickedStar;
 
                 // Apply the pulsing bloom effect without the audio control

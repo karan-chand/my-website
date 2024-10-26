@@ -24,7 +24,7 @@ composer.addPass(renderPass);
 
 const bloomPass = new THREE.UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.5,  // Base bloom strength for the default glow
+    0.6,  // Base bloom strength for the default glow
     0.2,  // Bloom radius for the default state
     0.08  // Threshold for capturing emissive intensity
 );
@@ -51,7 +51,7 @@ const starData = [
 let starMeshes = [];
 const defaultIntensity = 0.4; // Bright base glow
 const hoverIntensityMultiplier = 1.8;
-const clickIntensityMultiplier = 2.4; // Reduced to avoid overly intense glow
+const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
 
 // Create stars in the scene
@@ -152,12 +152,12 @@ window.addEventListener('pointerdown', event => {
                 console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
                 gsap.to(bloomPass, {
-                    strength: 1.2, // Mild initial bloom burst on click
+                    strength: 1.6, // Initial burst to 1.6 on click
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.2, // Subtle pulsing between 1.2 and 1.5
+                            strength: 1.4, // Pulses between 1.4 and 2.1
                             duration: 1.8,
                             repeat: -1,
                             yoyo: true,
@@ -179,7 +179,7 @@ window.addEventListener('pointerdown', event => {
                     }
                     activeStar = null;
                     gsap.to(bloomPass, {
-                        strength: 0.5,
+                        strength: 0.6,
                         duration: 1.5,
                         ease: "power4.out"
                     });
@@ -194,12 +194,12 @@ window.addEventListener('pointerdown', event => {
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
 
                 gsap.to(bloomPass, {
-                    strength: 1.0,
+                    strength: 0.8,
                     duration: 1.0,
                     ease: "power2.inOut",
                     onComplete: () => {
                         activePulseTween = gsap.to(bloomPass, {
-                            strength: 1.0,
+                            strength: 0.8,
                             duration: 1.8,
                             repeat: -1,
                             yoyo: true,

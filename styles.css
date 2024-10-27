@@ -36,12 +36,12 @@ header {
 header h1 {
     font-size: 24px;
     font-weight: bold;
-    color: black;
+    color: white; /* Set to white */
     margin: 0;
     font-family: 'Halyard Text', Arial, sans-serif;
 }
 
-/* Dropdown styling */
+/* Dropdown menu styling */
 nav ul {
     list-style-type: none;
     padding: 0;
@@ -56,7 +56,7 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: black;
+    color: white; /* Set to white */
     font-size: 18px;
     font-family: 'Halyard Text', Arial, sans-serif;
 }
@@ -64,8 +64,8 @@ nav ul li a {
 nav ul .dropdown {
     display: none;
     position: absolute;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: transparent; /* Transparent background */
+    box-shadow: none; /* Remove shadow if any */
     padding: 0;
     z-index: 10;
 }
@@ -80,11 +80,11 @@ nav ul .dropdown li {
 }
 
 nav ul .dropdown li a {
-    color: black;
+    color: white; /* White text for dropdown items */
 }
 
 nav ul .dropdown li a:hover {
-    color: #00ffcc;
+    color: #00ffcc; /* Optional hover color for dropdown items */
 }
 
 /* Static text for Virgo symbol and star name */

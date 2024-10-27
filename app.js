@@ -341,6 +341,70 @@ let isPlaying = false;
 let audio = new Audio();
 audio.loop = false;  // Prevent looping by default
 
+// Play/Pause Button functionality with hover effect on pause
+playPauseBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        audio.pause();
+        playPauseBtn.textContent = 'play';
+
+        // Stop the intense glow for the active star and apply the hover effect instead
+        if (activeStarMesh) {
+            gsap.to(activeStarMesh.material, {
+                emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+            
+            // Adjust bloom settings to match the hover effect rather than the clicked effect
+            if (activePulseTween) {
+                activePulseTween.kill();
+                activePulseTween = null;
+            }
+            gsap.to(bloomPass, {
+                strength: 0.6,  // Hover effect strength
+                radius: 0.2,    // Default radius
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+            
+            const activeStarData = starMeshes.find(star => star.mesh === activeStarMesh);
+            if (activeStarData) {
+                starNameElement.innerHTML = activeStarData.name; // Show the active star’s name
+            }
+        }
+    } else {
+        audio.play();
+        audioContext.resume();
+        playPauseBtn.textContent = 'pause';
+
+        // Apply the clicked state bloom and glow effects for the active star
+        if (activeStarMesh) {
+            gsap.to(activeStarMesh.material, {
+                emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+
+            gsap.to(bloomPass, {
+                strength: 1.6,  // Clicked state strength
+                radius: 0.1,
+                duration: 1.0,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    activePulseTween = gsap.to(bloomPass, {
+                        strength: 2.8,
+                        duration: 1.8,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                }
+            });
+        }
+    }
+    isPlaying = !isPlaying;
+});
+
 // Initialize audio context for waveform visualization
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const analyzer = audioContext.createAnalyser();

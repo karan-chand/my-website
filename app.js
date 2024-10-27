@@ -346,8 +346,8 @@ function resetStarGlow() {
     starMeshes.forEach(starData => {
         gsap.to(starData.mesh.material, {
             emissiveIntensity: defaultIntensity,
-            duration: 1.5,
-            ease: "power4.out"
+            duration: 3.0,
+            ease: "power2.inOut"
         });
     });
 

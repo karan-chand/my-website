@@ -282,7 +282,32 @@ stopBtn.addEventListener('click', () => {
     playPauseBtn.textContent = 'play';
     isPlaying = false;
     hideAudioPlayer();
+    resetStarGlow();  // Reset stars to default state
 });
+
+// Function to reset stars to the default state
+function resetStarGlow() {
+    // Reset bloom effect strength and radius
+    if (activePulseTween) {
+        activePulseTween.kill();
+        activePulseTween = null;
+    }
+    bloomPass.strength = 0.6;  // Reset to default strength
+    bloomPass.radius = 0.2;    // Reset to default radius
+
+    // Reset each star's emissive intensity to the default
+    starMeshes.forEach(starData => {
+        gsap.to(starData.mesh.material, {
+            emissiveIntensity: defaultIntensity,
+            duration: 1.5,
+            ease: "power4.out"
+        });
+    });
+
+    // Clear active star and reset the Virgo symbol
+    activeStar = null;
+    starNameElement.innerHTML = "♍︎";
+}
 
 // Rewind 30 seconds
 rewindBtn.addEventListener('click', () => {

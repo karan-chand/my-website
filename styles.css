@@ -1,16 +1,16 @@
 /* Load .woff2 first for better performance, then .woff, and .ttf as fallback */
 @font-face {
-    font-family: 'Spyro2';
-    src: url('fonts/Spyro2HD.woff2') format('woff2'),
-         url('fonts/Spyro2HD.woff') format('woff'),
-         url('fonts/Spyro 2.ttf') format('truetype');  /* TrueType fallback */
+    font-family: 'Halyard Text';
+    src: url('fonts/Halyard Text Regular.woff2') format('woff2'),
+         url('fonts/Halyard Text Regular.woff') format('woff'),
+         url('fonts/Halyard Text Regular.ttf') format('truetype');  /* TrueType fallback */
     font-weight: normal;
     font-style: normal;
 }
 
-/* Apply the Spyro2 font across the whole website */
+/* Apply the Halyard Text font across the whole website */
 body, html {
-    font-family: 'Spyro2', Arial, sans-serif;
+    font-family: 'Halyard Text', Arial, sans-serif;
     margin: 0;
     height: 100%;
     overflow: hidden;
@@ -31,7 +31,7 @@ canvas {
     right: 20px;
     color: white;
     font-size: 18px;
-    font-family: 'Spyro2', Arial, sans-serif;
+    font-family: 'Halyard Text', Arial, sans-serif;
     z-index: 10;
 }
 
@@ -71,7 +71,7 @@ canvas {
     border-radius: 10px;
     z-index: 10;
     padding: 10px;
-    font-family: 'Spyro2', Arial, sans-serif;
+    font-family: 'Halyard Text', Arial, sans-serif;
 }
 
 /* Styling for audio controls */
@@ -79,7 +79,7 @@ canvas {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Spyro2', Arial, sans-serif;
+    font-family: 'Halyard Text', Arial, sans-serif;
 }
 
 .audio-controls button {
@@ -89,7 +89,7 @@ canvas {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    font-family: 'Spyro2', Arial, sans-serif;  /* Ensure Spyro font is applied */
+    font-family: 'Halyard Text', Arial, sans-serif;  /* Ensure Halyard Text font is applied */
 }
 
 .audio-controls button:hover {

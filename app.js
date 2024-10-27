@@ -54,36 +54,10 @@ const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
 
-// Find the Spica star in the starMeshes array
-let spicaStarMesh = null;
-
-// Create stars in the scene
-starData.forEach(star => {
-    const geometry = new THREE.SphereGeometry(star.size, 32, 32);
-    const material = new THREE.MeshStandardMaterial({
-        color: 0xe0e0ff,
-        emissive: 0xffffff,
-        emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
-    });
-    const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
-    scene.add(starMesh);
-    starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
-});
-
-// Adjust camera and controls
-camera.position.z = 50;
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 0.7;
-controls.enableZoom = true;
-controls.enablePan = false;
-
-// Raycaster for hover detection
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-const starNameElement = document.getElementById('star-name');
+// Define a variable to store the GSAP pulse tween
+let activePulseTween = null;
+let activeStar = null;
+let activeStarMesh = null;  // Track the star that is currently playing
 
 // Handle click logic for Spica (dropdown menu)
 document.getElementById('spica-menu').addEventListener('click', (event) => {
@@ -129,9 +103,37 @@ function playSpicaAudio() {
     });
 }
 
-// Define a variable to store the GSAP pulse tween
-let activePulseTween = null;
-let activeStar = null;
+// Create stars in the scene
+starData.forEach(star => {
+    const geometry = new THREE.SphereGeometry(star.size, 32, 32);
+    const material = new THREE.MeshStandardMaterial({
+        color: 0xe0e0ff,
+        emissive: 0xffffff,
+        emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
+    });
+    const starMesh = new THREE.Mesh(geometry, material);
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
+    scene.add(starMesh);
+    starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
+
+    if (star.name === 'Spica') {
+        spicaStarMesh = starMesh;  // Reference to Spica star for special behavior
+    }
+});
+
+// Adjust camera and controls
+camera.position.z = 50;
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.rotateSpeed = 0.7;
+controls.enableZoom = true;
+controls.enablePan = false;
+
+// Raycaster for hover detection
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const starNameElement = document.getElementById('star-name');
 
 // Handle hover logic
 window.addEventListener('pointermove', event => {
@@ -193,6 +195,7 @@ window.addEventListener('pointerdown', event => {
             }
 
             activeStar = clickedStar;
+            activeStarMesh = clickedStar; // Set as currently playing star
 
             if (clickedStarData.name === 'Spica') {
                 // Dispatch event to audioplayer.js with the audio source
@@ -289,6 +292,43 @@ window.addEventListener('resize', () => {
     composer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// Function to reset stars to the default state
+function resetStarGlow() {
+    if (activePulseTween) {
+        activePulseTween.kill();
+        activePulseTween = null;
+    }
+    bloomPass.strength = 0.6;  
+    bloomPass.radius = 0.2;
+
+    starMeshes.forEach(starData => {
+        gsap.to(starData.mesh.material, {
+            emissiveIntensity: defaultIntensity,
+            duration: 3.0,
+            ease: "power2.inOut"
+        });
+    });
+
+    activeStar = null;
+    starNameElement.innerHTML = "♍︎";
+}
+
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    composer.render();
+}
+animate();
+
+// Handle window resizing
+window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    composer.setSize(window.innerWidth, window.innerHeight);
+});
+
 // Audio player container and controls
 const audioPlayerContainer = document.getElementById('audio-player-container');
 const playPauseBtn = document.getElementById('play-pause-btn');
@@ -331,30 +371,6 @@ stopBtn.addEventListener('click', () => {
     hideAudioPlayer();
     resetStarGlow();  // Reset stars to default state
 });
-
-// Function to reset stars to the default state
-function resetStarGlow() {
-    // Reset bloom effect strength and radius
-    if (activePulseTween) {
-        activePulseTween.kill();
-        activePulseTween = null;
-    }
-    bloomPass.strength = 0.6;  // Reset to default strength
-    bloomPass.radius = 0.2;    // Reset to default radius
-
-    // Reset each star's emissive intensity to the default
-    starMeshes.forEach(starData => {
-        gsap.to(starData.mesh.material, {
-            emissiveIntensity: defaultIntensity,
-            duration: 3.0,
-            ease: "power2.inOut"
-        });
-    });
-
-    // Clear active star and reset the Virgo symbol
-    activeStar = null;
-    starNameElement.innerHTML = "♍︎";
-}
 
 // Rewind 30 seconds
 rewindBtn.addEventListener('click', () => {

@@ -124,7 +124,7 @@ window.addEventListener('pointermove', event => {
             ease: "power4.out"
         });
         currentlyHoveredStar = null;
-        starNameElement.innerHTML = "Hover over a star...";
+        starNameElement.innerHTML = "♍︎";
     }
 });
 

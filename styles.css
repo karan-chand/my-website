@@ -87,16 +87,16 @@ nav ul .dropdown li a:hover {
     color: #00ffcc;
 }
 
-/* Static text for the Virgo symbol */
+/* Static text for Virgo symbol and star name */
 .static-text {
     position: absolute;
-    top: 50px;
-    width: 100%;
-    text-align: center;
-    color: black;
-    font-size: 24px;
+    top: 10px;
+    right: 20px;
+    color: white; /* Ensures it is visible on a dark background */
+    font-size: 18px;
     font-family: 'Halyard Text', Arial, sans-serif;
     z-index: 10;
+    text-align: right;
 }
 
 /* Custom cursor */
@@ -136,6 +136,7 @@ nav ul .dropdown li a:hover {
     z-index: 10;
     padding: 10px;
     font-family: 'Halyard Text', Arial, sans-serif;
+    flex-direction: column; /* Aligns waveform below the controls */
 }
 
 /* Styling for audio controls */
@@ -153,7 +154,6 @@ nav ul .dropdown li a:hover {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    font-family: 'Halyard Text', Arial, sans-serif;  /* Ensure Halyard Text font is applied */
 }
 
 .audio-controls button:hover {
@@ -164,7 +164,7 @@ nav ul .dropdown li a:hover {
 .wave-visualizer {
     width: 100%;
     height: 50px;
-    background: black; /* Black background for contrast */
+    background: transparent; /* Set to transparent */
     margin-top: 5px;
     border-radius: 5px;
     overflow: hidden;

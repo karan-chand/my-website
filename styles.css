@@ -24,13 +24,77 @@ canvas {
     height: 100vh;
 }
 
-/* Static text for the Virgo page */
-.static-text {
+/* Header styling */
+header {
     position: absolute;
     top: 10px;
-    right: 20px;
-    color: white;
+    width: 100%;
+    text-align: center;
+    z-index: 15;
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    margin: 0;
+    font-family: 'Halyard Text', Arial, sans-serif;
+}
+
+/* Dropdown styling */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+
+nav ul li {
+    display: inline-block;
+    position: relative;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: black;
     font-size: 18px;
+    font-family: 'Halyard Text', Arial, sans-serif;
+}
+
+nav ul .dropdown {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 0;
+    z-index: 10;
+}
+
+nav ul li:hover .dropdown {
+    display: block;
+}
+
+nav ul .dropdown li {
+    display: block;
+    padding: 8px 12px;
+}
+
+nav ul .dropdown li a {
+    color: black;
+}
+
+nav ul .dropdown li a:hover {
+    color: #00ffcc;
+}
+
+/* Static text for the Virgo symbol */
+.static-text {
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    text-align: center;
+    color: black;
+    font-size: 24px;
     font-family: 'Halyard Text', Arial, sans-serif;
     z-index: 10;
 }

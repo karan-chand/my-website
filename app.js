@@ -365,6 +365,11 @@ function resetSceneToDefault() {
             duration: 1.5,
             ease: "power4.out"
         });
+        gsap.to(activeStar.material, {
+            emissiveIntensity: defaultIntensity,
+            duration: 1.0,
+            ease: "power2.inOut"
+        });
         activeStar = null;
     }
 
@@ -373,6 +378,9 @@ function resetSceneToDefault() {
 
     // Clear active star and reset the Virgo symbol
     starNameElement.innerHTML = "♍";
+
+    // Reactivate controls
+    controls.enabled = true;
 }
 
 // Function to reset camera to default state
@@ -383,10 +391,12 @@ function resetCamera() {
         y: 0,
         z: 50,
         duration: 2.0,
-        ease: "power2.inOut"
+        ease: "power2.inOut",
+        onComplete: () => {
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
     });
-    controls.target.set(0, 0, 0);
-    controls.update();
 }
 
 // Rewind 30 seconds

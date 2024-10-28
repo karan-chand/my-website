@@ -197,16 +197,11 @@ window.addEventListener('pointerdown', event => {
                 ease: "power2.inOut",
                 onComplete: () => {
                     console.log('Camera zoom complete, starting rotation.');
-                    rotationTween = gsap.to(camera, {
-                        onUpdate: function () {
-                            camera.lookAt(clickedStar.position);
-                        },
+                    rotationTween = gsap.to(camera.rotation, {
+                        y: camera.rotation.y + Math.PI * 2, // Rotate 360 degrees around y-axis
                         duration: 20.0,
                         repeat: -1,
-                        ease: "linear",
-                        modifiers: {
-                            rotation: (rotation) => rotation + 0.01
-                        }
+                        ease: "linear"
                     });
                 }
             });
@@ -328,16 +323,11 @@ playPauseBtn.addEventListener('click', () => {
             });
 
             // Restart camera rotation
-            rotationTween = gsap.to(camera, {
-                onUpdate: function () {
-                    camera.lookAt(activeStar.position);
-                },
+            rotationTween = gsap.to(camera.rotation, {
+                y: camera.rotation.y + Math.PI * 2, // Rotate 360 degrees around y-axis
                 duration: 20.0,
                 repeat: -1,
-                ease: "linear",
-                modifiers: {
-                    rotation: (rotation) => rotation + 0.01
-                }
+                ease: "linear"
             });
         }
     }

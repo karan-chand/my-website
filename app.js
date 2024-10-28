@@ -267,10 +267,51 @@ playPauseBtn.addEventListener('click', () => {
     if (isPlaying) {
         audio.pause();
         playPauseBtn.textContent = 'play';
+
+        // Revert to hover state when paused
+        if (activeStar) {
+            gsap.killTweensOf(activeStar.material);
+            gsap.to(activeStar.material, {
+                emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+            gsap.to(bloomPass, {
+                strength: 0.6, // Return to default strength
+                duration: 1.5,
+                ease: "power4.out",
+                onComplete: () => { bloomPass.radius = 0.2; } // Reset bloom radius
+            });
+        }
     } else {
         audio.play();
         audioContext.resume();
         playPauseBtn.textContent = 'pause';
+
+        // Proceed with play effects
+        if (activeStar) {
+            gsap.to(bloomPass, {
+                strength: 1.6, // Initial burst to 1.6 on click
+                duration: 1.0,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    bloomPass.radius = 0.1; // Reduce radius specifically for clicked state to limit spillover
+                    activePulseTween = gsap.to(bloomPass, {
+                        strength: 2.8, // Pulses between 1.3 and 2.8 for greater intensity
+                        duration: 1.8,
+                        repeat: -1,
+                        yoyo: true,
+                        ease: "sine.inOut"
+                    });
+                }
+            });
+
+            gsap.to(activeStar.material, {
+                emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
+                duration: 0.5,
+                ease: "power2.inOut"
+            });
+        }
     }
     isPlaying = !isPlaying;
 });

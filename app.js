@@ -59,9 +59,9 @@ let currentlyHoveredStar = null;
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
-        color: 0xe0e0ff,
-        emissive: 0x6699ff, // Bluish tint (R: 0.4, G: 0.6, B: 1.0)
-        emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
+        color: 0xffffff, // Default color: white
+        emissive: 0x6699ff, // Default emissive color (light blue)
+        emissiveIntensity: defaultIntensity  // Default glow intensity
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
@@ -132,7 +132,7 @@ window.addEventListener('pointermove', event => {
             ease: "power4.out"
         });
         currentlyHoveredStar = null;
-        starNameElement.innerHTML = "♍︎";
+        starNameElement.innerHTML = "♍";
     }
 });
 
@@ -345,7 +345,7 @@ function resetStarGlow() {
 
     // Clear active star and reset the Virgo symbol
     activeStar = null;
-    starNameElement.innerHTML = "♍︎";
+    starNameElement.innerHTML = "♍";
 }
 
 // Function to reset camera to default state

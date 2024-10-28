@@ -3,8 +3,8 @@ const customCursor = document.getElementById('custom-cursor');
 
 // Update cursor position on pointermove (for mobile/touch support)
 window.addEventListener('pointermove', (event) => {
-    customCursor.style.left = ${event.pageX}px;
-    customCursor.style.top = ${event.pageY}px;
+    customCursor.style.left = `${event.pageX}px`;
+    customCursor.style.top = `${event.pageY}px`;
 });
 
 // Initialize the scene, camera, and renderer
@@ -154,7 +154,7 @@ window.addEventListener('pointerdown', event => {
                 });
                 document.dispatchEvent(playAudioEvent);
 
-                console.log(${clickedStarData.name} clicked! Playing audio...);
+                console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
                 gsap.to(bloomPass, {
                     strength: 1.6, // Initial burst to 1.6 on click
@@ -198,7 +198,7 @@ window.addEventListener('pointerdown', event => {
                 };
             } else {
                 window.open(clickedStarData.link, '_blank');
-                console.log(${clickedStarData.name} clicked! Opening URL...);
+                console.log(`${clickedStarData.name} clicked! Opening URL...`);
 
                 gsap.to(bloomPass, {
                     strength: 1.0,

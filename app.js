@@ -253,7 +253,6 @@ playPauseBtn.addEventListener('click', () => {
         // Revert to hover state when paused
         if (activeStar) {
             console.log('Pausing audio, reverting to hover state for star:', activeStar.name);
-            gsap.killTweensOf(activeStar.material);
             gsap.to(activeStar.material.emissive, {
                 r: 0.4, // Reset to bluish tint
                 g: 0.6,
@@ -323,6 +322,24 @@ stopBtn.addEventListener('click', () => {
     isPlaying = false;
     hideAudioPlayer();
     resetSceneToDefault();  // Reset scene to default state
+
+    // Remove blue color from active star
+    if (activeStar) {
+        console.log('Resetting emissive color of active star to default.');
+        gsap.to(activeStar.material.emissive, {
+            r: 1.0,
+            g: 1.0,
+            b: 1.0,
+            duration: 1.5,
+            ease: "power4.out"
+        });
+        gsap.to(activeStar.material, {
+            emissiveIntensity: defaultIntensity,
+            duration: 1.0,
+            ease: "power2.inOut"
+        });
+        activeStar = null;
+    }
 });
 
 // Function to reset scene to default state
@@ -355,23 +372,6 @@ function resetSceneToDefault() {
             ease: "power4.out"
         });
     });
-
-    // Reset active star emissive color to default
-    if (activeStar) {
-        gsap.to(activeStar.material.emissive, {
-            r: 1.0,
-            g: 1.0,
-            b: 1.0,
-            duration: 1.5,
-            ease: "power4.out"
-        });
-        gsap.to(activeStar.material, {
-            emissiveIntensity: defaultIntensity,
-            duration: 1.0,
-            ease: "power2.inOut"
-        });
-        activeStar = null;
-    }
 
     // Reset camera to default state
     resetCamera();

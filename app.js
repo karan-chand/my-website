@@ -157,8 +157,14 @@ window.addEventListener('pointerdown', event => {
 
             activeStar = clickedStar;
 
-            // Change the emissive color of the clicked star to orange
-            activeStar.material.emissive.setHex(0xffa500); // Set emissive color to orange
+            // Smoothly change the emissive color of the clicked star to orange
+            gsap.to(activeStar.material.emissive, {
+                r: 1.0, // Orange color (R: 1.0, G: 0.65, B: 0.0)
+                g: 0.65,
+                b: 0.0,
+                duration: 1.5,
+                ease: "power2.inOut"
+            });
             console.log('Emissive color set to orange for:', clickedStarData.name);
 
             // Dispatch event to audioplayer.js with the audio source
@@ -243,7 +249,13 @@ playPauseBtn.addEventListener('click', () => {
         if (activeStar) {
             console.log('Pausing audio, reverting to hover state for star:', activeStar.name);
             gsap.killTweensOf(activeStar.material);
-            activeStar.material.emissive.setHex(0xffffff); // Reset to original emissive color
+            gsap.to(activeStar.material.emissive, {
+                r: 1.0, // Reset to white color
+                g: 1.0,
+                b: 1.0,
+                duration: 1.0,
+                ease: "power2.inOut"
+            });
             gsap.to(activeStar.material, {
                 emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
                 duration: 0.5,

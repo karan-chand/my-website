@@ -149,56 +149,61 @@ window.addEventListener('pointerdown', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.link) {
-            console.log('Star clicked:', clickedStarData.name);
-            if (activePulseTween) {
-                activePulseTween.kill();
-                activePulseTween = null;
-            }
-
-            activeStar = clickedStar;
-
-            // Smoothly change the emissive color of the clicked star to bluish tint (Spica's color)
-            gsap.to(activeStar.material.emissive, {
-                r: 0.4, // Bluish tint (R: 0.4, G: 0.6, B: 1.0)
-                g: 0.6,
-                b: 1.0,
-                duration: 1.5,
-                ease: "power2.inOut"
-            });
-            console.log('Emissive color set to bluish tint for:', clickedStarData.name);
-
-            // Dispatch event to audioplayer.js with the audio source
-            const playAudioEvent = new CustomEvent("playAudio", {
-                detail: { audioSrc: clickedStarData.link }
-            });
-            document.dispatchEvent(playAudioEvent);
-
-            console.log(`${clickedStarData.name} clicked! Playing audio...`);
-
-            gsap.to(bloomPass, {
-                strength: 1.6, // Initial burst to 1.6 on click
-                duration: 1.0,
-                ease: "power2.inOut",
-                onComplete: () => {
-                    bloomPass.radius = 0.1; // Reduce radius specifically for clicked state to limit spillover
-                    activePulseTween = gsap.to(bloomPass, {
-                        strength: 2.8, // Pulses between 1.3 and 2.8 for greater intensity
-                        duration: 1.8,
-                        repeat: -1,
-                        yoyo: true,
-                        ease: "sine.inOut"
-                    });
-                }
-            });
-
-            gsap.to(clickedStar.material, {
-                emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
-                duration: 0.5,
-                ease: "power2.inOut"
-            });
+            handleStarClick(clickedStar, clickedStarData);
         }
     }
 });
+
+// Function to handle star click logic
+function handleStarClick(clickedStar, clickedStarData) {
+    console.log('Star clicked:', clickedStarData.name);
+    if (activePulseTween) {
+        activePulseTween.kill();
+        activePulseTween = null;
+    }
+
+    activeStar = clickedStar;
+
+    // Smoothly change the emissive color of the clicked star to bluish tint (Spica's color)
+    gsap.to(activeStar.material.emissive, {
+        r: 0.4, // Bluish tint (R: 0.4, G: 0.6, B: 1.0)
+        g: 0.6,
+        b: 1.0,
+        duration: 1.5,
+        ease: "power2.inOut"
+    });
+    console.log('Emissive color set to bluish tint for:', clickedStarData.name);
+
+    // Dispatch event to audioplayer.js with the audio source
+    const playAudioEvent = new CustomEvent("playAudio", {
+        detail: { audioSrc: clickedStarData.link }
+    });
+    document.dispatchEvent(playAudioEvent);
+
+    console.log(`${clickedStarData.name} clicked! Playing audio...`);
+
+    gsap.to(bloomPass, {
+        strength: 1.6, // Initial burst to 1.6 on click
+        duration: 1.0,
+        ease: "power2.inOut",
+        onComplete: () => {
+            bloomPass.radius = 0.1; // Reduce radius specifically for clicked state to limit spillover
+            activePulseTween = gsap.to(bloomPass, {
+                strength: 2.8, // Pulses between 1.3 and 2.8 for greater intensity
+                duration: 1.8,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+            });
+        }
+    });
+
+    gsap.to(clickedStar.material, {
+        emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
+        duration: 0.5,
+        ease: "power2.inOut"
+    });
+}
 
 // Animation loop
 function animate() {
@@ -343,11 +348,22 @@ function resetSceneToDefault() {
         });
     });
 
+    // Reset active star emissive color to default
+    if (activeStar) {
+        gsap.to(activeStar.material.emissive, {
+            r: 1.0,
+            g: 1.0,
+            b: 1.0,
+            duration: 1.5,
+            ease: "power4.out"
+        });
+        activeStar = null;
+    }
+
     // Reset camera to default state
     resetCamera();
 
     // Clear active star and reset the Virgo symbol
-    activeStar = null;
     starNameElement.innerHTML = "♍";
 }
 
@@ -434,3 +450,12 @@ function drawWaveform() {
     ctx.lineTo(canvas.width, canvas.height / 2);
     ctx.stroke();
 }
+
+// Handle dropdown menu click for Spica
+const spicaMenuItem = document.getElementById('spica-menu');
+spicaMenuItem.addEventListener('click', () => {
+    const spicaStarData = starMeshes.find(star => star.name === 'Spica');
+    if (spicaStarData) {
+        handleStarClick(spicaStarData.mesh, spicaStarData);
+    }
+});

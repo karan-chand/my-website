@@ -90,8 +90,6 @@ const starNameElement = document.getElementById('star-name');
 // Define a variable to store the GSAP pulse tween
 let activePulseTween = null;
 let activeStar = null;
-let isRotating = false;
-let rotationTween = null;
 
 // Handle hover logic
 window.addEventListener('pointermove', event => {
@@ -188,31 +186,6 @@ window.addEventListener('pointerdown', event => {
                 duration: 0.5,
                 ease: "power2.inOut"
             });
-
-            // Start camera zoom-in and rotation
-            gsap.to(camera.position, {
-                x: clickedStar.position.x,
-                y: clickedStar.position.y,
-                z: clickedStar.position.z + 10,
-                duration: 2.0,
-                ease: "power2.inOut",
-                onComplete: () => {
-                    console.log('Camera zoom complete, setting controls target.');
-                    controls.target.set(clickedStar.position.x, clickedStar.position.y, clickedStar.position.z);
-                    controls.update();
-                    console.log('Starting rotation around star.');
-                    rotationTween = gsap.to(camera, {
-                        onUpdate: () => {
-                            camera.lookAt(controls.target);
-                        },
-                        duration: 20.0,
-                        repeat: -1,
-                        ease: "linear"
-                    });
-                }
-            });
-
-            isRotating = true;
         }
     }
 });
@@ -222,12 +195,6 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     composer.render();
-
-    // Detect if the user manually zooms out and reset the camera
-    if (isRotating && camera.position.z > 20) {
-        console.log('User zoomed out manually, resetting camera.');
-        resetCamera();
-    }
 }
 animate();
 
@@ -291,13 +258,6 @@ playPauseBtn.addEventListener('click', () => {
                 }
             });
         }
-
-        // Stop camera rotation
-        if (rotationTween) {
-            console.log('Stopping camera rotation.');
-            rotationTween.kill();
-            rotationTween = null;
-        }
     } else {
         audio.play();
         audioContext.resume();
@@ -327,16 +287,6 @@ playPauseBtn.addEventListener('click', () => {
                 duration: 0.5,
                 ease: "power2.inOut"
             });
-
-            // Restart camera rotation
-            rotationTween = gsap.to(camera, {
-                onUpdate: () => {
-                    camera.lookAt(controls.target);
-                },
-                duration: 20.0,
-                repeat: -1,
-                ease: "linear"
-            });
         }
     }
     isPlaying = !isPlaying;
@@ -351,7 +301,7 @@ stopBtn.addEventListener('click', () => {
     isPlaying = false;
     hideAudioPlayer();
     resetStarGlow();  // Reset stars to default state
-    resetCamera();  // Reset the camera to default state
+    resetCamera();    // Reset camera to default state
 });
 
 // Function to reset stars to the default state
@@ -383,10 +333,6 @@ function resetStarGlow() {
 // Function to reset camera to default state
 function resetCamera() {
     console.log('Resetting camera to default position.');
-    if (rotationTween) {
-        rotationTween.kill();
-        rotationTween = null;
-    }
     gsap.to(camera.position, {
         x: 0,
         y: 0,
@@ -396,7 +342,6 @@ function resetCamera() {
     });
     controls.target.set(0, 0, 0);
     controls.update();
-    isRotating = false;
 }
 
 // Rewind 30 seconds
@@ -433,16 +378,6 @@ document.addEventListener("playAudio", (event) => {
     console.log('playAudio event received for source:', event.detail.audioSrc);
     const audioSrc = event.detail.audioSrc;
     showAudioPlayer(audioSrc);
-});
-
-// Event listener for playing any star audio from dropdown menu
-document.getElementById('mixes-dropdown').addEventListener('change', (event) => {
-    const selectedStarName = event.target.value;
-    const selectedStar = starMeshes.find(star => star.name === selectedStarName && star.link);
-    if (selectedStar) {
-        console.log(`Dropdown selected ${selectedStarName}, playing audio.`);
-        showAudioPlayer(selectedStar.link);
-    }
 });
 
 // Visualization Loop for Waveform

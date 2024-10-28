@@ -334,8 +334,16 @@ function resetSceneToDefault() {
         activePulseTween.kill();
         activePulseTween = null;
     }
-    bloomPass.strength = 0.6;  // Reset to default strength
-    bloomPass.radius = 0.2;    // Reset to default radius
+    gsap.to(bloomPass, {
+        strength: 0.6,  // Reset to default strength
+        duration: 1.0,
+        ease: "power2.inOut"
+    });
+    gsap.to(bloomPass, {
+        radius: 0.2,    // Reset to default radius
+        duration: 1.0,
+        ease: "power2.inOut"
+    });
 
     // Reset each star's emissive intensity to the default
     starMeshes.forEach(starData => {

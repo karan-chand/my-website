@@ -60,8 +60,8 @@ starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff, // Default color: white
-        emissive: 0x6699ff, // Default emissive color (light blue)
-        emissiveIntensity: defaultIntensity  // Default glow intensity
+        emissive: 0x000000, // No emissive color by default
+        emissiveIntensity: 0  // No glow initially
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
@@ -107,7 +107,7 @@ window.addEventListener('pointermove', event => {
             if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
                 gsap.killTweensOf(currentlyHoveredStar.material);
                 gsap.to(currentlyHoveredStar.material, {
-                    emissiveIntensity: defaultIntensity,
+                    emissiveIntensity: 0,
                     duration: 1.2,
                     ease: "power4.out"
                 });
@@ -127,7 +127,7 @@ window.addEventListener('pointermove', event => {
         console.log('Hover cleared, resetting previous star.');
         gsap.killTweensOf(currentlyHoveredStar.material);
         gsap.to(currentlyHoveredStar.material, {
-            emissiveIntensity: defaultIntensity,
+            emissiveIntensity: 0,
             duration: 1.2,
             ease: "power4.out"
         });
@@ -257,7 +257,7 @@ playPauseBtn.addEventListener('click', () => {
                 ease: "power2.inOut"
             });
             gsap.to(activeStar.material, {
-                emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
+                emissiveIntensity: 0.8, // Glow intensity during pause
                 duration: 0.5,
                 ease: "power2.inOut"
             });
@@ -336,8 +336,8 @@ function resetStarGlow() {
     // Reset each star's emissive intensity to the default
     starMeshes.forEach(starData => {
         gsap.to(starData.mesh.material, {
-            emissive: 0x6699ff, // Reset to bluish tint
-            emissiveIntensity: defaultIntensity,
+            emissive: 0x000000, // No emissive color by default
+            emissiveIntensity: 0,
             duration: 1.5,
             ease: "power4.out"
         });

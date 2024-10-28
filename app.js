@@ -389,7 +389,35 @@ document.addEventListener("playAudio", (event) => {
 document.getElementById('spica-menu').addEventListener('click', () => {
     const spicaStar = starMeshes.find(star => star.name === 'Spica');
     if (spicaStar) {
-        handleStarClick(window.innerWidth / 2, window.innerHeight / 2);
+        // Trigger audio play and click state effects for Spica
+        const playAudioEvent = new CustomEvent("playAudio", {
+            detail: { audioSrc: spicaStar.link }
+        });
+        document.dispatchEvent(playAudioEvent);
+
+        gsap.to(bloomPass, {
+            strength: 1.6,
+            duration: 1.0,
+            ease: "power2.inOut",
+            onComplete: () => {
+                bloomPass.radius = 0.1;
+                activePulseTween = gsap.to(bloomPass, {
+                    strength: 2.8,
+                    duration: 1.8,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            }
+        });
+
+        gsap.to(spicaStar.mesh.material, {
+            emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
+            duration: 0.5,
+            ease: "power2.inOut"
+        });
+
+        activeStar = spicaStar.mesh;
     }
 });
 

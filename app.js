@@ -138,9 +138,14 @@ window.addEventListener('pointermove', event => {
 
 // Handle click logic for stars with a link
 window.addEventListener('pointerdown', event => {
-    console.log('Pointer down at:', event.clientX, event.clientY);
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    handleStarClick(event.clientX, event.clientY);
+});
+
+// Function to handle star click logic
+function handleStarClick(clientX, clientY) {
+    console.log('Pointer down at:', clientX, clientY);
+    mouse.x = (clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children);
 
@@ -188,7 +193,7 @@ window.addEventListener('pointerdown', event => {
             });
         }
     }
-});
+}
 
 // Animation loop
 function animate() {
@@ -378,6 +383,14 @@ document.addEventListener("playAudio", (event) => {
     console.log('playAudio event received for source:', event.detail.audioSrc);
     const audioSrc = event.detail.audioSrc;
     showAudioPlayer(audioSrc);
+});
+
+// Dropdown menu functionality to simulate Spica star click
+document.getElementById('dropdown-spica').addEventListener('click', () => {
+    const spicaStar = starMeshes.find(star => star.name === 'Spica');
+    if (spicaStar) {
+        handleStarClick(spicaStar.mesh.position.x, spicaStar.mesh.position.y);
+    }
 });
 
 // Visualization Loop for Waveform

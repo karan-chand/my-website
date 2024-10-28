@@ -340,6 +340,13 @@ document.addEventListener("playAudio", (event) => {
     showAudioPlayer(audioSrc);
 });
 
+// Event listener for playing Spica audio from dropdown menu
+document.getElementById('mixes-dropdown').addEventListener('change', (event) => {
+    if (event.target.value === 'Spica') {
+        showAudioPlayer(spicaAudio.src);
+    }
+});
+
 // Visualization Loop for Waveform
 function drawWaveform() {
     requestAnimationFrame(drawWaveform);

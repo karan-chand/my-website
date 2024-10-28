@@ -3,8 +3,8 @@ const customCursor = document.getElementById('custom-cursor');
 
 // Update cursor position on pointermove (for mobile/touch support)
 window.addEventListener('pointermove', (event) => {
-    customCursor.style.left = `${event.pageX}px`;
-    customCursor.style.top = `${event.pageY}px`;
+    customCursor.style.left = ${event.pageX}px;
+    customCursor.style.top = ${event.pageY}px;
 });
 
 // Initialize the scene, camera, and renderer
@@ -53,11 +53,6 @@ const defaultIntensity = 0.4; // Bright base glow
 const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
-let activePulseTween = null;
-let activeStar = null;
-
-// Find the Spica star in the starMeshes array
-let spicaStarMesh = null;
 
 // Create stars in the scene
 starData.forEach(star => {
@@ -71,10 +66,6 @@ starData.forEach(star => {
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
-    
-    if (star.name === 'Spica') {
-        spicaStarMesh = starMesh;
-    }
 });
 
 // Adjust camera and controls
@@ -90,50 +81,6 @@ controls.enablePan = false;
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
-
-// Handle click logic for Spica (dropdown menu)
-document.getElementById('spica-menu').addEventListener('click', (event) => {
-    event.preventDefault(); // Prevent default anchor behavior
-    playSpicaAudio();
-});
-
-// Function to play Spica audio and trigger glow
-function playSpicaAudio() {
-    if (activePulseTween) {
-        activePulseTween.kill();
-        activePulseTween = null;
-    }
-
-    activeStar = spicaStarMesh;
-
-    // Dispatch event to audioplayer.js with the audio source
-    const playAudioEvent = new CustomEvent("playAudio", {
-        detail: { audioSrc: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }
-    });
-    document.dispatchEvent(playAudioEvent);
-
-    gsap.to(bloomPass, {
-        strength: 1.6,
-        duration: 1.0,
-        ease: "power2.inOut",
-        onComplete: () => {
-            bloomPass.radius = 0.1;
-            activePulseTween = gsap.to(bloomPass, {
-                strength: 2.8,
-                duration: 1.8,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut"
-            });
-        }
-    });
-
-    gsap.to(spicaStarMesh.material, {
-        emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
-        duration: 0.5,
-        ease: "power2.inOut"
-    });
-}
 
 // Define a variable to store the GSAP pulse tween
 let activePulseTween = null;

@@ -386,10 +386,10 @@ document.addEventListener("playAudio", (event) => {
 });
 
 // Dropdown menu functionality to simulate Spica star click
-document.getElementById('dropdown-spica').addEventListener('click', () => {
+document.getElementById('spica-menu').addEventListener('click', () => {
     const spicaStar = starMeshes.find(star => star.name === 'Spica');
     if (spicaStar) {
-        handleStarClick(spicaStar.mesh.position.x, spicaStar.mesh.position.y);
+        handleStarClick(window.innerWidth / 2, window.innerHeight / 2);
     }
 });
 

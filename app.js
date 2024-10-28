@@ -60,7 +60,7 @@ starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0xe0e0ff,
-        emissive: 0xffffff,
+        emissive: 0x6699ff, // Bluish tint (R: 0.4, G: 0.6, B: 1.0)
         emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
     });
     const starMesh = new THREE.Mesh(geometry, material);
@@ -157,15 +157,15 @@ window.addEventListener('pointerdown', event => {
 
             activeStar = clickedStar;
 
-            // Smoothly change the emissive color of the clicked star to orange
+            // Smoothly change the emissive color of the clicked star to bluish tint (Spica's color)
             gsap.to(activeStar.material.emissive, {
-                r: 1.0, // Orange color (R: 1.0, G: 0.65, B: 0.0)
-                g: 0.65,
-                b: 0.0,
+                r: 0.4, // Bluish tint (R: 0.4, G: 0.6, B: 1.0)
+                g: 0.6,
+                b: 1.0,
                 duration: 1.5,
                 ease: "power2.inOut"
             });
-            console.log('Emissive color set to orange for:', clickedStarData.name);
+            console.log('Emissive color set to bluish tint for:', clickedStarData.name);
 
             // Dispatch event to audioplayer.js with the audio source
             const playAudioEvent = new CustomEvent("playAudio", {
@@ -250,8 +250,8 @@ playPauseBtn.addEventListener('click', () => {
             console.log('Pausing audio, reverting to hover state for star:', activeStar.name);
             gsap.killTweensOf(activeStar.material);
             gsap.to(activeStar.material.emissive, {
-                r: 1.0, // Reset to white color
-                g: 1.0,
+                r: 0.4, // Reset to bluish tint
+                g: 0.6,
                 b: 1.0,
                 duration: 1.0,
                 ease: "power2.inOut"
@@ -336,7 +336,7 @@ function resetStarGlow() {
     // Reset each star's emissive intensity to the default
     starMeshes.forEach(starData => {
         gsap.to(starData.mesh.material, {
-            emissive: 0xffffff, // Reset to original emissive color
+            emissive: 0x6699ff, // Reset to bluish tint
             emissiveIntensity: defaultIntensity,
             duration: 1.5,
             ease: "power4.out"

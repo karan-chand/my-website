@@ -3,8 +3,8 @@ const customCursor = document.getElementById('custom-cursor');
 
 // Update cursor position on pointermove (for mobile/touch support)
 window.addEventListener('pointermove', (event) => {
-    customCursor.style.left = ${event.pageX}px;
-    customCursor.style.top = ${event.pageY}px;
+    customCursor.style.left = `${event.pageX}px`;
+    customCursor.style.top = `${event.pageY}px`;
 });
 
 // Initialize the scene, camera, and renderer
@@ -53,6 +53,8 @@ const defaultIntensity = 0.4; // Bright base glow
 const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
+let activePulseTween = null;
+let activeStar = null;
 
 // Find the Spica star in the starMeshes array
 let spicaStarMesh = null;
@@ -69,6 +71,10 @@ starData.forEach(star => {
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
+    
+    if (star.name === 'Spica') {
+        spicaStarMesh = starMesh;
+    }
 });
 
 // Adjust camera and controls

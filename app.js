@@ -79,6 +79,7 @@ controls.dampingFactor = 0.05;
 controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
+controls.target.set(0, 0, 0);  // Set initial focus point to the center
 console.log('Orbit controls configured.');
 
 // Raycaster for hover detection
@@ -196,9 +197,14 @@ window.addEventListener('pointerdown', event => {
                 duration: 2.0,
                 ease: "power2.inOut",
                 onComplete: () => {
-                    console.log('Camera zoom complete, starting rotation.');
-                    rotationTween = gsap.to(camera.rotation, {
-                        y: camera.rotation.y + Math.PI * 2, // Rotate 360 degrees around y-axis
+                    console.log('Camera zoom complete, setting controls target.');
+                    controls.target.set(clickedStar.position.x, clickedStar.position.y, clickedStar.position.z);
+                    controls.update();
+                    console.log('Starting rotation around star.');
+                    rotationTween = gsap.to(camera, {
+                        onUpdate: () => {
+                            camera.lookAt(controls.target);
+                        },
                         duration: 20.0,
                         repeat: -1,
                         ease: "linear"
@@ -323,8 +329,10 @@ playPauseBtn.addEventListener('click', () => {
             });
 
             // Restart camera rotation
-            rotationTween = gsap.to(camera.rotation, {
-                y: camera.rotation.y + Math.PI * 2, // Rotate 360 degrees around y-axis
+            rotationTween = gsap.to(camera, {
+                onUpdate: () => {
+                    camera.lookAt(controls.target);
+                },
                 duration: 20.0,
                 repeat: -1,
                 ease: "linear"
@@ -386,6 +394,8 @@ function resetCamera() {
         duration: 2.0,
         ease: "power2.inOut"
     });
+    controls.target.set(0, 0, 0);
+    controls.update();
     isRotating = false;
 }
 

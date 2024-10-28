@@ -158,11 +158,8 @@ window.addEventListener('pointerdown', event => {
             activeStar = clickedStar;
 
             // Change the emissive color of the clicked star to orange
-            gsap.to(activeStar.material, {
-                emissive: 0xffa500, // Orange color
-                duration: 0.5,
-                ease: "power2.inOut"
-            });
+            activeStar.material.emissive.setHex(0xffa500); // Set emissive color to orange
+            console.log('Emissive color set to orange for:', clickedStarData.name);
 
             // Dispatch event to audioplayer.js with the audio source
             const playAudioEvent = new CustomEvent("playAudio", {
@@ -246,8 +243,8 @@ playPauseBtn.addEventListener('click', () => {
         if (activeStar) {
             console.log('Pausing audio, reverting to hover state for star:', activeStar.name);
             gsap.killTweensOf(activeStar.material);
+            activeStar.material.emissive.setHex(0xffffff); // Reset to original emissive color
             gsap.to(activeStar.material, {
-                emissive: 0xffffff, // Reset to original emissive color
                 emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
                 duration: 0.5,
                 ease: "power2.inOut"
@@ -256,7 +253,7 @@ playPauseBtn.addEventListener('click', () => {
                 strength: 0.6, // Return to default strength
                 duration: 1.5,
                 ease: "power4.out",
-                onComplete: () => { 
+                onComplete: () => {
                     bloomPass.radius = 0.2; // Reset bloom radius
                     if (activePulseTween) {
                         console.log('Stopping active pulse tween during pause.');

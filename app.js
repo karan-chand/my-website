@@ -3,6 +3,7 @@ const customCursor = document.getElementById('custom-cursor');
 
 // Update cursor position on pointermove (for mobile/touch support)
 window.addEventListener('pointermove', (event) => {
+    console.log('Pointer moved:', event.pageX, event.pageY);
     customCursor.style.left = `${event.pageX}px`;
     customCursor.style.top = `${event.pageY}px`;
 });
@@ -10,12 +11,15 @@ window.addEventListener('pointermove', (event) => {
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+console.log('Camera initialized with perspective:', camera);
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('virgo-constellation'), antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
+console.log('Renderer initialized with size:', window.innerWidth, window.innerHeight);
 
 // Create an audio element and load the track for Spica
 const spicaAudio = new Audio('Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3');
+console.log('Spica audio initialized with source:', spicaAudio.src);
 
 // Set up the composer for bloom effect
 const composer = new THREE.EffectComposer(renderer);
@@ -29,6 +33,7 @@ const bloomPass = new THREE.UnrealBloomPass(
     0.08  // Threshold for capturing emissive intensity
 );
 composer.addPass(bloomPass);
+console.log('Bloom pass added to composer with settings:', bloomPass);
 
 // Star data and creation
 const starData = [
@@ -66,16 +71,19 @@ starData.forEach(star => {
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
+    console.log('Star added to scene:', star.name, starMesh.position);
 });
 
 // Adjust camera and controls
 camera.position.z = 50;
+console.log('Camera position set to:', camera.position);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.rotateSpeed = 0.7;
 controls.enableZoom = true;
 controls.enablePan = false;
+console.log('Orbit controls configured.');
 
 // Raycaster for hover detection
 const raycaster = new THREE.Raycaster();
@@ -85,9 +93,12 @@ const starNameElement = document.getElementById('star-name');
 // Define a variable to store the GSAP pulse tween
 let activePulseTween = null;
 let activeStar = null;
+let isRotating = false;
+let rotationTween = null;
 
 // Handle hover logic
 window.addEventListener('pointermove', event => {
+    console.log('Pointer move detected at:', event.clientX, event.clientY);
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
@@ -97,6 +108,7 @@ window.addEventListener('pointermove', event => {
         const hoveredStar = intersects[0].object;
 
         if (currentlyHoveredStar !== hoveredStar) {
+            console.log('New star hovered:', hoveredStar.name);
             if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
                 gsap.killTweensOf(currentlyHoveredStar.material);
                 gsap.to(currentlyHoveredStar.material, {
@@ -117,6 +129,7 @@ window.addEventListener('pointermove', event => {
             starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
         }
     } else if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
+        console.log('Hover cleared, resetting previous star.');
         gsap.killTweensOf(currentlyHoveredStar.material);
         gsap.to(currentlyHoveredStar.material, {
             emissiveIntensity: defaultIntensity,
@@ -130,6 +143,7 @@ window.addEventListener('pointermove', event => {
 
 // Handle click logic for stars with a link
 window.addEventListener('pointerdown', event => {
+    console.log('Pointer down at:', event.clientX, event.clientY);
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(mouse, camera);
@@ -140,6 +154,7 @@ window.addEventListener('pointerdown', event => {
         const clickedStarData = starMeshes.find(star => star.mesh === clickedStar);
 
         if (clickedStarData && clickedStarData.link) {
+            console.log('Star clicked:', clickedStarData.name);
             if (activePulseTween) {
                 activePulseTween.kill();
                 activePulseTween = null;
@@ -178,24 +193,23 @@ window.addEventListener('pointerdown', event => {
                     ease: "power2.inOut"
                 });
 
-                spicaAudio.onended = () => {
-                    if (activePulseTween) {
-                        activePulseTween.kill();
-                        activePulseTween = null;
-                    }
-                    activeStar = null;
-                    gsap.to(bloomPass, {
-                        strength: 0.6, // Return to default strength
-                        duration: 1.5,
-                        ease: "power4.out",
-                        onComplete: () => { bloomPass.radius = 0.2; } // Reset bloom radius after click ends
-                    });
-                    gsap.to(clickedStar.material, {
-                        emissiveIntensity: defaultIntensity,
-                        duration: 1.5,
-                        ease: "power4.out"
-                    });
-                };
+                // Start camera zoom-in and rotation
+                gsap.to(camera.position, {
+                    x: clickedStar.position.x,
+                    y: clickedStar.position.y,
+                    z: clickedStar.position.z + 10,
+                    duration: 2.0,
+                    ease: "power2.inOut"
+                });
+
+                rotationTween = gsap.to(camera.rotation, {
+                    y: '+=6.28', // Rotate 360 degrees around the y-axis
+                    duration: 20.0,
+                    repeat: -1,
+                    ease: "linear"
+                });
+
+                isRotating = true;
             } else {
                 window.open(clickedStarData.link, '_blank');
                 console.log(`${clickedStarData.name} clicked! Opening URL...`);
@@ -231,11 +245,18 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update();
     composer.render();
+
+    // Detect if the user manually zooms out and reset the camera
+    if (isRotating && camera.position.z > 20) {
+        console.log('User zoomed out manually, resetting camera.');
+        resetCamera();
+    }
 }
 animate();
 
 // Handle window resizing
 window.addEventListener('resize', () => {
+    console.log('Window resized:', window.innerWidth, window.innerHeight);
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -261,15 +282,18 @@ analyzer.fftSize = 1024;
 const source = audioContext.createMediaElementSource(audio);
 source.connect(analyzer);
 analyzer.connect(audioContext.destination);
+console.log('Audio context and analyzer initialized.');
 
 // Play/Pause Button functionality
 playPauseBtn.addEventListener('click', () => {
+    console.log('Play/Pause button clicked.');
     if (isPlaying) {
         audio.pause();
         playPauseBtn.textContent = 'play';
 
         // Revert to hover state when paused
         if (activeStar) {
+            console.log('Pausing audio, reverting to hover state for star:', activeStar.name);
             gsap.killTweensOf(activeStar.material);
             gsap.to(activeStar.material, {
                 emissiveIntensity: defaultIntensity * hoverIntensityMultiplier,
@@ -280,8 +304,22 @@ playPauseBtn.addEventListener('click', () => {
                 strength: 0.6, // Return to default strength
                 duration: 1.5,
                 ease: "power4.out",
-                onComplete: () => { bloomPass.radius = 0.2; } // Reset bloom radius
+                onComplete: () => { 
+                    bloomPass.radius = 0.2; // Reset bloom radius
+                    if (activePulseTween) {
+                        console.log('Stopping active pulse tween during pause.');
+                        activePulseTween.kill();
+                        activePulseTween = null;
+                    }
+                }
             });
+        }
+
+        // Stop camera rotation
+        if (rotationTween) {
+            console.log('Stopping camera rotation.');
+            rotationTween.kill();
+            rotationTween = null;
         }
     } else {
         audio.play();
@@ -290,6 +328,7 @@ playPauseBtn.addEventListener('click', () => {
 
         // Proceed with play effects
         if (activeStar) {
+            console.log('Playing audio, starting effects for star:', activeStar.name);
             gsap.to(bloomPass, {
                 strength: 1.6, // Initial burst to 1.6 on click
                 duration: 1.0,
@@ -311,6 +350,14 @@ playPauseBtn.addEventListener('click', () => {
                 duration: 0.5,
                 ease: "power2.inOut"
             });
+
+            // Restart camera rotation
+            rotationTween = gsap.to(camera.rotation, {
+                y: '+=6.28',
+                duration: 20.0,
+                repeat: -1,
+                ease: "linear"
+            });
         }
     }
     isPlaying = !isPlaying;
@@ -318,18 +365,22 @@ playPauseBtn.addEventListener('click', () => {
 
 // Stop Button functionality
 stopBtn.addEventListener('click', () => {
+    console.log('Stop button clicked.');
     audio.pause();
     audio.currentTime = 0;  // Reset the audio to the beginning
     playPauseBtn.textContent = 'play';
     isPlaying = false;
     hideAudioPlayer();
     resetStarGlow();  // Reset stars to default state
+    resetCamera();  // Reset the camera to default state
 });
 
 // Function to reset stars to the default state
 function resetStarGlow() {
+    console.log('Resetting star glow to default state.');
     // Reset bloom effect strength and radius
     if (activePulseTween) {
+        console.log('Stopping active pulse tween during reset.');
         activePulseTween.kill();
         activePulseTween = null;
     }
@@ -350,18 +401,38 @@ function resetStarGlow() {
     starNameElement.innerHTML = "♍︎";
 }
 
+// Function to reset camera to default state
+function resetCamera() {
+    console.log('Resetting camera to default position.');
+    if (rotationTween) {
+        rotationTween.kill();
+        rotationTween = null;
+    }
+    gsap.to(camera.position, {
+        x: 0,
+        y: 0,
+        z: 50,
+        duration: 2.0,
+        ease: "power2.inOut"
+    });
+    isRotating = false;
+}
+
 // Rewind 30 seconds
 rewindBtn.addEventListener('click', () => {
+    console.log('Rewind button clicked.');
     audio.currentTime = Math.max(0, audio.currentTime - 30);
 });
 
 // Fast forward 30 seconds
 fastForwardBtn.addEventListener('click', () => {
+    console.log('Fast forward button clicked.');
     audio.currentTime = Math.min(audio.duration, audio.currentTime + 30);
 });
 
 // Show audio player and play audio
 function showAudioPlayer(audioSrc) {
+    console.log('Showing audio player for source:', audioSrc);
     audio.src = audioSrc;
     audioPlayerContainer.style.display = 'flex';
     audio.play();
@@ -372,11 +443,13 @@ function showAudioPlayer(audioSrc) {
 
 // Hide audio player
 function hideAudioPlayer() {
+    console.log('Hiding audio player.');
     audioPlayerContainer.style.display = 'none';
 }
 
 // Event listener for audio start on star click
 document.addEventListener("playAudio", (event) => {
+    console.log('playAudio event received for source:', event.detail.audioSrc);
     const audioSrc = event.detail.audioSrc;
     showAudioPlayer(audioSrc);
 });
@@ -384,6 +457,7 @@ document.addEventListener("playAudio", (event) => {
 // Event listener for playing Spica audio from dropdown menu
 document.getElementById('mixes-dropdown').addEventListener('change', (event) => {
     if (event.target.value === 'Spica') {
+        console.log('Dropdown selected Spica, playing audio.');
         showAudioPlayer(spicaAudio.src);
     }
 });
@@ -395,29 +469,4 @@ function drawWaveform() {
     const dataArray = new Uint8Array(bufferLength);
     analyzer.getByteTimeDomainData(dataArray);
 
-    const canvas = waveVisualizer;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#00ffcc';
-    ctx.beginPath();
-
-    const sliceWidth = canvas.width / bufferLength;
-    let x = 0;
-
-    for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = (v * canvas.height) / 2;
-
-        if (i === 0) {
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
-
-        x += sliceWidth;
-    }
-
-    ctx.lineTo(canvas.width, canvas.height / 2);
-    ctx.stroke();
-}
+    const canvas

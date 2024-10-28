@@ -60,8 +60,8 @@ starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0xffffff, // Default color: white
-        emissive: 0x000000, // No emissive color by default
-        emissiveIntensity: 0  // No glow initially
+        emissive: 0xffffff, // Default emissive color: white for visibility
+        emissiveIntensity: defaultIntensity  // Default glow intensity
     });
     const starMesh = new THREE.Mesh(geometry, material);
     starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
@@ -107,7 +107,7 @@ window.addEventListener('pointermove', event => {
             if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
                 gsap.killTweensOf(currentlyHoveredStar.material);
                 gsap.to(currentlyHoveredStar.material, {
-                    emissiveIntensity: 0,
+                    emissiveIntensity: defaultIntensity,
                     duration: 1.2,
                     ease: "power4.out"
                 });
@@ -127,7 +127,7 @@ window.addEventListener('pointermove', event => {
         console.log('Hover cleared, resetting previous star.');
         gsap.killTweensOf(currentlyHoveredStar.material);
         gsap.to(currentlyHoveredStar.material, {
-            emissiveIntensity: 0,
+            emissiveIntensity: defaultIntensity,
             duration: 1.2,
             ease: "power4.out"
         });
@@ -317,13 +317,12 @@ stopBtn.addEventListener('click', () => {
     playPauseBtn.textContent = 'play';
     isPlaying = false;
     hideAudioPlayer();
-    resetStarGlow();  // Reset stars to default state
-    resetCamera();    // Reset camera to default state
+    resetSceneToDefault();  // Reset scene to default state
 });
 
-// Function to reset stars to the default state
-function resetStarGlow() {
-    console.log('Resetting star glow to default state.');
+// Function to reset scene to default state
+function resetSceneToDefault() {
+    console.log('Resetting scene to default state.');
     // Reset bloom effect strength and radius
     if (activePulseTween) {
         console.log('Stopping active pulse tween during reset.');
@@ -336,12 +335,16 @@ function resetStarGlow() {
     // Reset each star's emissive intensity to the default
     starMeshes.forEach(starData => {
         gsap.to(starData.mesh.material, {
-            emissive: 0x000000, // No emissive color by default
-            emissiveIntensity: 0,
+            color: 0xffffff, // Ensure the color remains white
+            emissive: 0xffffff, // Default emissive color: white for visibility
+            emissiveIntensity: defaultIntensity, // Default glow intensity
             duration: 1.5,
             ease: "power4.out"
         });
     });
+
+    // Reset camera to default state
+    resetCamera();
 
     // Clear active star and reset the Virgo symbol
     activeStar = null;

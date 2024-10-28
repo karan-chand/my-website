@@ -190,21 +190,6 @@ window.addEventListener('pointerdown', event => {
     }
 });
 
-// Add functionality to play audio when selecting Spica from the dropdown
-const mixesDropdown = document.getElementById('mixes-dropdown');
-mixesDropdown.addEventListener('change', (event) => {
-    if (event.target.value === 'Spica') {
-        const spicaData = starMeshes.find(star => star.name === 'Spica');
-        if (spicaData && spicaData.link) {
-            console.log('Dropdown selection: Spica. Playing audio...');
-            const playAudioEvent = new CustomEvent("playAudio", {
-                detail: { audioSrc: spicaData.link }
-            });
-            document.dispatchEvent(playAudioEvent);
-        }
-    }
-});
-
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);

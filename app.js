@@ -34,22 +34,22 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Star data and creation with accurate Virgo coordinates from Earth's perspective (scaled to fit within -6.0 to 6.0)
+// Star data and creation adjusted for accuracy while retaining original spread and visual appeal
 const starData = [
-    { name: '109 Virginis', x: 1.20, y: -2.80, z: -1.30, size: 0.30 },
-    { name: 'Auva', x: 2.50, y: -3.20, z: -2.00, size: 0.40 },
-    { name: 'Heze', x: 0.90, y: -2.70, z: -0.75, size: 0.35 },
-    { name: 'Nu Virginis', x: 3.00, y: -1.75, z: -3.00, size: 0.30 },
-    { name: 'Omnicron Virginis', x: 2.70, y: -2.80, z: -1.50, size: 0.40 },
-    { name: 'Porrima', x: 1.10, y: -2.50, z: -0.38, size: 0.50 },
-    { name: 'Rijl Al Awwa', x: 1.00, y: -1.90, z: -0.60, size: 0.50 },
-    { name: 'Spica', x: 1.80, y: -1.00, z: -2.50, size: 1.00, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 2.00, y: -1.60, z: -0.70, size: 0.35 },
-    { name: 'Tau Virginis', x: 3.00, y: -1.25, z: -2.20, size: 0.30 },
-    { name: 'Theta Virginis', x: 1.35, y: -2.35, z: -3.15, size: 0.30 },
-    { name: 'Vindemiatrix', x: 2.40, y: -2.70, z: -1.00, size: 0.60 },
-    { name: 'Zaniah', x: 1.95, y: -2.60, z: -2.40, size: 0.40 },
-    { name: 'Zavijava', x: 0.80, y: -2.00, z: -0.35, size: 0.30 }
+    { name: '109 Virginis', x: 2.0, y: -4.0, z: 1.0, size: 0.3 },
+    { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
+    { name: 'Heze', x: 3.0, y: -1.0, z: 0.5, size: 0.35 },
+    { name: 'Nu Virginis', x: -2.5, y: 4.0, z: 2.0, size: 0.3 },
+    { name: 'Omnicron Virginis', x: 2.0, y: 4.0, z: 3.0, size: 0.4 },
+    { name: 'Porrima', x: 4.5, y: 2.0, z: 0.0, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 4.3, y: -4.0, z: -0.1, size: 0.5 },
+    { name: 'Spica', x: -2.0, y: -1.0, z: -2.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 4.0, y: 3.0, z: -1.0, size: 0.35 },
+    { name: 'Tau Virginis', x: 0.5, y: -2.0, z: 1.2, size: 0.3 },
+    { name: 'Theta Virginis', x: -4.0, y: 0.5, z: -2.0, size: 0.3 },
+    { name: 'Vindemiatrix', x: 2.5, y: 1.2, z: 2.5, size: 0.6 },
+    { name: 'Zaniah', x: -1.5, y: 3.0, z: 0.5, size: 0.4 },
+    { name: 'Zavijava', x: 5.0, y: 4.5, z: 1.0, size: 0.3 }
 ];
 
 

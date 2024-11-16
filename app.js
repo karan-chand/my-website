@@ -31,22 +31,22 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Star data and creation
+// Updated Star Data with Adjusted Coordinates for Earth Perspective
 const starData = [
-    { name: '109 Virginis', x: 2, y: -4, z: 1, size: 0.3 },
-    { name: 'Auva', x: 1.5, y: 1.5, z: 1.5, size: 0.4 },
-    { name: 'Heze', x: 3, y: -1, z: 0.5, size: 0.35 },
-    { name: 'Nu Virginis', x: -2.5, y: 4, z: 2, size: 0.3 },
-    { name: 'Omnicron Virginis', x: 2, y: 4, z: 3, size: 0.4 },
-    { name: 'Porrima', x: 4.5, y: 2, z: 0, size: 0.5 },
-    { name: 'Rijl Al Awwa', x: 4.3, y: -4, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -2, y: -1, z: -2, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 4, y: 3, z: -1, size: 0.35 },
-    { name: 'Tau Virginis', x: 0.5, y: -2, z: 1.2, size: 0.3 },
-    { name: 'Theta Virginis', x: -4, y: 0.5, z: -2, size: 0.3 },
-    { name: 'Vindemiatrix', x: 2.5, y: 1.2, z: 2.5, size: 0.6 },
-    { name: 'Zaniah', x: -1.5, y: 3, z: 0.5, size: 0.4 },
-    { name: 'Zavijava', x: 5, y: 4.5, z: 1, size: 0.3 }
+    { name: '109 Virginis', x: 0.33, y: -0.67, z: 1.0, size: 0.3 },
+    { name: 'Auva', x: 0.23, y: 0.23, z: 1.5, size: 0.4 },
+    { name: 'Heze', x: 0.55, y: -0.18, z: 0.5, size: 0.35 },
+    { name: 'Nu Virginis', x: -0.36, y: 0.57, z: 2.0, size: 0.3 },
+    { name: 'Omnicron Virginis', x: 0.25, y: 0.50, z: 3.0, size: 0.4 },
+    { name: 'Porrima', x: 0.9, y: 0.4, z: 0.0, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 0.86, y: -0.8, z: -0.1, size: 0.5 },
+    { name: 'Spica', x: -0.4, y: -0.2, z: -2.0, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 0.67, y: 0.5, z: -1.0, size: 0.35 },
+    { name: 'Tau Virginis', x: 0.09, y: -0.36, z: 1.2, size: 0.3 },
+    { name: 'Theta Virginis', x: -0.8, y: 0.1, z: -2.0, size: 0.3 },
+    { name: 'Vindemiatrix', x: 0.45, y: 0.22, z: 2.5, size: 0.6 },
+    { name: 'Zaniah', x: -0.3, y: 0.6, z: 0.5, size: 0.4 },
+    { name: 'Zavijava', x: 0.83, y: 0.75, z: 1.0, size: 0.3 }
 ];
 
 let starMeshes = [];

@@ -34,23 +34,24 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Star data and creation with accurate Virgo coordinates from Earth's perspective (camera at 0,0,0)
+// Star data and creation with accurate Virgo coordinates from Earth's perspective (scaled to fit within -6.0 to 6.0)
 const starData = [
-    { name: '109 Virginis', x: 2.03, y: -4.74, z: -2.09, size: 0.30 },
-    { name: 'Auva', x: 4.37, y: -5.32, z: -3.21, size: 0.40 },
-    { name: 'Heze', x: 1.64, y: -4.57, z: -1.20, size: 0.35 },
-    { name: 'Nu Virginis', x: 5.35, y: -3.11, z: -5.35, size: 0.30 },
-    { name: 'Omnicron Virginis', x: 4.84, y: -4.38, z: -2.46, size: 0.40 },
-    { name: 'Porrima', x: 1.91, y: -4.17, z: -0.62, size: 0.50 },
-    { name: 'Rijl Al Awwa', x: 1.73, y: -3.16, z: -0.97, size: 0.50 },
-    { name: 'Spica', x: 3.08, y: -1.74, z: -4.05, size: 1.00, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 3.52, y: -2.75, z: -1.13, size: 0.35 },
-    { name: 'Tau Virginis', x: 5.26, y: -2.17, z: -3.60, size: 0.30 },
-    { name: 'Theta Virginis', x: 2.35, y: -4.07, z: -5.19, size: 0.30 },
-    { name: 'Vindemiatrix', x: 4.28, y: -4.63, z: -1.65, size: 0.60 },
-    { name: 'Zaniah', x: 3.46, y: -4.50, z: -4.29, size: 0.40 },
-    { name: 'Zavijava', x: 1.42, y: -3.52, z: -0.58, size: 0.30 }
+    { name: '109 Virginis', x: 1.20, y: -2.80, z: -1.30, size: 0.30 },
+    { name: 'Auva', x: 2.50, y: -3.20, z: -2.00, size: 0.40 },
+    { name: 'Heze', x: 0.90, y: -2.70, z: -0.75, size: 0.35 },
+    { name: 'Nu Virginis', x: 3.00, y: -1.75, z: -3.00, size: 0.30 },
+    { name: 'Omnicron Virginis', x: 2.70, y: -2.80, z: -1.50, size: 0.40 },
+    { name: 'Porrima', x: 1.10, y: -2.50, z: -0.38, size: 0.50 },
+    { name: 'Rijl Al Awwa', x: 1.00, y: -1.90, z: -0.60, size: 0.50 },
+    { name: 'Spica', x: 1.80, y: -1.00, z: -2.50, size: 1.00, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 2.00, y: -1.60, z: -0.70, size: 0.35 },
+    { name: 'Tau Virginis', x: 3.00, y: -1.25, z: -2.20, size: 0.30 },
+    { name: 'Theta Virginis', x: 1.35, y: -2.35, z: -3.15, size: 0.30 },
+    { name: 'Vindemiatrix', x: 2.40, y: -2.70, z: -1.00, size: 0.60 },
+    { name: 'Zaniah', x: 1.95, y: -2.60, z: -2.40, size: 0.40 },
+    { name: 'Zavijava', x: 0.80, y: -2.00, z: -0.35, size: 0.30 }
 ];
+
 
 let starMeshes = [];
 const defaultIntensity = 0.4; // Bright base glow

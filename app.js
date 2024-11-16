@@ -36,15 +36,16 @@ console.log('Bloom pass added to composer with settings:', bloomPass);
 
 // Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on right ascension and declination values, scaled to fit within -6.0 to 6.0
 const starData = [
-    { name: 'Vindemiatrix', x: 5.5, y: 6.0, z: 0.0, size: 0.6 },  // Top center-right, adjusted
-    { name: 'Auva', x: -6.0, y: 4.0, z: 0.0, size: 0.4 },         // Top left, adjusted
-    { name: 'Heze', x: -4.5, y: 2.0, z: 0.0, size: 0.35 },        // Mid left, adjusted
-    { name: 'Porrima', x: 0.0, y: 0.0, z: 0.0, size: 0.5 },       // Center
-    { name: 'Zaniah', x: 3.0, y: 2.0, z: 0.0, size: 0.4 },        // Above Porrima, adjusted
-    { name: 'Zavijava', x: -2.0, y: 2.2, z: 0.0, size: 0.3 },     // Near center-left, adjusted
-    { name: 'Syrma', x: 4.5, y: -4.0, z: 0.0, size: 0.35 },       // Bottom right, adjusted
-    { name: 'Spica', x: 0.0, y: -6.0, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' } // Bottom center
+    { name: 'Vindemiatrix', x: 4.5, y: 6.0, z: 0.0, size: 0.6 },  // Top center-right, adjusted to match diagram
+    { name: 'Auva', x: -5.5, y: 4.0, z: 0.0, size: 0.4 },         // Top left, adjusted to match diagram
+    { name: 'Heze', x: -3.5, y: 3.0, z: 0.0, size: 0.35 },        // Mid left, adjusted to match diagram
+    { name: 'Porrima', x: 0.0, y: 1.0, z: 0.0, size: 0.5 },       // Center, adjusted to match diagram
+    { name: 'Zaniah', x: 2.5, y: 2.5, z: 0.0, size: 0.4 },        // Above Porrima, adjusted to match diagram
+    { name: 'Zavijava', x: -2.0, y: 2.0, z: 0.0, size: 0.3 },     // Near center-left, adjusted to match diagram
+    { name: 'Syrma', x: 3.5, y: -3.5, z: 0.0, size: 0.35 },       // Bottom right, adjusted to match diagram
+    { name: 'Spica', x: 0.0, y: -6.0, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' } // Bottom center, adjusted to match diagram
 ];
+
 
 
 

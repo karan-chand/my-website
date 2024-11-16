@@ -31,23 +31,28 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Updated Star Data with Earth Perspective Coordinates
 const starData = [
-    { name: '109 Virginis', x: 12.05, y: -3.17, z: 9.5, size: 0.4 },
-    { name: 'Auva', x: 8.23, y: 5.67, z: -2.1, size: 0.45 },
-    { name: 'Heze', x: 5.35, y: -6.23, z: 4.5, size: 0.4 },
-    { name: 'Nu Virginis', x: -3.5, y: 10.0, z: 6.8, size: 0.35 },
-    { name: 'Omnicron Virginis', x: 4.8, y: 8.1, z: -3.2, size: 0.45 },
-    { name: 'Porrima', x: 9.6, y: 3.9, z: 0.1, size: 0.5 },
-    { name: 'Rijl Al Awwa', x: 8.4, y: -9.2, z: -0.3, size: 0.6 },
-    { name: 'Spica', x: -2.5, y: -4.5, z: -6.9, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 6.8, y: 7.2, z: -5.0, size: 0.4 },
-    { name: 'Tau Virginis', x: 0.5, y: -7.5, z: 2.3, size: 0.3 },
-    { name: 'Theta Virginis', x: -7.8, y: 0.8, z: -4.2, size: 0.35 },
-    { name: 'Vindemiatrix', x: 3.6, y: 2.1, z: 7.2, size: 0.55 },
-    { name: 'Zaniah', x: -2.2, y: 9.4, z: 1.3, size: 0.4 },
-    { name: 'Zavijava', x: 10.1, y: 7.6, z: 2.4, size: 0.4 }
+    { name: '109 Virginis', ra: 14.68, dec: -5.4, size: 0.4 },
+    { name: 'Auva', ra: 12.93, dec: 3.4, size: 0.45 },
+    { name: 'Heze', ra: 13.75, dec: -0.6, size: 0.4 },
+    { name: 'Nu Virginis', ra: 14.45, dec: -7.6, size: 0.35 },
+    { name: 'Omnicron Virginis', ra: 14.27, dec: 1.6, size: 0.45 },
+    { name: 'Porrima', ra: 12.85, dec: -1.2, size: 0.5 },
+    { name: 'Rijl Al Awwa', ra: 14.64, dec: -6.0, size: 0.6 },
+    { name: 'Spica', ra: 13.42, dec: -11.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', ra: 13.84, dec: -8.2, size: 0.4 },
+    { name: 'Tau Virginis', ra: 14.03, dec: 2.2, size: 0.3 },
+    { name: 'Theta Virginis', ra: 12.15, dec: -1.0, size: 0.35 },
+    { name: 'Vindemiatrix', ra: 13.04, dec: 10.9, size: 0.55 },
+    { name: 'Zaniah', ra: 13.23, dec: 2.5, size: 0.4 },
+    { name: 'Zavijava', ra: 12.43, dec: 4.3, size: 0.4 }
 ];
+
+// Convert to Cartesian coordinates for use in your 3D scene
+const convertedStarData = starData.map(star => {
+    const { x, y, z } = raDecToCartesian(star.ra, star.dec);
+    return { ...star, x, y, z };
+});
 
 let starMeshes = [];
 const defaultIntensity = 0.4; // Bright base glow

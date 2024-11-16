@@ -31,6 +31,18 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
+// Function to convert RA/Dec to Cartesian coordinates
+function raDecToCartesian(ra, dec) {
+    const raRad = (ra / 24) * 2 * Math.PI; // Convert RA from hours to radians
+    const decRad = (dec / 180) * Math.PI;  // Convert Dec from degrees to radians
+
+    // Convert spherical coordinates (RA, Dec) to Cartesian coordinates (x, y, z)
+    const x = Math.cos(decRad) * Math.cos(raRad);
+    const y = Math.cos(decRad) * Math.sin(raRad);
+    const z = Math.sin(decRad);
+    return { x, y, z };
+}
+
 const starData = [
     { name: '109 Virginis', ra: 14.68, dec: -5.4, size: 0.4 },
     { name: 'Auva', ra: 12.93, dec: 3.4, size: 0.45 },
@@ -48,7 +60,7 @@ const starData = [
     { name: 'Zavijava', ra: 12.43, dec: 4.3, size: 0.4 }
 ];
 
-// Convert to Cartesian coordinates for use in your 3D scene
+// Convert starData from RA/Dec to Cartesian coordinates
 const convertedStarData = starData.map(star => {
     const { x, y, z } = raDecToCartesian(star.ra, star.dec);
     return { ...star, x, y, z };
@@ -61,7 +73,7 @@ const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
 
 // Create stars in the scene with adjusted coordinates and sizes
-starData.forEach(star => {
+convertedStarData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0xe0e0ff,
@@ -70,19 +82,17 @@ starData.forEach(star => {
     });
     const starMesh = new THREE.Mesh(geometry, material);
 
-    // Scale the coordinates to fit the scene
-    const scaleFactor = 3; // Adjust this factor to fit your scene better
+    const scaleFactor = 10; // Adjust this factor to fit your scene better
     starMesh.position.set(star.x * scaleFactor, star.y * scaleFactor, star.z * scaleFactor);
     scene.add(starMesh);
 
-    // Store mesh and data for interaction
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
     console.log('Star added to scene:', star.name, starMesh.position);
 });
 
-// Adjust camera position for Earth-like view and set controls
-camera.position.set(0, 0, 30); // Adjusted closer to fit the 3D scene scale based on "3.0 adjustment"
-console.log('Camera position set to:', camera.position);
+    // Adjust camera position for Earth-like view and set controls
+    camera.position.set(0, 0, 30); // Adjusted closer to fit the 3D scene scale
+    console.log('Camera position set to:', camera.position);
 
 // Configure Orbit Controls with smoother interaction
 const controls = new THREE.OrbitControls(camera, renderer.domElement);

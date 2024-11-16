@@ -34,22 +34,22 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Updated Star Data for Virgo Constellation with Adjusted Coordinates (Closer Together)
+// Star data and creation with accurate Virgo coordinates
 const starData = [
-    { name: '109 Virginis', x: -2.81, y: 4.93, z: -1.35, size: 0.3 },
-    { name: 'Auva', x: -4.63, y: 14.82, z: 1.19, size: 0.4 },
-    { name: 'Heze', x: 1.86, y: -7.16, z: -0.06, size: 0.35 },
-    { name: 'Nu Virginis', x: -15.85, y: 24.91, z: 3.34, size: 0.3 },
-    { name: 'Omnicron Virginis', x: 5.05, y: -14.57, z: -1.73, size: 0.4 },
-    { name: 'Porrima', x: 3.70, y: -2.03, z: -0.10, size: 0.5 },
-    { name: 'Rijl Al Awwa', x: 3.51, y: -5.99, z: -0.54, size: 0.5 },
-    { name: 'Spica', x: -5.33, y: 17.77, z: -4.86, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 1.37, y: 6.86, z: -0.73, size: 0.35 },
-    { name: 'Tau Virginis', x: -5.74, y: 20.42, z: 1.32, size: 0.3 },
-    { name: 'Theta Virginis', x: -19.39, y: 8.82, z: -3.07, size: 0.3 },
-    { name: 'Vindemiatrix', x: 2.51, y: 9.74, z: 1.93, size: 0.6 },
-    { name: 'Zaniah', x: -6.12, y: 21.68, z: -0.32, size: 0.4 },
-    { name: 'Zavijava', x: 0.87, y: 3.50, z: 0.10, size: 0.3 }
+    { name: '109 Virginis', x: 5.4, y: -3.6, z: 2.1, size: 0.3 },
+    { name: 'Auva', x: 3.5, y: 1.2, z: 4.0, size: 0.4 },
+    { name: 'Heze', x: 6.3, y: -0.9, z: 1.1, size: 0.35 },
+    { name: 'Nu Virginis', x: -2.8, y: 4.5, z: 3.2, size: 0.3 },
+    { name: 'Omnicron Virginis', x: 2.4, y: 5.1, z: 3.6, size: 0.4 },
+    { name: 'Porrima', x: 4.8, y: 2.7, z: 0.8, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 4.1, y: -3.8, z: -0.3, size: 0.5 },
+    { name: 'Spica', x: -1.9, y: -1.2, z: -1.8, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 3.8, y: 2.8, z: -0.9, size: 0.35 },
+    { name: 'Tau Virginis', x: 1.0, y: -1.8, z: 2.5, size: 0.3 },
+    { name: 'Theta Virginis', x: -3.9, y: 0.7, z: -2.4, size: 0.3 },
+    { name: 'Vindemiatrix', x: 2.9, y: 1.8, z: 3.3, size: 0.6 },
+    { name: 'Zaniah', x: -1.2, y: 3.7, z: 1.0, size: 0.4 },
+    { name: 'Zavijava', x: 5.6, y: 4.9, z: 1.4, size: 0.3 }
 ];
 
 let starMeshes = [];

@@ -1,12 +1,15 @@
 // Custom cursor element for mobile and tablet
 const customCursor = document.getElementById('custom-cursor');
-
-// Update cursor position on pointermove (for mobile/touch support)
-window.addEventListener('pointermove', (event) => {
-    console.log('Pointer moved:', event.pageX, event.pageY);
-    customCursor.style.left = ${event.pageX}px;
-    customCursor.style.top = ${event.pageY}px;
-});
+if (customCursor) {
+    // Update cursor position on pointermove (for mobile/touch support)
+    window.addEventListener('pointermove', (event) => {
+        console.log('Pointer moved:', event.pageX, event.pageY);
+        customCursor.style.left = `${event.pageX}px`;
+        customCursor.style.top = `${event.pageY}px`;
+    });
+} else {
+    console.error('Custom cursor element not found.');
+}
 
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
@@ -101,9 +104,10 @@ window.addEventListener('pointermove', event => {
 
     if (intersects.length > 0) {
         const hoveredStar = intersects[0].object;
+        const hoveredStarData = starMeshes.find(star => star.mesh === hoveredStar);
 
-        if (currentlyHoveredStar !== hoveredStar) {
-            console.log('New star hovered:', hoveredStar.name);
+        if (currentlyHoveredStar !== hoveredStar && hoveredStarData) {
+            console.log('New star hovered:', hoveredStarData.name);
             if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
                 gsap.killTweensOf(currentlyHoveredStar.material);
                 gsap.to(currentlyHoveredStar.material, {
@@ -121,7 +125,7 @@ window.addEventListener('pointermove', event => {
             });
 
             currentlyHoveredStar = hoveredStar;
-            starNameElement.innerHTML = starMeshes.find(star => star.mesh === hoveredStar).name;
+            starNameElement.innerHTML = hoveredStarData.name;
         }
     } else if (currentlyHoveredStar && currentlyHoveredStar !== activeStar) {
         console.log('Hover cleared, resetting previous star.');
@@ -168,7 +172,7 @@ function handleStarClick(clientX, clientY) {
             });
             document.dispatchEvent(playAudioEvent);
 
-            console.log(${clickedStarData.name} clicked! Playing audio...);
+            console.log(`${clickedStarData.name} clicked! Playing audio...`);
 
             gsap.to(bloomPass, {
                 strength: 1.6, // Initial burst to 1.6 on click

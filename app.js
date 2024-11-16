@@ -34,22 +34,22 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Updated Star Data for Virgo Constellation with Accurate Coordinates from Earth's Perspective
+// Updated Star Data for Virgo Constellation with Adjusted Coordinates (Closer Together)
 const starData = [
-    { name: '109 Virginis', x: -28.1, y: 49.3, z: -13.5, size: 0.3 },
-    { name: 'Auva', x: -46.3, y: 148.2, z: 11.9, size: 0.4 },
-    { name: 'Heze', x: 18.6, y: -71.6, z: -0.6, size: 0.35 },
-    { name: 'Nu Virginis', x: -158.5, y: 249.1, z: 33.4, size: 0.3 },
-    { name: 'Omnicron Virginis', x: 50.5, y: -145.7, z: -17.3, size: 0.4 },
-    { name: 'Porrima', x: 37.0, y: -20.3, z: -1.0, size: 0.5 },
-    { name: 'Rijl Al Awwa', x: 35.1, y: -59.9, z: -5.4, size: 0.5 },
-    { name: 'Spica', x: -53.3, y: 177.7, z: -48.6, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 13.7, y: 68.6, z: -7.3, size: 0.35 },
-    { name: 'Tau Virginis', x: -57.4, y: 204.2, z: 13.2, size: 0.3 },
-    { name: 'Theta Virginis', x: -193.9, y: 88.2, z: -30.7, size: 0.3 },
-    { name: 'Vindemiatrix', x: 25.1, y: 97.4, z: 19.3, size: 0.6 },
-    { name: 'Zaniah', x: -61.2, y: 216.8, z: -3.2, size: 0.4 },
-    { name: 'Zavijava', x: 8.7, y: 35.0, z: 1.0, size: 0.3 }
+    { name: '109 Virginis', x: -2.81, y: 4.93, z: -1.35, size: 0.3 },
+    { name: 'Auva', x: -4.63, y: 14.82, z: 1.19, size: 0.4 },
+    { name: 'Heze', x: 1.86, y: -7.16, z: -0.06, size: 0.35 },
+    { name: 'Nu Virginis', x: -15.85, y: 24.91, z: 3.34, size: 0.3 },
+    { name: 'Omnicron Virginis', x: 5.05, y: -14.57, z: -1.73, size: 0.4 },
+    { name: 'Porrima', x: 3.70, y: -2.03, z: -0.10, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 3.51, y: -5.99, z: -0.54, size: 0.5 },
+    { name: 'Spica', x: -5.33, y: 17.77, z: -4.86, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 1.37, y: 6.86, z: -0.73, size: 0.35 },
+    { name: 'Tau Virginis', x: -5.74, y: 20.42, z: 1.32, size: 0.3 },
+    { name: 'Theta Virginis', x: -19.39, y: 8.82, z: -3.07, size: 0.3 },
+    { name: 'Vindemiatrix', x: 2.51, y: 9.74, z: 1.93, size: 0.6 },
+    { name: 'Zaniah', x: -6.12, y: 21.68, z: -0.32, size: 0.4 },
+    { name: 'Zavijava', x: 0.87, y: 3.50, z: 0.10, size: 0.3 }
 ];
 
 let starMeshes = [];

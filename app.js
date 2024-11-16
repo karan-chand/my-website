@@ -34,16 +34,16 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Star data and creation focused on prominent stars visible in the Virgo constellation map with positions accurately matched to the SVG diagram
+// Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on declination values, scaled to fit within -6.0 to 6.0
 const starData = [
-    { name: 'Vindemiatrix', x: 2.5, y: 4.5, z: 0.0, size: 0.6 },  // Top center-right
-    { name: 'Auva', x: -3.0, y: 2.5, z: 0.0, size: 0.4 },         // Top left
-    { name: 'Heze', x: -1.8, y: 1.0, z: 0.0, size: 0.35 },        // Mid left
-    { name: 'Porrima', x: 0.0, y: 1.5, z: 0.0, size: 0.5 },       // Center
-    { name: 'Zaniah', x: 0.5, y: 2.0, z: 0.0, size: 0.4 },        // Above Porrima
-    { name: 'Zavijava', x: -0.5, y: 2.2, z: 0.0, size: 0.3 },     // Near center, slightly to the left
-    { name: 'Syrma', x: 2.0, y: -1.5, z: 0.0, size: 0.35 },       // Bottom right
-    { name: 'Spica', x: 0.0, y: -4.5, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' } // Bottom center
+    { name: 'Vindemiatrix', x: 1.4, y: 6.0, z: 0.0, size: 0.6 },  // Top center-right, scaled
+    { name: 'Auva', x: -1.6, y: 4.0, z: 0.0, size: 0.4 },         // Top left, scaled
+    { name: 'Heze', x: -1.0, y: 2.0, z: 0.0, size: 0.35 },        // Mid left, scaled
+    { name: 'Porrima', x: 0.0, y: 0.0, z: 0.0, size: 0.5 },       // Center, scaled
+    { name: 'Zaniah', x: 0.4, y: 2.0, z: 0.0, size: 0.4 },        // Above Porrima, scaled
+    { name: 'Zavijava', x: -0.6, y: 2.2, z: 0.0, size: 0.3 },     // Near center-left, scaled
+    { name: 'Syrma', x: 1.6, y: -4.0, z: 0.0, size: 0.35 },       // Bottom right, scaled
+    { name: 'Spica', x: 0.0, y: -6.0, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' } // Bottom center, scaled
 ];
 
 

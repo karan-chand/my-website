@@ -31,22 +31,22 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Updated Star Data with Adjusted Coordinates for Earth Perspective
+// Updated Star Data with Earth Perspective Coordinates
 const starData = [
-    { name: '109 Virginis', x: 0.33, y: -0.67, z: 1.0, size: 0.3 },
-    { name: 'Auva', x: 0.23, y: 0.23, z: 1.5, size: 0.4 },
-    { name: 'Heze', x: 0.55, y: -0.18, z: 0.5, size: 0.35 },
-    { name: 'Nu Virginis', x: -0.36, y: 0.57, z: 2.0, size: 0.3 },
-    { name: 'Omnicron Virginis', x: 0.25, y: 0.50, z: 3.0, size: 0.4 },
-    { name: 'Porrima', x: 0.9, y: 0.4, z: 0.0, size: 0.5 },
-    { name: 'Rijl Al Awwa', x: 0.86, y: -0.8, z: -0.1, size: 0.5 },
-    { name: 'Spica', x: -0.4, y: -0.2, z: -2.0, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', x: 0.67, y: 0.5, z: -1.0, size: 0.35 },
-    { name: 'Tau Virginis', x: 0.09, y: -0.36, z: 1.2, size: 0.3 },
-    { name: 'Theta Virginis', x: -0.8, y: 0.1, z: -2.0, size: 0.3 },
-    { name: 'Vindemiatrix', x: 0.45, y: 0.22, z: 2.5, size: 0.6 },
-    { name: 'Zaniah', x: -0.3, y: 0.6, z: 0.5, size: 0.4 },
-    { name: 'Zavijava', x: 0.83, y: 0.75, z: 1.0, size: 0.3 }
+    { name: '109 Virginis', x: 12.05, y: -3.17, z: 9.5, size: 0.4 },
+    { name: 'Auva', x: 8.23, y: 5.67, z: -2.1, size: 0.45 },
+    { name: 'Heze', x: 5.35, y: -6.23, z: 4.5, size: 0.4 },
+    { name: 'Nu Virginis', x: -3.5, y: 10.0, z: 6.8, size: 0.35 },
+    { name: 'Omnicron Virginis', x: 4.8, y: 8.1, z: -3.2, size: 0.45 },
+    { name: 'Porrima', x: 9.6, y: 3.9, z: 0.1, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 8.4, y: -9.2, z: -0.3, size: 0.6 },
+    { name: 'Spica', x: -2.5, y: -4.5, z: -6.9, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 6.8, y: 7.2, z: -5.0, size: 0.4 },
+    { name: 'Tau Virginis', x: 0.5, y: -7.5, z: 2.3, size: 0.3 },
+    { name: 'Theta Virginis', x: -7.8, y: 0.8, z: -4.2, size: 0.35 },
+    { name: 'Vindemiatrix', x: 3.6, y: 2.1, z: 7.2, size: 0.55 },
+    { name: 'Zaniah', x: -2.2, y: 9.4, z: 1.3, size: 0.4 },
+    { name: 'Zavijava', x: 10.1, y: 7.6, z: 2.4, size: 0.4 }
 ];
 
 let starMeshes = [];
@@ -55,32 +55,50 @@ const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
 
-// Create stars in the scene
+// Create stars in the scene with adjusted coordinates and sizes
 starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0xe0e0ff,
         emissive: 0xffffff,
-        emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
+        emissiveIntensity: defaultIntensity,
     });
     const starMesh = new THREE.Mesh(geometry, material);
-    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
+
+    // Scale the coordinates to fit the scene
+    const scaleFactor = 3; // Adjust this factor to fit your scene better
+    starMesh.position.set(star.x * scaleFactor, star.y * scaleFactor, star.z * scaleFactor);
     scene.add(starMesh);
+
+    // Store mesh and data for interaction
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
     console.log('Star added to scene:', star.name, starMesh.position);
 });
 
-// Adjust camera and controls
-camera.position.z = 50;
+// Adjust camera position for Earth-like view and set controls
+camera.position.set(0, 0, 30); // Adjusted closer to fit the 3D scene scale based on "3.0 adjustment"
 console.log('Camera position set to:', camera.position);
+
+// Configure Orbit Controls with smoother interaction
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.rotateSpeed = 0.7;
-controls.enableZoom = true;
-controls.enablePan = false;
-controls.target.set(0, 0, 0);  // Set initial focus point to the center
-console.log('Orbit controls configured.');
+controls.enableDamping = true;          // Smooth control movements
+controls.dampingFactor = 0.07;          // Slightly increased for smoother transitions
+controls.rotateSpeed = 0.4;             // Reduced rotation speed for better control
+controls.enableZoom = true;             // Allow zooming in/out
+controls.zoomSpeed = 0.6;               // Adjust zoom speed
+
+// Optional: Set limits on how far the camera can zoom in/out
+controls.maxDistance = 100; // Maximum distance (zoom out limit)
+
+// Optional: Enable panning if you want to allow horizontal/vertical movement
+controls.enablePan = true; // Change to 'false' if you want to lock panning
+controls.panSpeed = 0.8;   // Adjust the panning speed
+
+// Set the initial focus point to the center of the constellation
+controls.target.set(0, 0, 0);
+controls.update();
+
+console.log('Orbit controls configured with new settings.');
 
 // Raycaster for hover detection
 const raycaster = new THREE.Raycaster();

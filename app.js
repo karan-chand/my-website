@@ -4,8 +4,8 @@ const customCursor = document.getElementById('custom-cursor');
 // Update cursor position on pointermove (for mobile/touch support)
 window.addEventListener('pointermove', (event) => {
     console.log('Pointer moved:', event.pageX, event.pageY);
-    customCursor.style.left = `${event.pageX}px`;
-    customCursor.style.top = `${event.pageY}px`;
+    customCursor.style.left = ${event.pageX}px;
+    customCursor.style.top = ${event.pageY}px;
 });
 
 // Initialize the scene, camera, and renderer
@@ -31,40 +31,23 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Function to convert RA/Dec to Cartesian coordinates
-function raDecToCartesian(ra, dec) {
-    const raRad = (ra / 24) * 2 * Math.PI; // Convert RA from hours to radians
-    const decRad = (dec / 180) * Math.PI;  // Convert Dec from degrees to radians
-
-    // Convert spherical coordinates (RA, Dec) to Cartesian coordinates (x, y, z)
-    const x = Math.cos(decRad) * Math.cos(raRad);
-    const y = Math.cos(decRad) * Math.sin(raRad);
-    const z = Math.sin(decRad);
-    return { x, y, z };
-}
-
+// Updated Star Data with Adjusted Coordinates for Earth Perspective
 const starData = [
-    { name: '109 Virginis', ra: 14.68, dec: -5.4, size: 0.4 },
-    { name: 'Auva', ra: 12.93, dec: 3.4, size: 0.45 },
-    { name: 'Heze', ra: 13.75, dec: -0.6, size: 0.4 },
-    { name: 'Nu Virginis', ra: 14.45, dec: -7.6, size: 0.35 },
-    { name: 'Omnicron Virginis', ra: 14.27, dec: 1.6, size: 0.45 },
-    { name: 'Porrima', ra: 12.85, dec: -1.2, size: 0.5 },
-    { name: 'Rijl Al Awwa', ra: 14.64, dec: -6.0, size: 0.6 },
-    { name: 'Spica', ra: 13.42, dec: -11.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
-    { name: 'Syrma', ra: 13.84, dec: -8.2, size: 0.4 },
-    { name: 'Tau Virginis', ra: 14.03, dec: 2.2, size: 0.3 },
-    { name: 'Theta Virginis', ra: 12.15, dec: -1.0, size: 0.35 },
-    { name: 'Vindemiatrix', ra: 13.04, dec: 10.9, size: 0.55 },
-    { name: 'Zaniah', ra: 13.23, dec: 2.5, size: 0.4 },
-    { name: 'Zavijava', ra: 12.43, dec: 4.3, size: 0.4 }
+    { name: '109 Virginis', x: 0.33, y: -0.67, z: 1.0, size: 0.3 },
+    { name: 'Auva', x: 0.23, y: 0.23, z: 1.5, size: 0.4 },
+    { name: 'Heze', x: 0.55, y: -0.18, z: 0.5, size: 0.35 },
+    { name: 'Nu Virginis', x: -0.36, y: 0.57, z: 2.0, size: 0.3 },
+    { name: 'Omnicron Virginis', x: 0.25, y: 0.50, z: 3.0, size: 0.4 },
+    { name: 'Porrima', x: 0.9, y: 0.4, z: 0.0, size: 0.5 },
+    { name: 'Rijl Al Awwa', x: 0.86, y: -0.8, z: -0.1, size: 0.5 },
+    { name: 'Spica', x: -0.4, y: -0.2, z: -2.0, size: 1, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'Syrma', x: 0.67, y: 0.5, z: -1.0, size: 0.35 },
+    { name: 'Tau Virginis', x: 0.09, y: -0.36, z: 1.2, size: 0.3 },
+    { name: 'Theta Virginis', x: -0.8, y: 0.1, z: -2.0, size: 0.3 },
+    { name: 'Vindemiatrix', x: 0.45, y: 0.22, z: 2.5, size: 0.6 },
+    { name: 'Zaniah', x: -0.3, y: 0.6, z: 0.5, size: 0.4 },
+    { name: 'Zavijava', x: 0.83, y: 0.75, z: 1.0, size: 0.3 }
 ];
-
-// Convert starData from RA/Dec to Cartesian coordinates
-const convertedStarData = starData.map(star => {
-    const { x, y, z } = raDecToCartesian(star.ra, star.dec);
-    return { ...star, x, y, z };
-});
 
 let starMeshes = [];
 const defaultIntensity = 0.4; // Bright base glow
@@ -72,48 +55,32 @@ const hoverIntensityMultiplier = 1.8;
 const clickIntensityMultiplier = 1.8; // Reduced to avoid overly intense glow
 let currentlyHoveredStar = null;
 
-// Create stars in the scene with adjusted coordinates and sizes
-convertedStarData.forEach(star => {
+// Create stars in the scene
+starData.forEach(star => {
     const geometry = new THREE.SphereGeometry(star.size, 32, 32);
     const material = new THREE.MeshStandardMaterial({
         color: 0xe0e0ff,
         emissive: 0xffffff,
-        emissiveIntensity: defaultIntensity,
+        emissiveIntensity: defaultIntensity, // Default intensity for subtle glow
     });
     const starMesh = new THREE.Mesh(geometry, material);
-
-    const scaleFactor = 10; // Adjust this factor to fit your scene better
-    starMesh.position.set(star.x * scaleFactor, star.y * scaleFactor, star.z * scaleFactor);
+    starMesh.position.set(star.x * 5, star.y * 5, star.z * 5);
     scene.add(starMesh);
-
     starMeshes.push({ mesh: starMesh, name: star.name, link: star.link });
     console.log('Star added to scene:', star.name, starMesh.position);
 });
 
-    // Adjust camera position for Earth-like view and set controls
-    camera.position.set(0, 0, 30); // Adjusted closer to fit the 3D scene scale
-    console.log('Camera position set to:', camera.position);
-
-// Configure Orbit Controls with smoother interaction
+// Adjust camera and controls
+camera.position.z = 50;
+console.log('Camera position set to:', camera.position);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;          // Smooth control movements
-controls.dampingFactor = 0.07;          // Slightly increased for smoother transitions
-controls.rotateSpeed = 0.4;             // Reduced rotation speed for better control
-controls.enableZoom = true;             // Allow zooming in/out
-controls.zoomSpeed = 0.6;               // Adjust zoom speed
-
-// Optional: Set limits on how far the camera can zoom in/out
-controls.maxDistance = 100; // Maximum distance (zoom out limit)
-
-// Optional: Enable panning if you want to allow horizontal/vertical movement
-controls.enablePan = true; // Change to 'false' if you want to lock panning
-controls.panSpeed = 0.8;   // Adjust the panning speed
-
-// Set the initial focus point to the center of the constellation
-controls.target.set(0, 0, 0);
-controls.update();
-
-console.log('Orbit controls configured with new settings.');
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.rotateSpeed = 0.7;
+controls.enableZoom = true;
+controls.enablePan = false;
+controls.target.set(0, 0, 0);  // Set initial focus point to the center
+console.log('Orbit controls configured.');
 
 // Raycaster for hover detection
 const raycaster = new THREE.Raycaster();
@@ -201,7 +168,7 @@ function handleStarClick(clientX, clientY) {
             });
             document.dispatchEvent(playAudioEvent);
 
-            console.log(`${clickedStarData.name} clicked! Playing audio...`);
+            console.log(${clickedStarData.name} clicked! Playing audio...);
 
             gsap.to(bloomPass, {
                 strength: 1.6, // Initial burst to 1.6 on click

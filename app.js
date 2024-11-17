@@ -237,12 +237,10 @@ source.connect(analyzer);
 analyzer.connect(audioContext.destination);
 console.log('Audio context and analyzer initialized.');
 
-// Play/Pause Button functionality
 playPauseBtn.addEventListener('click', () => {
     console.log('Play/Pause button clicked.');
     if (isPlaying) {
         audio.pause();
-        playPauseBtn.textContent = 'play';
 
         // Revert to hover state when paused
         if (activeStar) {
@@ -257,7 +255,7 @@ playPauseBtn.addEventListener('click', () => {
                 strength: 0.6, // Return to default strength
                 duration: 1.5,
                 ease: "power4.out",
-                onComplete: () => { 
+                onComplete: () => {
                     bloomPass.radius = 0.2; // Reset bloom radius
                     if (activePulseTween) {
                         console.log('Stopping active pulse tween during pause.');
@@ -270,7 +268,6 @@ playPauseBtn.addEventListener('click', () => {
     } else {
         audio.play();
         audioContext.resume();
-        playPauseBtn.textContent = 'pause';
 
         // Proceed with play effects
         if (activeStar) {
@@ -299,14 +296,16 @@ playPauseBtn.addEventListener('click', () => {
         }
     }
     isPlaying = !isPlaying;
+    playPauseBtn.textContent = 'play/pause';
+
+    // Set button text to 'play/pause'
+    playPauseBtn.textContent = 'play/pause'; // <-- ADD THIS LINE
 });
 
-// Stop Button functionality
 stopBtn.addEventListener('click', () => {
     console.log('Stop button clicked.');
     audio.pause();
     audio.currentTime = 0;  // Reset the audio to the beginning
-    playPauseBtn.textContent = 'play';
     isPlaying = false;
     hideAudioPlayer();
     resetStarGlow();  // Reset stars to default state
@@ -371,7 +370,6 @@ function showAudioPlayer(audioSrc) {
     audio.src = audioSrc;
     audioPlayerContainer.style.display = 'flex';
     audio.play();
-    playPauseBtn.textContent = 'pause';  // Set to "pause" when playing
     isPlaying = true;
     drawWaveform();  // Start drawing waveform
 }

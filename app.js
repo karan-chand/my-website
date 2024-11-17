@@ -75,7 +75,7 @@ starData.forEach(star => {
 });
 
 // Adjust camera position and controls
-camera.position.set(0, 100, 50); // Adjusted y position to 10 to raise the view, and z position to 50 to zoom out
+camera.position.set(0, 0, 50); // Adjusted y position to raise the view, and z position to 50 to zoom out
 console.log('Camera position set to:', camera.position);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;

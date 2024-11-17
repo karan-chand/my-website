@@ -36,20 +36,20 @@ console.log('Bloom pass added to composer with settings:', bloomPass);
 
 // Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on calculated coordinates
 const starData = [
-    { name: 'Spica', x: -1.60, y: -2.892, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }, // Alpha Virginis
+    { name: 'Spica', x: -1.60, y: -2.892, z: 8.16, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }, // Alpha Virginis
     { name: 'Zavijava', x: 5.76, y: 0.599, z: 0.0, size: 0.3 },  // Beta Virginis
-    { name: 'Porrima', x: 2.19, y: 0.686, z: 0.0, size: 0.5 },   // Gamma Virginis
-    { name: 'Auva', x: 1.35, y: 1.295, z: 0.0, size: 0.4 },     // Delta Virginis
-    { name: 'Vindemiatrix', x: 0.92, y: 2.892, z: 0.0, size: 0.6 }, // Epsilon Virginis
-    { name: 'Heze', x: -2.36, y: 0.394, z: 0.0, size: 0.35 },    // Zeta Virginis
-    { name: 'Zaniah', x: 3.73, y: 0.348, z: 0.0, size: 0.4 },    // Eta Virginis
-    { name: 'Theta Virginis', x: 0.40, y: -1.466, z: 0.0, size: 0.3 }, // Theta Virginis
-    { name: 'Syrma', x: -4.00, y: -1.530, z: 0.0, size: 0.35 },   // Iota Virginis
-    { name: 'Rijl al Awwa', x: -5.79, y: -1.466, z: 0.0, size: 0.35 }, // Mu Virginis
-    { name: 'Nu Virginis', x: 6.00, y: 1.643, z: 0.0, size: 0.3 }, // Nu Virginis
-    { name: 'Omicron Virginis', x: 5.29, y: 2.157, z: 0.0, size: 0.3 }, // Omicron Virginis
-    { name: 'Tau Virginis', x: -3.13, y: 0.592, z: 0.0, size: 0.3 }, // Tau Virginis
-    { name: '109 Virginis', x: -6.00, y: 0.611, z: 0.0, size: 0.3 }  // 109 Virginis
+    { name: 'Porrima', x: 2.19, y: 0.686, z: 0.09, size: 0.5 },   // Gamma Virginis
+    { name: 'Auva', x: 1.35, y: 1.295, z: 7.23, size: 0.4 },     // Delta Virginis
+    { name: 'Vindemiatrix', x: 0.92, y: 2.892, z: 2.83, size: 0.6 }, // Epsilon Virginis
+    { name: 'Heze', x: -2.36, y: 0.394, z: 1.41, size: 0.35 },    // Zeta Virginis
+    { name: 'Zaniah', x: 3.73, y: 0.348, z: 8.98, size: 0.4 },    // Eta Virginis
+    { name: 'Theta Virginis', x: 0.40, y: -1.466, z: 11.51, size: 0.3 }, // Theta Virginis
+    { name: 'Syrma', x: -4.00, y: -1.530, z: 1.27, size: 0.35 },   // Iota Virginis
+    { name: 'Rijl al Awwa', x: -5.79, y: -1.466, z: 0.95, size: 0.35 }, // Mu Virginis
+    { name: 'Nu Virginis', x: 6.00, y: 1.643, z: 12.0, size: 0.3 }, // Nu Virginis
+    { name: 'Omicron Virginis', x: 5.29, y: 2.157, z: 4.79, size: 0.3 }, // Omicron Virginis
+    { name: 'Tau Virginis', x: -3.13, y: 0.592, z: 7.44, size: 0.3 }, // Tau Virginis
+    { name: '109 Virginis', x: -6.00, y: 0.611, z: 3.73, size: 0.3 }  // 109 Virginis
 ];
 
 let starMeshes = [];

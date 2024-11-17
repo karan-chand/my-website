@@ -34,20 +34,23 @@ const bloomPass = new THREE.UnrealBloomPass(
 composer.addPass(bloomPass);
 console.log('Bloom pass added to composer with settings:', bloomPass);
 
-// Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on right ascension and declination values, scaled to fit within -6.0 to 6.0
+// Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on right ascension and declination values, scaled proportionally to fit within -6.0 to 6.0
 const starData = [
-    { name: 'Vindemiatrix', x: 4.5, y: 6.0, z: 0.0, size: 0.6 },  // Top center-right, adjusted to match diagram
-    { name: 'Auva', x: -5.5, y: 4.0, z: 0.0, size: 0.4 },         // Top left, adjusted to match diagram
-    { name: 'Heze', x: -3.5, y: 3.0, z: 0.0, size: 0.35 },        // Mid left, adjusted to match diagram
-    { name: 'Porrima', x: 0.0, y: 1.0, z: 0.0, size: 0.5 },       // Center, adjusted to match diagram
-    { name: 'Zaniah', x: 2.5, y: 2.5, z: 0.0, size: 0.4 },        // Above Porrima, adjusted to match diagram
-    { name: 'Zavijava', x: -2.0, y: 2.0, z: 0.0, size: 0.3 },     // Near center-left, adjusted to match diagram
-    { name: 'Syrma', x: 3.5, y: -3.5, z: 0.0, size: 0.35 },       // Bottom right, adjusted to match diagram
-    { name: 'Spica', x: 0.0, y: -6.0, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' } // Bottom center, adjusted to match diagram
+    { name: 'Spica', x: -3.62, y: 6.0, z: 0.0, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }, // Alpha Virginis
+    { name: 'Zavijava', x: 6.0, y: 1.29, z: 0.0, size: 0.3 },  // Beta Virginis
+    { name: 'Porrima', x: 1.99, y: 2.96, z: 0.0, size: 0.5 },   // Gamma Virginis
+    { name: 'Auva', x: -0.19, y: 4.10, z: 0.0, size: 0.4 },     // Delta Virginis
+    { name: 'Vindemiatrix', x: 1.58, y: 6.0, z: 0.0, size: 0.6 }, // Epsilon Virginis
+    { name: 'Heze', x: -4.99, y: 3.32, z: 0.0, size: 0.35 },    // Zeta Virginis
+    { name: 'Zaniah', x: 4.21, y: 3.09, z: 0.0, size: 0.4 },    // Eta Virginis
+    { name: 'Theta Virginis', x: 0.03, y: 5.26, z: 0.0, size: 0.3 }, // Theta Virginis
+    { name: 'Syrma', x: -6.0, y: 5.18, z: 0.0, size: 0.35 },   // Iota Virginis
+    { name: 'Rijl al Awwa', x: -6.0, y: 5.26, z: 0.0, size: 0.35 }, // Mu Virginis
+    { name: 'Nu Virginis', x: 6.0, y: 0.0, z: 0.0, size: 0.3 }, // Nu Virginis
+    { name: 'Omicron Virginis', x: 4.93, y: 1.74, z: 0.0, size: 0.3 }, // Omicron Virginis
+    { name: 'Tau Virginis', x: -4.20, y: 1.35, z: 0.0, size: 0.3 }, // Tau Virginis
+    { name: '109 Virginis', x: -6.0, y: 1.30, z: 0.0, size: 0.3 }  // 109 Virginis
 ];
-
-
-
 
 let starMeshes = [];
 const defaultIntensity = 0.4; // Bright base glow

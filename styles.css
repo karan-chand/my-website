@@ -162,7 +162,7 @@ nav ul .dropdown li a:hover {
 
 /* Waveform visualizer styling */
 .wave-visualizer {
-    width: 100%;
+    width: 90vw;
     height: 50px;
     background: transparent; /* Set to transparent */
     margin-top: 5px;

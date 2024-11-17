@@ -74,8 +74,8 @@ starData.forEach(star => {
     console.log('Star added to scene:', star.name, starMesh.position);
 });
 
-// Adjust camera and controls
-camera.position.z = 50;
+// Adjust camera position and controls
+camera.position.set(0, 30, 50); // Adjusted y position to 10 to raise the view, and z position to 50 to zoom out
 console.log('Camera position set to:', camera.position);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;

@@ -306,25 +306,32 @@ stopBtn.addEventListener('click', () => {
     console.log('Stop button clicked.');
     audio.pause();
     audio.currentTime = 0;  // Reset the audio to the beginning
-    isPlaying = false;
+    isPlaying = false;      // Set isPlaying to false, indicating that the audio is stopped
+
     hideAudioPlayer();
-    resetStarGlow();  // Reset stars to default state
-    resetCamera();    // Reset camera to default state
+    resetStarGlow();  // Reset stars and lighting to default state
+    resetCamera();    // Reset camera to default position
 });
 
 // Function to reset stars to the default state
 function resetStarGlow() {
     console.log('Resetting star glow to default state.');
+
     // Reset bloom effect strength and radius
     if (activePulseTween) {
         console.log('Stopping active pulse tween during reset.');
         activePulseTween.kill();
         activePulseTween = null;
     }
-    bloomPass.strength = 0.6;  // Reset to default strength
-    bloomPass.radius = 0.2;    // Reset to default radius
 
-    // Reset each star's emissive intensity to the default
+    gsap.to(bloomPass, {
+        strength: 0.6,  // Reset to default strength
+        radius: 0.2,    // Reset to default radius
+        duration: 1.0,
+        ease: "power4.out"
+    });
+
+    // Reset each star's emissive intensity to the default value
     starMeshes.forEach(starData => {
         gsap.to(starData.mesh.material, {
             emissiveIntensity: defaultIntensity,
@@ -335,6 +342,7 @@ function resetStarGlow() {
 
     // Clear active star and reset the Virgo symbol
     activeStar = null;
+    currentlyHoveredStar = null;
     starNameElement.innerHTML = "♍︎";
 }
 

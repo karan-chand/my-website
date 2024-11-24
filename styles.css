@@ -1,14 +1,33 @@
-/* Load .woff2 first for better performance, then .woff, and .ttf as fallback */
+/* Load Stanley Regular font for the site title */
 @font-face {
-    font-family: 'Halyard Text';
-    src: url('fonts/Halyard Text Regular.woff2') format('woff2'),
-         url('fonts/Halyard Text Regular.woff') format('woff'),
-         url('fonts/Halyard Text Regular.ttf') format('truetype');  /* TrueType fallback */
+    font-family: 'Stanley Regular';
+    src: url('fonts/Stanley Regular.woff2') format('woff2'),
+         url('fonts/Stanley Regular.woff') format('woff'),
+         url('fonts/Stanley Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
-/* Apply the Halyard Text font across the whole website */
+/* Site title styling */
+header h1 {
+    font-size: 30px;
+    font-weight: normal;
+    color: white; /* Keep white for visibility */
+    font-family: 'Stanley Regular', Arial, sans-serif; /* Use Stanley Regular */
+    margin: 0;
+}
+
+/* Load Halyard Text Regular font for everything else */
+@font-face {
+    font-family: 'Halyard Text';
+    src: url('fonts/Halyard Text Regular.woff2') format('woff2'),
+         url('fonts/Halyard Text Regular.woff') format('woff'),
+         url('fonts/Halyard Text Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Apply Halyard Text Regular across the rest of the website */
 body, html {
     font-family: 'Halyard Text', Arial, sans-serif;
     margin: 0;
@@ -31,14 +50,6 @@ header {
     width: 100%;
     text-align: center;
     z-index: 15;
-}
-
-header h1 {
-    font-size: 24px;
-    font-weight: bold;
-    color: white; /* Set to white */
-    margin: 0;
-    font-family: 'Halyard Text', Arial, sans-serif;
 }
 
 /* Dropdown menu styling */
@@ -64,8 +75,7 @@ nav ul li a {
 nav ul .dropdown {
     display: none;
     position: absolute;
-    background-color: transparent; /* Transparent background */
-    box-shadow: none; /* Remove shadow if any */
+    background-color: transparent;
     padding: 0;
     z-index: 10;
 }
@@ -108,15 +118,7 @@ nav ul .dropdown li a:hover {
     position: absolute;
     pointer-events: none;
     z-index: 11;
-    transition: transform 0.1s ease;
     transform: translate(-50%, -50%);
-}
-
-/* Hide custom cursor on larger screens */
-@media (min-width: 768px) {
-    .custom-cursor {
-        display: none;
-    }
 }
 
 /* Styling for the audio player container */
@@ -129,14 +131,14 @@ nav ul .dropdown li a:hover {
     height: 100px;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
-    display: none; /* Initially hidden, shown on audio play */
+    display: none;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
     z-index: 10;
     padding: 10px;
     font-family: 'Halyard Text', Arial, sans-serif;
-    flex-direction: column; /* Aligns waveform below the controls */
+    flex-direction: column;
 }
 
 /* Styling for audio controls */
@@ -164,7 +166,7 @@ nav ul .dropdown li a:hover {
 .wave-visualizer {
     width: 90vw;
     height: 50px;
-    background: transparent; /* Set to transparent */
+    background: transparent;
     margin-top: 5px;
     border-radius: 5px;
     overflow: hidden;

@@ -28,14 +28,13 @@
 <body>
     <!-- Header with site title and dropdown menu -->
     <header>
-        <h1>karan.ink</h1>
+        <h1 onclick="resetPage()">karan.ink</h1>
         <nav>
             <ul>
                 <li>
                     <a href="#">stars</a>
                     <ul class="dropdown">
-                        <!-- Set the link's href to include Spica's unique identifier -->
-                        <li><a href="#" id="spica-menu" onclick="document.getElementById('spica-star').dispatchEvent(new PointerEvent('pointerdown', { clientX: 0, clientY: 0 }));">AUDIO MEDITATION 001 - SPICA</a></li>
+                        <li><a href="#" id="spica-menu" onclick="document.getElementById('spica-star').dispatchEvent(new PointerEvent('pointerdown', { clientX: 0, clientY: 0 }));">spica</a></li>
                     </ul>
                 </li>
             </ul>

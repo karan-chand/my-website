@@ -360,6 +360,21 @@ function resetCamera() {
     controls.update();
 }
 
+// Reset page 
+function resetPage() {
+    console.log("Resetting page to default state via header click.");
+
+    // Trigger the same logic as the stop button
+    audio.pause();
+    audio.currentTime = 0;
+    isPlaying = false;
+    hideAudioPlayer();
+    resetStarGlow();
+    resetCamera();
+}
+
+
+
 // Rewind 30 seconds
 rewindBtn.addEventListener('click', () => {
     console.log('Rewind button clicked.');

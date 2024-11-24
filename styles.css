@@ -130,21 +130,37 @@ nav ul .dropdown li a {
 
 /* Hover effect for dropdown items */
 nav ul .dropdown li a:hover {
-    color: #00ff00; /* Bright green for hover */
+    color: #00ffcc; /* Default green for hover */
 }
 
 /* Audio controls hover styling */
 .audio-controls button {
+    position: relative; /* Needed for pseudo-element positioning */
     background: none;
     border: none;
     color: #00ffcc; /* Default green */
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
+    padding: 5px 10px;
 }
 
-.audio-controls button:hover {
-    color: #008f00; /* Darker green for hover */
+/* Hover effect with semi-transparent background */
+.audio-controls button:hover::after {
+    content: ''; /* Required for pseudo-element */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9); /* Semi-transparent grey */
+    border-radius: 5px; /* Optional: rounded corners */
+    z-index: -1; /* Place the background behind the text */
+}
+
+/* Adjust button spacing */
+.audio-controls button {
+    margin: 5px;
 }
 
 /* Static text for Virgo symbol and star name */

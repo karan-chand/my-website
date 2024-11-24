@@ -28,13 +28,19 @@
 <body>
     <!-- Header with site title and dropdown menu -->
     <header>
+        <!-- Clicking the title triggers reset -->
         <h1 onclick="resetPage()">karan.ink</h1>
         <nav>
             <ul>
                 <li>
                     <a href="#">stars</a>
                     <ul class="dropdown">
-                        <li><a href="#" id="spica-menu" onclick="document.getElementById('spica-star').dispatchEvent(new PointerEvent('pointerdown', { clientX: 0, clientY: 0 }));">nada sutra 001: spica</a></li>
+                        <!-- Dropdown link simulating Spica star click -->
+                        <li>
+                            <a href="#" id="spica-menu" onclick="document.getElementById('spica-star').dispatchEvent(new PointerEvent('pointerdown', { clientX: 0, clientY: 0 }));">
+                                nada sutra 001: spica
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

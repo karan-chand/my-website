@@ -15,6 +15,7 @@ header h1 {
     color: white; /* Keep white for visibility */
     font-family: 'Stanley Regular', Arial, sans-serif; /* Use Stanley Regular */
     margin: 0;
+    cursor: pointer; /* Indicate clickable behavior */
 }
 
 /* Load Halyard Text Regular font for everything else */
@@ -52,16 +53,42 @@ header {
     z-index: 15;
 }
 
-/* Dropdown styling */
+/* Dropdown container hidden by default */
+nav ul .dropdown {
+    display: none; /* Hidden initially */
+    position: absolute; /* Positioned relative to parent */
+    background-color: rgba(0, 0, 0, 0.9); /* Optional dark background */
+    border: 1px solid #00ffcc; /* Border for dropdown */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    padding: 0;
+    z-index: 100; /* Ensure it appears above other elements */
+    width: 200px; /* Consistent width for dropdown */
+}
+
+/* Show dropdown on hover */
+nav ul li:hover .dropdown {
+    display: block; /* Display dropdown when parent is hovered */
+}
+
+/* Dropdown items styling */
+nav ul .dropdown li {
+    padding: 10px 15px; /* Add padding for better clickability */
+    text-align: left; /* Align text to the left */
+    background-color: rgba(0, 0, 0, 0.8); /* Match dropdown background */
+    cursor: pointer;
+}
+
+/* Dropdown items hover effect */
+nav ul .dropdown li a:hover {
+    color: #00ff00; /* Bright green for hover */
+}
+
+/* Dropdown links inherit font style */
 nav ul li a, nav ul .dropdown li a {
     text-decoration: none;
     color: white; /* Matches the parent 'stars' text color */
     font-family: 'Halyard Text', Arial, sans-serif; /* Same font */
     font-size: 18px;
-}
-
-nav ul .dropdown li a:hover {
-    color: #00ffcc; /* Default green */
 }
 
 /* Audio controls hover styling */
@@ -128,19 +155,6 @@ nav ul .dropdown li a:hover {
     align-items: center;
     gap: 10px;
     font-family: 'Halyard Text', Arial, sans-serif;
-}
-
-.audio-controls button {
-    background: none;
-    border: none;
-    color: #00ffcc;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.audio-controls button:hover {
-    color: #ffcc00;
 }
 
 /* Waveform visualizer styling */

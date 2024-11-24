@@ -53,51 +53,84 @@ header {
     z-index: 15;
 }
 
-/* Dropdown container hidden by default */
-nav ul .dropdown {
-    display: none;
-    position: absolute;
-    left: 0; /* Align directly below the parent li */
-    top: 100%; /* Position below the "stars" menu item */
-    background-color: rgba(0, 0, 0, 0.9); /* Dark background */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+/* Main navigation */
+nav ul {
+    list-style: none; /* Remove default bullet points */
     padding: 0;
-    z-index: 100;
-    width: 200px; /* Consistent width for dropdown */
+    margin: 0;
+    display: inline-block;
+    position: relative;
 }
 
-/* Show dropdown on hover */
-nav ul li:hover .dropdown {
-    display: block; /* Display dropdown when parent is hovered */
+/* Parent navigation items */
+nav ul li {
+    display: inline-block;
+    position: relative;
 }
 
-/* Add a downward arrow to "stars" */
+/* Links for parent items like "stars" */
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-family: 'Halyard Text', Arial, sans-serif;
+    font-size: 18px;
+    padding: 10px 15px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Add arrow to parent items */
 nav ul li a::after {
-    content: ' ▼'; /* Unicode arrow symbol */
+    content: '⌄'; /* Unicode arrow symbol */
     font-size: 12px;
     color: grey; /* Light grey for subtlety */
     margin-left: 5px; /* Add spacing between text and arrow */
 }
 
+/* Dropdown menu (hidden by default) */
+nav ul .dropdown {
+    display: none;
+    position: absolute;
+    left: 0; /* Align with parent menu item */
+    top: 100%; /* Position directly below the parent item */
+    background-color: rgba(0, 0, 0, 0.9); /* Dark background */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    z-index: 100; /* Ensure it's above other elements */
+    width: 200px; /* Consistent dropdown width */
+    padding: 0;
+}
+
+/* Show dropdown on hover */
+nav ul li:hover .dropdown {
+    display: block;
+}
+
+/* Remove arrow from submenu items */
+nav ul .dropdown li a::after {
+    content: ''; /* Clear the arrow for submenu items */
+}
+
 /* Dropdown items styling */
 nav ul .dropdown li {
-    padding: 10px 15px;
+    padding: 0;
     text-align: left; /* Align text to the left */
-    background-color: rgba(0, 0, 0, 0.8); /* Match dropdown background */
     cursor: pointer;
 }
 
-/* Dropdown items hover effect */
-nav ul .dropdown li a:hover {
-    color: #00ff00; /* Bright green for hover */
-}
-
-/* Dropdown links inherit font style */
-nav ul li a, nav ul .dropdown li a {
+/* Dropdown links styling */
+nav ul .dropdown li a {
     text-decoration: none;
-    color: white; /* Matches the parent 'stars' text color */
+    color: white; /* Matches overall text color */
+    padding: 10px 15px; /* Add padding for better clickability */
+    display: block; /* Block-level for full clickable area */
     font-family: 'Halyard Text', Arial, sans-serif;
     font-size: 18px;
+    background-color: rgba(0, 0, 0, 0.8); /* Match dropdown background */
+}
+
+/* Hover effect for dropdown items */
+nav ul .dropdown li a:hover {
+    color: #00ff00; /* Bright green for hover */
 }
 
 /* Audio controls hover styling */

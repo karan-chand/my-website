@@ -411,8 +411,9 @@ document.addEventListener("playAudio", (event) => {
 });
 
 // Dropdown menu functionality to simulate Spica star click
-document.getElementById('spica-menu').addEventListener('click', () => {
-    const spicaStar = starMeshes.find(star => star.name === 'Spica');
+function triggerSpica() {
+    console.log('Triggering Spica star click from dropdown menu.');
+    const spicaStar = starMeshes.find(star => star.name.includes('Spica'));
     if (spicaStar) {
         // Trigger audio play and click state effects for Spica
         const playAudioEvent = new CustomEvent("playAudio", {
@@ -443,8 +444,10 @@ document.getElementById('spica-menu').addEventListener('click', () => {
         });
 
         activeStar = spicaStar.mesh;
+    } else {
+        console.error('Spica star not found in starMeshes.');
     }
-});
+}
 
 // Visualization Loop for Waveform
 function drawWaveform() {

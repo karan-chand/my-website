@@ -133,7 +133,7 @@ nav ul .dropdown li a:hover {
     color: #00ffcc; /* Default green for hover */
 }
 
-/* Audio controls hover styling */
+/* Audio controls styling */
 .audio-controls button {
     position: relative; /* Needed for pseudo-element positioning */
     background: none;
@@ -142,7 +142,9 @@ nav ul .dropdown li a:hover {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 5px 10px; /* Ensure padding doesn't wrap text */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    text-align: center; /* Align text centrally */
 }
 
 /* Hover effect with semi-transparent background */
@@ -160,8 +162,9 @@ nav ul .dropdown li a:hover {
 
 /* Adjust button spacing */
 .audio-controls button {
-    margin: 5px;
+    margin: 5px; /* Consistent spacing */
 }
+
 
 /* Static text for Virgo symbol and star name */
 .static-text {

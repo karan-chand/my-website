@@ -55,13 +55,14 @@ header {
 
 /* Dropdown container hidden by default */
 nav ul .dropdown {
-    display: none; /* Hidden initially */
-    position: absolute; /* Positioned relative to parent */
-    background-color: rgba(0, 0, 0, 0.9); /* Optional dark background */
-    border: 1px solid #00ffcc; /* Border for dropdown */
+    display: none;
+    position: absolute;
+    left: 0; /* Align directly below the parent li */
+    top: 100%; /* Position below the "stars" menu item */
+    background-color: rgba(0, 0, 0, 0.9); /* Dark background */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
     padding: 0;
-    z-index: 100; /* Ensure it appears above other elements */
+    z-index: 100;
     width: 200px; /* Consistent width for dropdown */
 }
 
@@ -70,9 +71,17 @@ nav ul li:hover .dropdown {
     display: block; /* Display dropdown when parent is hovered */
 }
 
+/* Add a downward arrow to "stars" */
+nav ul li a::after {
+    content: ' ▼'; /* Unicode arrow symbol */
+    font-size: 12px;
+    color: grey; /* Light grey for subtlety */
+    margin-left: 5px; /* Add spacing between text and arrow */
+}
+
 /* Dropdown items styling */
 nav ul .dropdown li {
-    padding: 10px 15px; /* Add padding for better clickability */
+    padding: 10px 15px;
     text-align: left; /* Align text to the left */
     background-color: rgba(0, 0, 0, 0.8); /* Match dropdown background */
     cursor: pointer;
@@ -87,7 +96,7 @@ nav ul .dropdown li a:hover {
 nav ul li a, nav ul .dropdown li a {
     text-decoration: none;
     color: white; /* Matches the parent 'stars' text color */
-    font-family: 'Halyard Text', Arial, sans-serif; /* Same font */
+    font-family: 'Halyard Text', Arial, sans-serif;
     font-size: 18px;
 }
 

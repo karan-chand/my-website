@@ -10,4 +10,4 @@ export function initializeCursor() {
     } else {
         console.error('Custom cursor element not found.');
     }
-}
+} 

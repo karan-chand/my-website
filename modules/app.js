@@ -493,4 +493,4 @@ function drawWaveform() {
 
     ctx.lineTo(canvas.width, canvas.height / 2);
     ctx.stroke();
-}
+} 

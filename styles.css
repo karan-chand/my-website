@@ -85,6 +85,8 @@ nav ul li a::after {
     font-size: 12px;
     color: grey; /* Light grey for subtlety */
     margin-left: 5px; /* Add spacing between text and arrow */
+    display: inline-block; /* Ensures the arrow is treated as a block element */
+    vertical-align: middle; /* Centers the arrow vertically relative to text */
 }
 
 /* Dropdown menu (hidden by default) */
@@ -170,7 +172,7 @@ nav ul .dropdown li a:hover {
 .audio-controls button {
     margin: 5px; /* Consistent spacing */
 }
-    
+
 
 
 /* Static text for Virgo symbol and star name */

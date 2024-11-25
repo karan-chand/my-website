@@ -1,3 +1,4 @@
+// Star configuration
 export const STAR_CONFIG = {
     defaultIntensity: 0.4,
     hoverIntensityMultiplier: 1.8,
@@ -7,6 +8,7 @@ export const STAR_CONFIG = {
     emissiveColor: 0xffffff
 };
 
+// Bloom effect configuration
 export const BLOOM_CONFIG = {
     defaultStrength: 0.6,
     defaultRadius: 0.2,
@@ -16,6 +18,7 @@ export const BLOOM_CONFIG = {
     pulseRadius: 0.1
 };
 
+// Animation timings
 export const ANIMATION_CONFIG = {
     defaultDuration: 0.5,
     longDuration: 1.0,
@@ -25,6 +28,7 @@ export const ANIMATION_CONFIG = {
     pulseEase: "sine.inOut"
 };
 
+// Camera settings
 export const CAMERA_CONFIG = {
     fov: 75,
     near: 0.1,
@@ -36,6 +40,7 @@ export const CAMERA_CONFIG = {
     }
 };
 
+// Controls settings
 export const CONTROLS_CONFIG = {
     dampingFactor: 0.05,
     rotateSpeed: 0.7,
@@ -45,5 +50,49 @@ export const CONTROLS_CONFIG = {
         x: 0,
         y: 0,
         z: 0
+    }
+};
+
+// UI configuration
+export const UI_CONFIG = {
+    colors: {
+        primary: '#00ffcc',
+        background: 'rgba(0, 0, 0, 0.8)',
+        text: '#ffffff',
+        cursor: 'rgba(255, 102, 0, 0.8)',
+        dropdownBg: 'rgba(0, 0, 0, 0.9)',
+        dropdownShadow: 'rgba(0, 0, 0, 0.2)'
+    },
+    fonts: {
+        primary: 'Stanley Regular',
+        secondary: 'Halyard Text',
+        fallbacks: 'Arial, sans-serif'
+    },
+    sizes: {
+        title: '30px',
+        text: '18px',
+        button: '14px',
+        cursorSize: '10px',
+        spacing: '10px',
+        playerWidth: '300px',
+        playerHeight: '100px'
+    },
+    zIndex: {
+        header: 15,
+        cursor: 11,
+        dropdown: 100,
+        player: 10
+    }
+};
+
+// Font loading configuration
+export const FONT_CONFIG = {
+    files: {
+        stanley: {
+            regular: 'fonts/Stanley Regular.woff2'
+        },
+        halyard: {
+            regular: 'fonts/Halyard Text Regular.woff2'
+        }
     }
 };

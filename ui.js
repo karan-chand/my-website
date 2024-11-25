@@ -1,3 +1,5 @@
+import { UI_CONFIG, FONT_CONFIG } from './constants.js';
+
 export class UIManager {
     constructor(audioPlayer, starSystem) {
         this.loadFonts();
@@ -6,10 +8,9 @@ export class UIManager {
 
     async loadFonts() {
         const fontFaces = [
-            new FontFace('Stanley Regular', 'url(fonts/Stanley Regular.woff2)'),
-            new FontFace('Halyard Text', 'url(fonts/Halyard Text Regular.woff2)')
+            new FontFace(UI_CONFIG.fonts.primary, `url(${FONT_CONFIG.files.stanley.regular})`),
+            new FontFace(UI_CONFIG.fonts.secondary, `url(${FONT_CONFIG.files.halyard.regular})`)
         ];
-
         const loadedFonts = await Promise.all(fontFaces.map(font => font.load()));
         loadedFonts.forEach(font => document.fonts.add(font));
     }
@@ -33,11 +34,9 @@ export class UIManager {
                     </ul>
                 </nav>
             </header>
-
             <div id="star-name" class="static-text">♍︎</div>
-            
+           
             <div id="custom-cursor" class="custom-cursor"></div>
-
             <div id="audio-player-container" class="audio-player-container">
                 <div class="audio-controls">
                     <button id="rewind-btn">rwd</button>
@@ -47,7 +46,6 @@ export class UIManager {
                 </div>
                 <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
             </div>
-
             <canvas id="virgo-constellation"></canvas>
         `;
     }

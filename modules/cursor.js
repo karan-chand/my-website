@@ -1,6 +1,4 @@
-// Cursor.js: Handles custom cursor functionality for mobile and tablet
-
-export function initializeCustomCursor() {
+export function initializeCursor() {
     const customCursor = document.getElementById('custom-cursor');
     if (customCursor) {
         // Update cursor position on pointermove (for mobile/touch support)

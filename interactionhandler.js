@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
+import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class InteractionHandler {
     constructor(sceneSetup, starSystem, audioPlayer) {
@@ -24,7 +24,6 @@ export class InteractionHandler {
     handleHover(event) {
         this.updateMousePosition(event);
         const intersects = this.sceneSetup.raycaster.intersectObjects(this.sceneSetup.scene.children);
-
         if (intersects.length > 0) {
             this.starSystem.handleHover(intersects[0].object, this.starNameElement);
         } else {
@@ -35,17 +34,16 @@ export class InteractionHandler {
     handleClick(event) {
         this.updateMousePosition(event);
         const intersects = this.sceneSetup.raycaster.intersectObjects(this.sceneSetup.scene.children);
-
         if (intersects.length > 0) {
             const clickedStar = intersects[0].object;
             const clickedStarData = this.starSystem.getStarData(clickedStar);
             if (clickedStarData?.link) {
-                this.triggerStarAudio(clickedStar, clickedStarData.link);
+                this.triggerStarAudio(clickedStar, clickedStarData);
             }
         }
     }
 
-    triggerStarAudio(star, audioLink) {
+    triggerStarAudio(star, starData) {
         if (this.audioPlayer.activePulseTween) {
             this.audioPlayer.activePulseTween.kill();
             this.audioPlayer.activePulseTween = null;
@@ -53,7 +51,10 @@ export class InteractionHandler {
 
         this.starSystem.activeStar = star;
         document.dispatchEvent(new CustomEvent("playAudio", {
-            detail: { audioSrc: audioLink }
+            detail: { 
+                audioSrc: starData.link,
+                textPath: starData.textPath 
+            }
         }));
 
         this.animateBloomEffect();
@@ -101,7 +102,7 @@ export class InteractionHandler {
                 ease: ANIMATION_CONFIG.defaultEase
             });
 
-            this.triggerStarAudio(star.mesh, star.link);
+            this.triggerStarAudio(star.mesh, star);
         }
     }
 }

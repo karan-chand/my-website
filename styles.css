@@ -1,4 +1,4 @@
-/* Load Stanley Regular font for the site title */
+/* Fonts */
 @font-face {
     font-family: 'Stanley Regular';
     src: url('fonts/Stanley Regular.woff2') format('woff2'),
@@ -8,17 +8,6 @@
     font-style: normal;
 }
 
-/* Site title styling */
-header h1 {
-    font-size: 30px;
-    font-weight: normal;
-    color: white; /* Keep white for visibility */
-    font-family: 'Stanley Regular', Arial, sans-serif; /* Use Stanley Regular */
-    margin: 0;
-    cursor: pointer; /* Indicate clickable behavior */
-}
-
-/* Load Halyard Text Regular font for everything else */
 @font-face {
     font-family: 'Halyard Text';
     src: url('fonts/Halyard Text Regular.woff2') format('woff2'),
@@ -28,23 +17,22 @@ header h1 {
     font-style: normal;
 }
 
-/* Apply Halyard Text Regular across the rest of the website */
+/* Base styles */
 body, html {
     font-family: 'Halyard Text', Arial, sans-serif;
     margin: 0;
     height: 100%;
     overflow: hidden;
-    background-color: white;
+    background-color: black;
 }
 
-/* Canvas styling */
 canvas {
     display: block;
     width: 100vw;
     height: 100vh;
 }
 
-/* Header styling */
+/* Header */
 header {
     position: absolute;
     top: 10px;
@@ -53,22 +41,29 @@ header {
     z-index: 15;
 }
 
-/* Main navigation */
+header h1 {
+    font-size: 30px;
+    font-weight: normal;
+    color: white;
+    font-family: 'Stanley Regular', Arial, sans-serif;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Navigation */
 nav ul {
-    list-style: none; /* Remove default bullet points */
+    list-style: none;
     padding: 0;
     margin: 0;
     display: inline-block;
     position: relative;
 }
 
-/* Parent navigation items */
 nav ul li {
     display: inline-block;
     position: relative;
 }
 
-/* Links for parent items like "stars" */
 nav ul li a {
     text-decoration: none;
     color: white;
@@ -79,130 +74,84 @@ nav ul li a {
     cursor: pointer;
 }
 
-/* Add arrow to parent items */
 nav ul li a::after {
-    content: '⌄'; /* Unicode arrow symbol */
+    content: '⌄';
     font-size: 12px;
-    color: grey; /* Light grey for subtlety */
-    margin-left: 5px; /* Spacing between text and arrow */
-    display: inline-block; /* Makes the arrow respect layout space */
-    text-align: center; /* Centers the arrow text horizontally */
-    width: 12px; /* Ensure a consistent width for alignment */
+    color: grey;
+    margin-left: 5px;
+    display: inline-block;
+    text-align: center;
+    width: 12px;
 }
 
-/* Dropdown menu (hidden by default) */
 nav ul .dropdown {
     display: none;
     position: absolute;
-    left: 0; /* Align with parent menu item */
-    top: 100%; /* Position directly below the parent item */
-    background-color: rgba(0, 0, 0, 0.9); /* Dark background */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    z-index: 100; /* Ensure it's above other elements */
-    width: 200px; /* Consistent dropdown width */
+    left: 0;
+    top: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    width: 200px;
     padding: 0;
 }
 
-/* Show dropdown on hover */
 nav ul li:hover .dropdown {
     display: block;
 }
 
-/* Remove arrow from submenu items */
 nav ul .dropdown li a::after {
-    content: ''; /* Clear the arrow for submenu items */
+    content: '';
 }
 
-/* Dropdown items styling */
 nav ul .dropdown li {
     padding: 0;
-    text-align: left; /* Align text to the left */
+    text-align: left;
     cursor: pointer;
-    white-space: nowrap; /* Prevent text wrapping */
+    white-space: nowrap;
 }
 
-/* Dropdown links styling */
 nav ul .dropdown li a {
     text-decoration: none;
-    color: white; /* Matches overall text color */
-    padding: 10px 15px; /* Add padding for better clickability */
-    display: block; /* Block-level for full clickable area */
-    font-family: 'Halyard Text', Arial, sans-serif;
+    color: white;
+    padding: 10px 15px;
+    display: block;
     font-size: 18px;
-    background-color: rgba(0, 0, 0, 0.8); /* Match dropdown background */
-    white-space: nowrap; /* Prevent text wrapping */
+    background-color: rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
 }
 
-/* Hover effect for dropdown items */
 nav ul .dropdown li a:hover {
-    color: #00ffcc; /* Default green for hover */
+    color: #00ffcc;
 }
 
-/* Audio controls styling */
+/* Audio player */
 .audio-controls button {
-    position: relative; /* Required for pseudo-element positioning */
+    position: relative;
     background: none;
     border: none;
-    color: #00ffcc; /* Default green */
+    color: #00ffcc;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    padding: 5px 10px; /* Ensure padding doesn't wrap text */
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    text-align: center; /* Align text centrally */
+    padding: 5px 10px;
+    white-space: nowrap;
+    text-align: center;
+    margin: 5px;
 }
 
-/* Hover effect with semi-transparent background */
 .audio-controls button:hover::after {
-    content: ''; /* Required for pseudo-element */
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(190, 190, 190, 0.3); /* Semi-transparent grey */
-    border-radius: 5px; /* Optional: rounded corners */
-    z-index: 0; /* Ensure pseudo-element is behind text but above container background */
+    background: rgba(190, 190, 190, 0.3);
+    border-radius: 5px;
+    z-index: 0;
 }
 
-/* Add position relative to parent for proper layering */
-.audio-player-container {
-    position: relative; /* Ensure container context for child elements */
-    display: flex; /* Optional: Ensures proper layout of elements */
-}
-
-/* Adjust button spacing */
-.audio-controls button {
-    margin: 5px; /* Consistent spacing */
-}
-
-
-
-/* Static text for Virgo symbol and star name */
-.static-text {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    color: white; /* Ensures it is visible on a dark background */
-    font-size: 18px;
-    font-family: 'Halyard Text', Arial, sans-serif;
-    z-index: 10;
-    text-align: right;
-}
-
-/* Custom cursor */
-.custom-cursor {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: rgba(255, 102, 0, 0.8);
-    position: absolute;
-    pointer-events: none;
-    z-index: 11;
-    transform: translate(-50%, -50%);
-}
-
-/* Styling for the audio player container */
 .audio-player-container {
     position: absolute;
     bottom: 20px;
@@ -222,15 +171,12 @@ nav ul .dropdown li a:hover {
     flex-direction: column;
 }
 
-/* Styling for audio controls */
 .audio-controls {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-family: 'Halyard Text', Arial, sans-serif;
 }
 
-/* Waveform visualizer styling */
 .wave-visualizer {
     width: 90vw;
     height: 50px;
@@ -238,4 +184,82 @@ nav ul .dropdown li a:hover {
     margin-top: 5px;
     border-radius: 5px;
     overflow: hidden;
+}
+
+/* Utilities */
+.static-text {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: white;
+    font-size: 18px;
+    font-family: 'Halyard Text', Arial, sans-serif;
+    z-index: 10;
+    text-align: right;
+}
+
+.custom-cursor {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 102, 0, 0.8);
+    position: absolute;
+    pointer-events: none;
+    z-index: 11;
+    transform: translate(-50%, -50%);
+}
+
+/* Text modal */
+.text-modal {
+    position: fixed;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 10px;
+    display: none;
+    z-index: 1000;
+}
+
+.modal-content {
+    padding: 20px;
+    color: white;
+    font-family: 'Halyard Text', Arial, sans-serif;
+}
+
+.text-content {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    padding: 10px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navigation button {
+    background: none;
+    border: none;
+    color: #00ffcc;
+    cursor: pointer;
+    padding: 5px 15px;
+    font-family: 'Halyard Text', Arial, sans-serif;
+    transition: color 0.3s ease;
+}
+
+.navigation button:hover {
+    color: white;
+}
+
+.page-counter {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
 }

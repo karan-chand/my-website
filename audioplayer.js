@@ -2,13 +2,14 @@ import gsap from 'gsap';
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class AudioPlayer {
-    constructor(starSystem, bloomPass) {
+    constructor(starSystem, bloomPass, textDisplay) {
         this.audio = new Audio();
         this.audio.loop = false;
         this.isPlaying = false;
         this.starSystem = starSystem;
         this.bloomPass = bloomPass;
         this.activePulseTween = null;
+        this.textDisplay = textDisplay;
         
         this.initializeAudioContext();
         this.cacheElements();
@@ -38,7 +39,20 @@ export class AudioPlayer {
         this.stopBtn.addEventListener('click', () => this.stop());
         this.rewindBtn.addEventListener('click', () => this.seek(-30));
         this.fastForwardBtn.addEventListener('click', () => this.seek(30));
-        document.addEventListener("playAudio", (event) => this.play(event.detail.audioSrc));
+        document.addEventListener("playAudio", (event) => this.play(event.detail.audioSrc, event.detail.textPath));
+    }
+
+    async play(audioSrc, textPath) {
+        this.audio.src = audioSrc;
+        this.playerContainer.style.display = 'flex';
+        this.audio.play();
+        this.isPlaying = true;
+        this.audioContext.resume();
+        this.startVisualizer();
+        
+        if (textPath) {
+            await this.textDisplay.loadAndShowText(textPath);
+        }
     }
 
     togglePlayPause() {
@@ -49,15 +63,6 @@ export class AudioPlayer {
         }
         this.isPlaying = !this.isPlaying;
         this.playPauseBtn.textContent = 'play/pause';
-    }
-
-    play(audioSrc) {
-        this.audio.src = audioSrc;
-        this.playerContainer.style.display = 'flex';
-        this.audio.play();
-        this.isPlaying = true;
-        this.audioContext.resume();
-        this.startVisualizer();
     }
 
     pause() {
@@ -80,6 +85,7 @@ export class AudioPlayer {
         this.audio.currentTime = 0;
         this.isPlaying = false;
         this.hidePlayer();
+        this.textDisplay.hideText();
 
         if (this.activePulseTween) {
             this.activePulseTween.kill();

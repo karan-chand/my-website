@@ -3,7 +3,15 @@ import gsap from 'gsap';
 import { STAR_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 const starData = [
-    { name: 'α Virginis known as Spica', x: -0.6396, y: -2.586, z: -1.29181, size: 1.0, link: 'audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { 
+        name: 'α Virginis known as Spica', 
+        x: -0.6396, 
+        y: -2.586, 
+        z: -1.29181, 
+        size: 1.0, 
+        link: 'audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3',
+        textPath: 'texts/spica.txt'
+    },
     { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },
     { name: 'γ Virginis konwn as Porrima', x: 2.1864, y: -0.3196296, z: -0.01463, size: 0.5 },
     { name: 'δ Virginis known as Auva', x: 1.3512, y: 0.7918332, z: -1.14551, size: 0.4 },
@@ -34,7 +42,8 @@ export class StarSystem {
             this.starMeshes.push({
                 mesh,
                 name: star.name,
-                link: star.link
+                link: star.link,
+                textPath: star.textPath
             });
         });
     }

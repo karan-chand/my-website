@@ -80,6 +80,19 @@ export class AudioPlayer {
         this.audio.currentTime = 0;
         this.isPlaying = false;
         this.hidePlayer();
+
+        if (this.activePulseTween) {
+            this.activePulseTween.kill();
+            this.activePulseTween = null;
+        }
+
+        gsap.to(this.bloomPass, {
+            strength: BLOOM_CONFIG.defaultStrength,
+            radius: BLOOM_CONFIG.defaultRadius,
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: ANIMATION_CONFIG.defaultEase
+        });
+
         this.starSystem.resetAllStars();
     }
 

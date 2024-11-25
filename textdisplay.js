@@ -38,6 +38,45 @@ export class TextDisplay {
         this.modal.querySelector('.next').addEventListener('click', () => this.nextPage());
     }
 
+    async loadAndShowText(textPath) {
+        try {
+            const response = await fetch(textPath);
+            if (!response.ok) throw new Error('Text not found');
+            const text = await response.text();
+            this.showText(text);
+        } catch (error) {
+            console.error('Error loading text:', error);
+            this.showText('Text content unavailable.');
+        }
+    }
+
+    showText(text) {
+        this.pages = this.splitIntoPages(text);
+        this.currentPage = 0;
+        this.updateModalContent();
+        this.modal.style.display = 'block';
+    }
+
+    hideText() {
+        this.modal.style.display = 'none';
+    }
+
+    splitIntoPages(text, wordsPerPage = 200) {
+        const words = text.split(' ');
+        const pages = [];
+        for (let i = 0; i < words.length; i += wordsPerPage) {
+            pages.push(words.slice(i, i + wordsPerPage).join(' '));
+        }
+        return pages;
+    }
+
+    updateModalContent() {
+        const content = this.modal.querySelector('.text-content');
+        content.textContent = this.pages[this.currentPage];
+        this.modal.querySelector('.page-counter').textContent = 
+            `${this.currentPage + 1}/${this.pages.length}`;
+    }
+
     initializeDrag() {
         const header = this.modal.querySelector('.modal-header');
         let isDragging = false;
@@ -83,5 +122,19 @@ export class TextDisplay {
             this.modal.querySelector('.modal-content').style.display = 'none';
         }
         this.isMinimized = !this.isMinimized;
+    }
+
+    prevPage() {
+        if (this.currentPage > 0) {
+            this.currentPage--;
+            this.updateModalContent();
+        }
+    }
+
+    nextPage() {
+        if (this.currentPage < this.pages.length - 1) {
+            this.currentPage++;
+            this.updateModalContent();
+        }
     }
 }

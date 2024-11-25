@@ -213,6 +213,11 @@ stopBtn.addEventListener('click', () => {
     hideAudioPlayer();
     starSystem.resetAllStars();
     resetCamera();
+
+    // Kill any active bloom effect tweens
+    gsap.killTweensOf(bloomPass);
+    bloomPass.strength = 0.6;
+    bloomPass.radius = 0.2;
 });
 
 function resetCamera() {

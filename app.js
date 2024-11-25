@@ -1,4 +1,11 @@
-// Import necessary modules
+// Import Three.js and its modules
+import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+// Import custom modules
 import { initializeCustomCursor } from './cursor.js';
 import { StarSystem, STAR_CONFIG } from './starsystem.js';
 
@@ -10,11 +17,11 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Set up the composer for bloom effect
-const composer = new THREE.EffectComposer(renderer);
-const renderPass = new THREE.RenderPass(scene, camera);
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-const bloomPass = new THREE.UnrealBloomPass(
+const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     0.6,  // Base bloom strength
     0.2,  // Bloom radius
@@ -28,7 +35,7 @@ starSystem.createStars();
 
 // Camera and controls setup
 camera.position.set(0, 0, 50);
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.rotateSpeed = 0.7;
@@ -218,7 +225,8 @@ function resetCamera() {
     controls.update();
 }
 
-function resetPage() {
+// Make resetPage global for HTML onclick
+window.resetPage = function() {
     audio.pause();
     audio.currentTime = 0;
     isPlaying = false;
@@ -252,7 +260,8 @@ document.addEventListener("playAudio", (event) => {
     showAudioPlayer(audioSrc);
 });
 
-function triggerSpica() {
+// Make triggerSpica global for HTML onclick
+window.triggerSpica = function() {
     const spicaStar = starSystem.findStarByName('Spica');
 
     if (spicaStar) {

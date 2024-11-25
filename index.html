@@ -1,75 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>karan.ink</title>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>karan.ink</title>
 
-    <!-- Link to the external CSS file -->
-    <link rel="stylesheet" href="styles.css">
+        <!-- Link to the external CSS file -->
+        <link rel="stylesheet" href="styles.css">
 
-    <!-- Include GSAP for animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <!-- Include GSAP for animations -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-    <!-- Load Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <!-- Load Three.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <!-- Include necessary scripts for bloom effect -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+        <!-- Include necessary scripts for bloom effect -->
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
 
-    <!-- Load OrbitControls from a CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-</head>
-<body>
-    <!-- Header with site title and dropdown menu -->
-    <header>
-        <!-- Clicking the title triggers reset -->
-        <h1 onclick="resetPage()">KARAN.INK</h1>
-        <nav>
-            <ul>
-                <li>
-                    <a href="#">stars</a>
-                    <ul class="dropdown">
-                        <!-- Dropdown link simulating Spica star click -->
-                        <li>
-                            <a href="#" id="spica-menu" onclick="triggerSpica()">
-                                nada sutra 001: spica
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-    </header>    
+        <!-- Load OrbitControls from a CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    </head>
+    <body>
+        <!-- Header with site title and dropdown menu -->
+        <header>
+            <!-- Clicking the title triggers reset -->
+            <h1 onclick="resetPage()">KARAN.INK</h1>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">stars</a>
+                        <ul class="dropdown">
+                            <!-- Dropdown link simulating Spica star click -->
+                            <li>
+                                <a href="#" id="spica-menu" onclick="triggerSpica()">
+                                    nada sutra 001: spica
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </header>    
 
-    <!-- Virgo Symbol in the center-top position -->
-    <div class="static-text" id="star-name">
-        ♍︎
-    </div>
-
-    <!-- Canvas for 3D rendering of the Virgo constellation -->
-    <canvas id="virgo-constellation"></canvas>
-
-    <!-- Custom cursor for mobile devices -->
-    <div id="custom-cursor" class="custom-cursor"></div>
-
-    <!-- Audio Player Container -->
-    <div class="audio-player-container" id="audio-player-container">
-        <div class="audio-controls">
-            <button id="rewind-btn">rwd</button>
-            <button id="play-pause-btn">play/pause</button>
-            <button id="stop-btn">stop</button>
-            <button id="fast-forward-btn">ffwd</button>
+        <!-- Virgo Symbol in the center-top position -->
+        <div class="static-text" id="star-name">
+            ♍︎
         </div>
-        <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
-    </div>
 
-    <!-- Load app.js for rendering the constellation and audio player -->
-    <script src="app.js"></script>
-</body>
-</html>
+        <!-- Canvas for 3D rendering of the Virgo constellation -->
+        <canvas id="virgo-constellation"></canvas>
+
+        <!-- Custom cursor for mobile devices -->
+        <div id="custom-cursor" class="custom-cursor"></div>
+
+        <!-- Audio Player Container -->
+        <div class="audio-player-container" id="audio-player-container">
+            <div class="audio-controls">
+                <button id="rewind-btn">rwd</button>
+                <button id="play-pause-btn">play/pause</button>
+                <button id="stop-btn">stop</button>
+                <button id="fast-forward-btn">ffwd</button>
+            </div>
+            <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
+        </div>
+
+        <!-- Load app.js for rendering the constellation and audio player -->
+        <script src="app.js"></script>
+    </body>
+    </html>

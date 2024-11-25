@@ -36,20 +36,20 @@ console.log('Bloom pass added to composer with settings:', bloomPass);
 
 // Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on the provided coordinates
 const starData = [
-    { name: 'α Virginis known as Spica', x: -0.6396, y: -2.586, z: -1.29181, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }, // Alpha Virginis
-    { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },  // Beta Virginis
-    { name: 'γ Virginis konwn as Porrima', x: 2.1864, y: -0.3196296, z: -0.01463, size: 0.5 },   // Gamma Virginis
-    { name: 'δ Virginis known as Auva', x: 1.3512, y: 0.7918332, z: -1.14551, size: 0.4 },     // Delta Virginis
-    { name: 'ε Virginis known as Vindemiatrix', x: 0.918, y: 2.586, z: -0.4484, size: 0.6 }, // Epsilon Virginis
-    { name: 'ζ Virginis known as Heze', x: -1.2864, y: -0.0925788, z: -0.22287, size: 0.35 },    // Zeta Virginis
-    { name: 'η Virginis known as Zaniah', x: 3.732, y: -0.1763652, z: -1.42158, size: 0.4 },    // Eta Virginis
-    { name: 'θ Virginis', x: 0.3936, y: -1.3079988, z: -1.82229, size: 0.3 }, // Theta Virginis
-    { name: 'ι Virginis known as Syrma', x: -4.0056, y: -1.3664424, z: -0.20083, size: 0.35 },   // Iota Virginis
-    { name: 'μ Virginis known as Rijl al Awwa', x: -5.79, y: -1.3079988, z: -0.15067, size: 0.35 }, // Mu Virginis
-    { name: 'ν Virginis', x: 6.0, y: 1.4652276, z: -1.9, size: 0.3 }, // Nu Virginis
-    { name: 'ο Virginis', x: 4.5708, y: 1.905882, z: -0.75848, size: 0.3 }, // Omicron Virginis
-    { name: 'τ Virginis', x: -3.0732, y: 0.4065192, z: -1.17762, size: 0.3 }, // Tau Virginis
-    { name: '109 Virginis', x: -6.0, y: 0.4251384, z: -0.59052, size: 0.3 }  // 109 Virginis
+    { name: 'α Virginis known as Spica', displayName: 'nada sutra 001: spica', x: -0.6396, y: -2.586, z: -1.29181, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
+    { name: 'β Virginis known as Zavijava', displayName: 'Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },
+    { name: 'γ Virginis konwn as Porrima', displayName: 'Porrima', x: 2.1864, y: -0.3196296, z: -0.01463, size: 0.5 },
+    { name: 'δ Virginis known as Auva', displayName: 'Auva', x: 1.3512, y: 0.7918332, z: -1.14551, size: 0.4 },
+    { name: 'ε Virginis known as Vindemiatrix', displayName: 'Vindemiatrix', x: 0.918, y: 2.586, z: -0.4484, size: 0.6 },
+    { name: 'ζ Virginis known as Heze', displayName: 'Heze', x: -1.2864, y: -0.0925788, z: -0.22287, size: 0.35 },
+    { name: 'η Virginis known as Zaniah', displayName: 'Zaniah', x: 3.732, y: -0.1763652, z: -1.42158, size: 0.4 },
+    { name: 'θ Virginis', displayName: 'Theta Virginis', x: 0.3936, y: -1.3079988, z: -1.82229, size: 0.3 },
+    { name: 'ι Virginis known as Syrma', displayName: 'Syrma', x: -4.0056, y: -1.3664424, z: -0.20083, size: 0.35 },
+    { name: 'μ Virginis known as Rijl al Awwa', displayName: 'Rijl al Awwa', x: -5.79, y: -1.3079988, z: -0.15067, size: 0.35 },
+    { name: 'ν Virginis', displayName: 'Nu Virginis', x: 6.0, y: 1.4652276, z: -1.9, size: 0.3 },
+    { name: 'ο Virginis', displayName: 'Omicron Virginis', x: 4.5708, y: 1.905882, z: -0.75848, size: 0.3 },
+    { name: 'τ Virginis', displayName: 'Tau Virginis', x: -3.0732, y: 0.4065192, z: -1.17762, size: 0.3 },
+    { name: '109 Virginis', displayName: '109 Virginis', x: -6.0, y: 0.4251384, z: -0.59052, size: 0.3 }
 ];
 
 let starMeshes = [];
@@ -89,6 +89,16 @@ console.log('Orbit controls configured.');
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const starNameElement = document.getElementById('star-name');
+const nowPlayingBar = document.getElementById('now-playing');
+
+function updateNowPlaying(displayName) {
+    nowPlayingBar.textContent = `now playing: ${displayName}`;
+    nowPlayingBar.style.visibility = 'visible'; // Make it visible
+}
+
+function hideNowPlaying() {
+    nowPlayingBar.style.visibility = 'hidden'; // Hide the bar
+}
 
 // Define a variable to store the GSAP pulse tween
 let activePulseTween = null;
@@ -163,17 +173,20 @@ function handleStarClick(clientX, clientY) {
                 activePulseTween.kill();
                 activePulseTween = null;
             }
-
+        
             activeStar = clickedStar;
-
+        
             // Dispatch event to audioplayer.js with the audio source
             const playAudioEvent = new CustomEvent("playAudio", {
                 detail: { audioSrc: clickedStarData.link }
             });
             document.dispatchEvent(playAudioEvent);
-
+        
+            // Update the now-playing bar with the star's displayName
+            updateNowPlaying(clickedStarData.displayName);
+        
             console.log(`${clickedStarData.name} clicked! Playing audio...`);
-
+        
             gsap.to(bloomPass, {
                 strength: 1.6, // Initial burst to 1.6 on click
                 duration: 1.0,
@@ -189,7 +202,7 @@ function handleStarClick(clientX, clientY) {
                     });
                 }
             });
-
+        
             gsap.to(clickedStar.material, {
                 emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
                 duration: 0.5,
@@ -227,6 +240,14 @@ const waveVisualizer = document.getElementById('waveform-visualizer');
 let isPlaying = false;
 let audio = new Audio();
 audio.loop = false;  // Prevent looping by default
+
+// Event listener to handle when audio playback ends
+audio.addEventListener('ended', () => {
+    console.log('Audio ended.');
+    isPlaying = false;
+
+    hideNowPlaying(); // Hide the now-playing bar
+});
 
 // Initialize audio context for waveform visualization
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -305,12 +326,13 @@ playPauseBtn.addEventListener('click', () => {
 stopBtn.addEventListener('click', () => {
     console.log('Stop button clicked.');
     audio.pause();
-    audio.currentTime = 0;  // Reset the audio to the beginning
-    isPlaying = false;      // Set isPlaying to false, indicating that the audio is stopped
+    audio.currentTime = 0; // Reset the audio to the beginning
+    isPlaying = false;     // Set isPlaying to false, indicating that the audio is stopped
 
     hideAudioPlayer();
-    resetStarGlow();  // Reset stars and lighting to default state
-    resetCamera();    // Reset camera to default position
+    hideNowPlaying();      // Hide the now-playing bar
+    resetStarGlow();       // Reset stars and lighting to default state
+    resetCamera();         // Reset camera to default position
 });
 
 // Function to reset stars to the default state

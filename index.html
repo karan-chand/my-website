@@ -24,18 +24,136 @@
 
     <!-- Load OrbitControls from a CDN -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: white;
+            touch-action: manipulation;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        header h1 {
+            cursor: pointer;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+            position: relative;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        nav ul li:hover .dropdown {
+            display: block;
+        }
+
+        .static-text {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: black;
+            font-size: 24px;
+            z-index: 10;
+        }
+
+        #custom-cursor {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            position: absolute;
+            pointer-events: none;
+            z-index: 11;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+
+        .audio-player-container {
+            position: fixed;
+            bottom: 50px; /* Positioned above the now-playing bar */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .audio-controls button {
+            margin: 5px;
+        }
+
+        .wave-visualizer {
+            display: block;
+            margin: 10px auto;
+            width: 100%;
+            max-width: 300px;
+            height: 50px;
+            background: transparent;
+        }
+
+        #now-playing {
+            position: fixed;
+            bottom: 0; /* At the very bottom of the viewport */
+            left: 0;
+            width: 100%; /* Full-width bar */
+            text-align: center;
+            font-size: 18px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            color: black;
+            padding: 10px 0;
+            z-index: 1; /* Below the audio player but above the canvas */
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Shadow for separation */
+            visibility: hidden; /* Hidden initially */
+        }
+    </style>
 </head>
 <body>
     <!-- Header with site title and dropdown menu -->
     <header>
-        <!-- Clicking the title triggers reset -->
         <h1 onclick="resetPage()">KARAN.INK</h1>
         <nav>
             <ul>
                 <li>
                     <a href="#">STARS</a>
                     <ul class="dropdown">
-                        <!-- Dropdown link simulating Spica star click -->
                         <li>
                             <a href="#" id="spica-menu" onclick="triggerSpica()">
                                 SOUND THREAD 001: Spica
@@ -68,6 +186,9 @@
         </div>
         <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
     </div>
+
+    <!-- Now Playing Bar -->
+    <div id="now-playing">now playing:</div>
 
     <!-- Load app.js for rendering the constellation and audio player -->
     <script src="app.js"></script>

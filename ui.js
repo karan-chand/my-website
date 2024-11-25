@@ -1,14 +1,23 @@
 export class UIManager {
     constructor(audioPlayer, starSystem) {
-        this.audioPlayer = audioPlayer;
-        this.starSystem = starSystem;
+        this.loadFonts();
         this.createBaseStructure();
+    }
+
+    async loadFonts() {
+        const fontFaces = [
+            new FontFace('Stanley Regular', 'url(fonts/Stanley Regular.woff2)'),
+            new FontFace('Halyard Text', 'url(fonts/Halyard Text Regular.woff2)')
+        ];
+
+        const loadedFonts = await Promise.all(fontFaces.map(font => font.load()));
+        loadedFonts.forEach(font => document.fonts.add(font));
     }
 
     createBaseStructure() {
         document.body.innerHTML = `
             <header>
-                <h1 id="karan-ink" onclick="resetPage()">KARAN.INK</h1>
+                <h1 onclick="resetPage()">KARAN.INK</h1>
                 <nav>
                     <ul>
                         <li>

@@ -158,7 +158,7 @@ nav ul .dropdown li a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(128, 128, 128, 0.9); /* Semi-transparent grey */
+    background: rgba(190, 190, 190, 0.3); /* Semi-transparent grey */
     border-radius: 5px; /* Optional: rounded corners */
     z-index: 0; /* Ensure pseudo-element is behind text but above container background */
 }

@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { STAR_CONFIG } from './starsystem.js';
+import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class AudioPlayer {
     constructor(starSystem, bloomPass) {
@@ -10,23 +10,27 @@ export class AudioPlayer {
         this.bloomPass = bloomPass;
         this.activePulseTween = null;
         
-        // Initialize audio context and analyzer
+        this.initializeAudioContext();
+        this.cacheElements();
+        this.initializeEventListeners();
+    }
+
+    initializeAudioContext() {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.analyzer = this.audioContext.createAnalyser();
         this.analyzer.fftSize = 1024;
         this.source = this.audioContext.createMediaElementSource(this.audio);
         this.source.connect(this.analyzer);
         this.analyzer.connect(this.audioContext.destination);
+    }
 
-        // Cache DOM elements
+    cacheElements() {
         this.playerContainer = document.getElementById('audio-player-container');
         this.playPauseBtn = document.getElementById('play-pause-btn');
         this.stopBtn = document.getElementById('stop-btn');
         this.rewindBtn = document.getElementById('rewind-btn');
         this.fastForwardBtn = document.getElementById('fast-forward-btn');
         this.waveVisualizer = document.getElementById('waveform-visualizer');
-
-        this.initializeEventListeners();
     }
 
     initializeEventListeners() {
@@ -92,8 +96,8 @@ export class AudioPlayer {
         gsap.killTweensOf(this.starSystem.activeStar.material);
         gsap.to(this.starSystem.activeStar.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
-            duration: 0.5,
-            ease: "power2.inOut"
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: ANIMATION_CONFIG.defaultEase
         });
         this.handleBloomPause();
     }
@@ -102,18 +106,18 @@ export class AudioPlayer {
         this.handleBloomResume();
         gsap.to(this.starSystem.activeStar.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
-            duration: 0.5,
-            ease: "power2.inOut"
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: ANIMATION_CONFIG.defaultEase
         });
     }
 
     handleBloomPause() {
         gsap.to(this.bloomPass, {
-            strength: 0.6,
-            duration: 1.5,
-            ease: "power4.out",
+            strength: BLOOM_CONFIG.defaultStrength,
+            duration: ANIMATION_CONFIG.longDuration,
+            ease: ANIMATION_CONFIG.defaultEase,
             onComplete: () => {
-                this.bloomPass.radius = 0.2;
+                this.bloomPass.radius = BLOOM_CONFIG.defaultRadius;
                 if (this.activePulseTween) {
                     this.activePulseTween.kill();
                     this.activePulseTween = null;
@@ -124,17 +128,17 @@ export class AudioPlayer {
 
     handleBloomResume() {
         gsap.to(this.bloomPass, {
-            strength: 1.6,
-            duration: 1.0,
-            ease: "power2.inOut",
+            strength: BLOOM_CONFIG.activeStrength,
+            duration: ANIMATION_CONFIG.longDuration,
+            ease: ANIMATION_CONFIG.defaultEase,
             onComplete: () => {
-                this.bloomPass.radius = 0.1;
+                this.bloomPass.radius = BLOOM_CONFIG.pulseRadius;
                 this.activePulseTween = gsap.to(this.bloomPass, {
-                    strength: 2.8,
-                    duration: 1.8,
+                    strength: BLOOM_CONFIG.pulseStrength,
+                    duration: ANIMATION_CONFIG.pulseDuration,
                     repeat: -1,
                     yoyo: true,
-                    ease: "sine.inOut"
+                    ease: ANIMATION_CONFIG.pulseEase
                 });
             }
         });

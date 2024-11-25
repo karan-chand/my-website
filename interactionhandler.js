@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { STAR_CONFIG } from './starsystem.js';
+import { BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class InteractionHandler {
     constructor(sceneSetup, starSystem, audioPlayer) {
@@ -7,7 +7,6 @@ export class InteractionHandler {
         this.starSystem = starSystem;
         this.audioPlayer = audioPlayer;
         this.starNameElement = document.getElementById('star-name');
-        
         this.initializeEventListeners();
     }
 
@@ -19,10 +18,7 @@ export class InteractionHandler {
     updateMousePosition(event) {
         this.sceneSetup.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.sceneSetup.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        this.sceneSetup.raycaster.setFromCamera(
-            this.sceneSetup.mouse, 
-            this.sceneSetup.camera
-        );
+        this.sceneSetup.raycaster.setFromCamera(this.sceneSetup.mouse, this.sceneSetup.camera);
     }
 
     handleHover(event) {
@@ -66,17 +62,17 @@ export class InteractionHandler {
 
     animateBloomEffect() {
         gsap.to(this.sceneSetup.bloomPass, {
-            strength: 1.6,
-            duration: 1.0,
-            ease: "power2.inOut",
+            strength: BLOOM_CONFIG.activeStrength,
+            duration: ANIMATION_CONFIG.longDuration,
+            ease: ANIMATION_CONFIG.defaultEase,
             onComplete: () => {
-                this.sceneSetup.bloomPass.radius = 0.1;
+                this.sceneSetup.bloomPass.radius = BLOOM_CONFIG.pulseRadius;
                 this.audioPlayer.activePulseTween = gsap.to(this.sceneSetup.bloomPass, {
-                    strength: 2.8,
-                    duration: 1.8,
+                    strength: BLOOM_CONFIG.pulseStrength,
+                    duration: ANIMATION_CONFIG.pulseDuration,
                     repeat: -1,
                     yoyo: true,
-                    ease: "sine.inOut"
+                    ease: ANIMATION_CONFIG.pulseEase
                 });
             }
         });
@@ -85,8 +81,8 @@ export class InteractionHandler {
     animateStarIntensity(star) {
         gsap.to(star.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
-            duration: 0.5,
-            ease: "power2.inOut"
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: ANIMATION_CONFIG.defaultEase
         });
     }
 
@@ -99,10 +95,10 @@ export class InteractionHandler {
             }
 
             gsap.to(this.sceneSetup.bloomPass, {
-                strength: 0.6,
-                radius: 0.2,
-                duration: 0.5,
-                ease: "power2.out"
+                strength: BLOOM_CONFIG.defaultStrength,
+                radius: BLOOM_CONFIG.defaultRadius,
+                duration: ANIMATION_CONFIG.defaultDuration,
+                ease: ANIMATION_CONFIG.defaultEase
             });
 
             this.triggerStarAudio(star.mesh, star.link);

@@ -1,17 +1,7 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
+import { STAR_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
-// Star configuration constants
-const STAR_CONFIG = {
-    defaultIntensity: 0.4,
-    hoverIntensityMultiplier: 1.8,
-    clickIntensityMultiplier: 1.8,
-    scaleMultiplier: 5,
-    defaultColor: 0xe0e0ff,
-    emissiveColor: 0xffffff
-};
-
-// Star data for Virgo constellation
 const starData = [
     { name: 'α Virginis known as Spica', x: -0.6396, y: -2.586, z: -1.29181, size: 1.0, link: 'audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' },
     { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },
@@ -29,13 +19,12 @@ const starData = [
     { name: '109 Virginis', x: -6.0, y: 0.4251384, z: -0.59052, size: 0.3 }
 ];
 
-class StarSystem {
+export class StarSystem {
     constructor(scene) {
         this.scene = scene;
         this.starMeshes = [];
         this.currentlyHoveredStar = null;
         this.activeStar = null;
-        this.activePulseTween = null;
     }
 
     createStars() {
@@ -92,8 +81,8 @@ class StarSystem {
             gsap.killTweensOf(this.currentlyHoveredStar.material);
             gsap.to(this.currentlyHoveredStar.material, {
                 emissiveIntensity: STAR_CONFIG.defaultIntensity,
-                duration: 1.2,
-                ease: "power4.out"
+                duration: ANIMATION_CONFIG.longDuration,
+                ease: ANIMATION_CONFIG.defaultEase
             });
         }
     }
@@ -102,22 +91,17 @@ class StarSystem {
         gsap.killTweensOf(mesh.material);
         gsap.to(mesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
-            duration: 0.5,
-            ease: "power2.inOut"
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: ANIMATION_CONFIG.defaultEase
         });
     }
 
     resetAllStars() {
-        if (this.activePulseTween) {
-            this.activePulseTween.kill();
-            this.activePulseTween = null;
-        }
-
         this.starMeshes.forEach(starData => {
             gsap.to(starData.mesh.material, {
                 emissiveIntensity: STAR_CONFIG.defaultIntensity,
-                duration: 1.5,
-                ease: "power4.out"
+                duration: ANIMATION_CONFIG.longDuration,
+                ease: ANIMATION_CONFIG.defaultEase
             });
         });
 
@@ -134,4 +118,4 @@ class StarSystem {
     }
 }
 
-export { StarSystem, starData, STAR_CONFIG };
+export { starData };

@@ -3,11 +3,18 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import gsap from 'gsap';
+import { CAMERA_CONFIG, CONTROLS_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class SceneSetup {
     constructor() {
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(
+            CAMERA_CONFIG.fov, 
+            window.innerWidth / window.innerHeight,
+            CAMERA_CONFIG.near,
+            CAMERA_CONFIG.far
+        );
         this.renderer = new THREE.WebGLRenderer({ 
             canvas: document.getElementById('virgo-constellation'), 
             antialias: true 
@@ -28,14 +35,19 @@ export class SceneSetup {
     }
 
     setupCamera() {
-        this.camera.position.set(0, 0, 50);
+        const { x, y, z } = CAMERA_CONFIG.defaultPosition;
+        this.camera.position.set(x, y, z);
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableDamping = true;
-        this.controls.dampingFactor = 0.05;
-        this.controls.rotateSpeed = 0.7;
-        this.controls.enableZoom = true;
-        this.controls.enablePan = false;
-        this.controls.target.set(0, 0, 0);
+        this.controls.dampingFactor = CONTROLS_CONFIG.dampingFactor;
+        this.controls.rotateSpeed = CONTROLS_CONFIG.rotateSpeed;
+        this.controls.enableZoom = CONTROLS_CONFIG.enableZoom;
+        this.controls.enablePan = CONTROLS_CONFIG.enablePan;
+        this.controls.target.set(
+            CONTROLS_CONFIG.defaultTarget.x,
+            CONTROLS_CONFIG.defaultTarget.y,
+            CONTROLS_CONFIG.defaultTarget.z
+        );
     }
 
     setupBloom() {
@@ -45,9 +57,9 @@ export class SceneSetup {
 
         this.bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            0.6,
-            0.2,
-            0.08
+            BLOOM_CONFIG.defaultStrength,
+            BLOOM_CONFIG.defaultRadius,
+            BLOOM_CONFIG.defaultThreshold
         );
         this.composer.addPass(this.bloomPass);
     }
@@ -65,14 +77,17 @@ export class SceneSetup {
     }
 
     resetCamera() {
+        const { x, y, z } = CAMERA_CONFIG.defaultPosition;
         gsap.to(this.camera.position, {
-            x: 0,
-            y: 0,
-            z: 50,
-            duration: 2.0,
-            ease: "power2.inOut"
+            x, y, z,
+            duration: ANIMATION_CONFIG.resetDuration,
+            ease: ANIMATION_CONFIG.defaultEase
         });
-        this.controls.target.set(0, 0, 0);
+        this.controls.target.set(
+            CONTROLS_CONFIG.defaultTarget.x,
+            CONTROLS_CONFIG.defaultTarget.y,
+            CONTROLS_CONFIG.defaultTarget.z
+        );
         this.controls.update();
     }
 

@@ -412,13 +412,32 @@ document.addEventListener("playAudio", (event) => {
 function triggerSpica() {
     console.log('Triggering Spica star click from dropdown menu.');
     const spicaStar = starMeshes.find(star => star.name.includes('Spica'));
+
     if (spicaStar) {
-        // Trigger audio play and click state effects for Spica
+        // Stop any ongoing bloom animations
+        if (activePulseTween) {
+            console.log('Stopping existing pulse tween for Spica.');
+            activePulseTween.kill(); // Kill the ongoing tween
+            activePulseTween = null; // Clear the reference
+        }
+
+        // Reset the bloom effect to its default state
+        gsap.to(bloomPass, {
+            strength: 0.6,
+            radius: 0.2,
+            duration: 0.5,
+            ease: "power2.out"
+        });
+
+        // Dispatch event to start the audio playback
         const playAudioEvent = new CustomEvent("playAudio", {
             detail: { audioSrc: spicaStar.link }
         });
         document.dispatchEvent(playAudioEvent);
 
+        console.log(`${spicaStar.name} audio started via dropdown.`);
+
+        // Trigger new pulsating effect
         gsap.to(bloomPass, {
             strength: 1.6,
             duration: 1.0,
@@ -435,17 +454,19 @@ function triggerSpica() {
             }
         });
 
+        // Update the star's glow effect
         gsap.to(spicaStar.mesh.material, {
             emissiveIntensity: defaultIntensity * clickIntensityMultiplier,
             duration: 0.5,
             ease: "power2.inOut"
         });
 
-        activeStar = spicaStar.mesh;
+        activeStar = spicaStar.mesh; // Set Spica as the active star
     } else {
         console.error('Spica star not found in starMeshes.');
     }
 }
+
 
 // Visualization Loop for Waveform
 function drawWaveform() {

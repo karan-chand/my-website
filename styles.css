@@ -84,9 +84,10 @@ nav ul li a::after {
     content: '⌄'; /* Unicode arrow symbol */
     font-size: 12px;
     color: grey; /* Light grey for subtlety */
-    margin-left: 5px; /* Add spacing between text and arrow */
-    display: inline-block; /* Ensures the arrow is treated as a block element */
-    vertical-align: middle; /* Centers the arrow vertically relative to text */
+    margin-left: 5px; /* Spacing between text and arrow */
+    display: inline-block; /* Makes the arrow respect layout space */
+    text-align: center; /* Centers the arrow text horizontally */
+    width: 12px; /* Ensure a consistent width for alignment */
 }
 
 /* Dropdown menu (hidden by default) */

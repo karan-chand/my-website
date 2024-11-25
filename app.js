@@ -29,7 +29,7 @@ console.log('Bloom pass added to composer with settings:', bloomPass);
 
 // Star data and creation focused on prominent stars visible in the Virgo constellation map with corrected spacing based on the provided coordinates
 const starData = [
-    { name: 'α Virginis known as Spica', x: -0.6396, y: -2.586, z: -1.29181, size: 1.0, link: 'Audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }, // Alpha Virginis
+    { name: 'α Virginis known as Spica', x: -0.6396, y: -2.586, z: -1.29181, size: 1.0, link: 'audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3' }, // Alpha Virginis
     { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },  // Beta Virginis
     { name: 'γ Virginis konwn as Porrima', x: 2.1864, y: -0.3196296, z: -0.01463, size: 0.5 },   // Gamma Virginis
     { name: 'δ Virginis known as Auva', x: 1.3512, y: 0.7918332, z: -1.14551, size: 0.4 },     // Delta Virginis

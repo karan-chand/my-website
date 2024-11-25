@@ -410,6 +410,72 @@ document.addEventListener("playAudio", (event) => {
     showAudioPlayer(audioSrc);
 });
 
+// Experimental event listeners
+
+// Global variables
+let isPlayingAudio = false; // Flag to track if audio is playing or paused
+let originalNowPlayingText = ""; // Store the "now playing" text for restoration
+
+// Function to format the "now playing" text
+function formatAudioName(link) {
+    // Extract the file name without extension and decode any URL-encoded characters
+    const fileName = link.substring(link.lastIndexOf('/') + 1).replace('.mp3', '');
+    return decodeURIComponent(fileName);
+}
+
+// Event listener for audio play
+audio.addEventListener('play', () => {
+    if (activeStar) {
+        const audioName = formatAudioName(activeStar.link);
+        originalNowPlayingText = `now playing: ${audioName}`;
+        starNameElement.innerHTML = originalNowPlayingText;
+        isPlayingAudio = true;
+    }
+});
+
+// Event listener for audio pause
+audio.addEventListener('pause', () => {
+    if (!audio.ended) { // Only if the audio hasn't ended
+        starNameElement.innerHTML = originalNowPlayingText;
+        isPlayingAudio = true;
+    }
+});
+
+// Event listener for audio end
+audio.addEventListener('ended', () => {
+    starNameElement.innerHTML = "♍︎";
+    isPlayingAudio = false;
+    originalNowPlayingText = ""; // Clear the stored text
+});
+
+// Stop button resets the text
+stopBtn.addEventListener('click', () => {
+    starNameElement.innerHTML = "♍︎";
+    isPlayingAudio = false;
+    originalNowPlayingText = ""; // Clear the stored text
+});
+
+// Handle hover logic (temporarily show the star name)
+window.addEventListener('pointermove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const hoveredStar = intersects[0].object;
+        const hoveredStarData = starMeshes.find(star => star.mesh === hoveredStar);
+
+        if (hoveredStarData) {
+            starNameElement.innerHTML = hoveredStarData.name; // Show the star's name
+        }
+    } else if (isPlayingAudio) {
+        starNameElement.innerHTML = originalNowPlayingText; // Restore "now playing" if applicable
+    } else {
+        starNameElement.innerHTML = "♍︎"; // Default state
+    }
+});
+
 // Dropdown menu functionality to simulate Spica star click
 function triggerSpica() {
     console.log('Triggering Spica star click from dropdown menu.');

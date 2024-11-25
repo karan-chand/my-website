@@ -118,6 +118,7 @@ nav ul .dropdown li {
     padding: 0;
     text-align: left; /* Align text to the left */
     cursor: pointer;
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 /* Dropdown links styling */
@@ -129,6 +130,7 @@ nav ul .dropdown li a {
     font-family: 'Halyard Text', Arial, sans-serif;
     font-size: 18px;
     background-color: rgba(0, 0, 0, 0.8); /* Match dropdown background */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
 /* Hover effect for dropdown items */

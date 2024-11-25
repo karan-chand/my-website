@@ -135,7 +135,7 @@ nav ul .dropdown li a:hover {
 
 /* Audio controls styling */
 .audio-controls button {
-    position: relative; /* Needed for pseudo-element positioning */
+    position: relative; /* Required for pseudo-element positioning */
     background: none;
     border: none;
     color: #00ffcc; /* Default green */
@@ -155,15 +155,22 @@ nav ul .dropdown li a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9); /* Semi-transparent grey */
+    background: rgba(128, 128, 128, 0.9); /* Semi-transparent grey */
     border-radius: 5px; /* Optional: rounded corners */
-    z-index: -1; /* Place the background behind the text */
+    z-index: 0; /* Ensure pseudo-element is behind text but above container background */
+}
+
+/* Add position relative to parent for proper layering */
+.audio-player-container {
+    position: relative; /* Ensure container context for child elements */
+    display: flex; /* Optional: Ensures proper layout of elements */
 }
 
 /* Adjust button spacing */
 .audio-controls button {
     margin: 5px; /* Consistent spacing */
 }
+    
 
 
 /* Static text for Virgo symbol and star name */

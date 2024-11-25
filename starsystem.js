@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { gsap } from 'gsap';
+import gsap from 'gsap';
 
 // Star configuration constants
 const STAR_CONFIG = {

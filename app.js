@@ -1,5 +1,5 @@
 // Import the custom cursor logic
-import { initializeCustomCursor } from './cursor.js';
+import { initializeCustomCursor } from './cursor.js'; // Since both files are in the root directory
 
 // Initialize the custom cursor
 initializeCustomCursor();

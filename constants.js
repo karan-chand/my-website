@@ -60,6 +60,15 @@ export const CONTROLS_CONFIG = {
     }
 };
 
+// Audio configuration
+export const AUDIO_CONFIG = {
+    fftSize: 2048,
+    smoothingTimeConstant: 0.8,
+    minDecibels: -100,
+    maxDecibels: -30,
+    defaultVolume: 0.7
+};
+
 // UI configuration
 export const UI_CONFIG = {
     colors: {
@@ -68,7 +77,8 @@ export const UI_CONFIG = {
         text: '#ffffff',
         cursor: 'rgba(255, 102, 0, 0.8)',
         dropdownBg: 'rgba(0, 0, 0, 0.9)',
-        dropdownShadow: 'rgba(0, 0, 0, 0.2)'
+        dropdownShadow: 'rgba(0, 0, 0, 0.2)',
+        waveform: '#00ffcc'
     },
     fonts: {
         primary: 'Stanley Regular',

@@ -1,25 +1,10 @@
-import { UI_CONFIG, FONT_CONFIG } from './constants.js';
+import { UI_CONFIG } from './constants.js';
+import gsap from 'gsap';
 
 export class UIManager {
     constructor() {
-        this.loadFonts();
         this.createBaseStructure();
         this.setupEventListeners();
-    }
-
-    async loadFonts() {
-        try {
-            const fontFaces = [
-                new FontFace(UI_CONFIG.fonts.primary, `url(${FONT_CONFIG.files.stanley.regular})`),
-                new FontFace(UI_CONFIG.fonts.secondary, `url(${FONT_CONFIG.files.halyard.regular})`)
-            ];
-            
-            const loadedFonts = await Promise.all(fontFaces.map(font => font.load()));
-            loadedFonts.forEach(font => document.fonts.add(font));
-        } catch (error) {
-            console.error('Error loading fonts:', error);
-            // Fallback to system fonts is handled in CSS
-        }
     }
 
     createBaseStructure() {
@@ -29,7 +14,7 @@ export class UIManager {
                 <nav>
                     <ul>
                         <li>
-                            <a href="#">stars</a>
+                            <a href="#" class="nav-link">stars</a>
                             <ul class="dropdown">
                                 <li>
                                     <a href="#" id="spica-menu" onclick="triggerSpica()">
@@ -47,10 +32,10 @@ export class UIManager {
 
             <div id="audio-player-container" class="audio-player-container">
                 <div class="audio-controls">
-                    <button id="rewind-btn" aria-label="Rewind 30 seconds">rwd</button>
-                    <button id="play-pause-btn" aria-label="Play or pause">play/pause</button>
-                    <button id="stop-btn" aria-label="Stop">stop</button>
-                    <button id="fast-forward-btn" aria-label="Forward 30 seconds">ffwd</button>
+                    <button id="rewind-btn">rwd</button>
+                    <button id="play-pause-btn">play/pause</button>
+                    <button id="stop-btn">stop</button>
+                    <button id="fast-forward-btn">ffwd</button>
                 </div>
                 <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
             </div>
@@ -85,6 +70,13 @@ export class UIManager {
                         onComplete: () => dropdown.style.display = 'none'
                     });
                 }
+            });
+        });
+
+        // Prevent default behavior for navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
             });
         });
 
@@ -126,47 +118,6 @@ export class UIManager {
             menuButton.remove();
         }
         document.querySelector('nav')?.classList.remove('mobile-open');
-    }
-
-    showLoadingScreen() {
-        const loader = document.createElement('div');
-        loader.className = 'loading-screen';
-        loader.innerHTML = `
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <div class="loading-text">Loading Virgo Constellation...</div>
-            </div>
-        `;
-        document.body.appendChild(loader);
-
-        return () => {
-            gsap.to(loader, {
-                opacity: 0,
-                duration: 0.5,
-                onComplete: () => loader.remove()
-            });
-        };
-    }
-
-    showError(message) {
-        const errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        errorElement.textContent = message;
-        document.body.appendChild(errorElement);
-
-        gsap.to(errorElement, {
-            opacity: 0,
-            delay: 3,
-            duration: 0.5,
-            onComplete: () => errorElement.remove()
-        });
-    }
-
-    updateStarInfo(starData) {
-        const starName = document.getElementById('star-name');
-        if (starName && starData) {
-            starName.textContent = starData.name;
-        }
     }
 }
 

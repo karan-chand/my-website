@@ -4,16 +4,15 @@ import { AudioPlayer } from './audioplayer.js';
 import { SceneSetup } from './scenesetup.js';
 import { InteractionHandler } from './interactionhandler.js';
 import { UIManager } from './ui.js';
-import { TextDisplay } from './textdisplay.js';
+import gsap from 'gsap';
 
 // Initialize UI first
 const uiManager = new UIManager();
 
-// Initialize core components
+// Initialize scene and core components
 const sceneSetup = new SceneSetup();
 const starSystem = new StarSystem(sceneSetup.scene);
-const textDisplay = new TextDisplay(sceneSetup.scene, sceneSetup.camera);
-const audioPlayer = new AudioPlayer(starSystem, sceneSetup.bloomPass, textDisplay);
+const audioPlayer = new AudioPlayer(starSystem, sceneSetup.bloomPass);
 const interactionHandler = new InteractionHandler(sceneSetup, starSystem, audioPlayer);
 
 // Initialize constellation
@@ -30,6 +29,13 @@ window.triggerSpica = function() {
     interactionHandler.triggerSpecificStar('Spica');
 }
 
-// Start animation and cursor
-sceneSetup.animate();
+// Start animation loop
+function animate() {
+    requestAnimationFrame(animate);
+    sceneSetup.controls.update();
+    sceneSetup.composer.render();
+}
+animate();
+
+// Initialize cursor
 initializeCustomCursor();

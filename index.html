@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KARAN.INK</title>
     <link rel="stylesheet" href="styles.css">
-    <script async src="https://unpkg.com/es-module-shims@1.8.2/dist/es-module-shims.js"></script>
+    
+    <!-- Load GSAP directly -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Import maps for Three.js -->
     <script type="importmap">
     {
         "imports": {
@@ -13,14 +17,13 @@
             "three/examples/jsm/postprocessing/EffectComposer.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
             "three/examples/jsm/postprocessing/RenderPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
             "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
-            "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js",
-            "gsap": "https://unpkg.com/gsap@3.12.0/dist/gsap.min.js"
+            "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js"
         }
     }
     </script>
 </head>
 <body>
     <canvas id="virgo-constellation"></canvas>
-    <script type="module" src="/app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

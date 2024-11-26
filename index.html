@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KARAN.INK</title>
     <link rel="stylesheet" href="styles.css">
-   
-    <!-- Import maps for module loading -->
+    <script async src="https://unpkg.com/es-module-shims@1.8.2/dist/es-module-shims.js"></script>
     <script type="importmap">
     {
         "imports": {
@@ -15,13 +14,13 @@
             "three/examples/jsm/postprocessing/RenderPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
             "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
             "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js",
-            "gsap": "https://unpkg.com/gsap@3.12.0/dist/gsap.es.min.js"
+            "gsap": "https://unpkg.com/gsap@3.12.0/dist/gsap.min.js"
         }
     }
     </script>
 </head>
 <body>
     <canvas id="virgo-constellation"></canvas>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="/app.js"></script>
 </body>
 </html>

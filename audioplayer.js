@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
+import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG, AUDIO_CONFIG, UI_CONFIG } from './constants.js';
 
 export class AudioPlayer {
     constructor(starSystem, bloomPass) {
@@ -8,6 +8,7 @@ export class AudioPlayer {
         this.bloomPass = bloomPass;
         this.isPlaying = false;
         this.activePulseTween = null;
+        this.currentStarMesh = null;
         
         this.initializeAudioContext();
         this.cacheElements();
@@ -18,7 +19,6 @@ export class AudioPlayer {
             if (event.detail && event.detail.audioSrc) {
                 console.log('Playing audio:', event.detail.audioSrc);
                 this.play(event.detail.audioSrc, event.detail.textPath);
-                // Show the player container
                 if (this.playerContainer) {
                     this.playerContainer.style.display = 'flex';
                 }
@@ -38,6 +38,12 @@ export class AudioPlayer {
             !this.rewindBtn || !this.fastForwardBtn || !this.waveVisualizer) {
             console.error('Failed to cache audio player elements');
         }
+
+        // Set initial styles
+        if (this.playerContainer) {
+            this.playerContainer.style.width = UI_CONFIG.sizes.playerWidth;
+            this.playerContainer.style.maxWidth = UI_CONFIG.sizes.playerMaxWidth;
+        }
     }
 
     initializeAudioContext() {
@@ -45,21 +51,22 @@ export class AudioPlayer {
             (window.AudioContext || window.webkitAudioContext)) {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.analyzer = this.audioContext.createAnalyser();
-            this.analyzer.fftSize = 2048;
+            this.analyzer.fftSize = AUDIO_CONFIG.fftSize;
+            this.analyzer.smoothingTimeConstant = AUDIO_CONFIG.smoothingTimeConstant;
+            this.analyzer.minDecibels = AUDIO_CONFIG.minDecibels;
+            this.analyzer.maxDecibels = AUDIO_CONFIG.maxDecibels;
             
-            // Create filters and effects
+            // Create gain node
             this.gainNode = this.audioContext.createGain();
-            this.biquadFilter = this.audioContext.createBiquadFilter();
+            this.gainNode.gain.value = AUDIO_CONFIG.defaultVolume;
             
-            // Set up audio processing chain
+            // Set up audio processing chain (removed biquadFilter)
             this.source = this.audioContext.createMediaElementSource(this.audio);
             this.source
                 .connect(this.gainNode)
-                .connect(this.biquadFilter)
                 .connect(this.analyzer)
                 .connect(this.audioContext.destination);
 
-            // Initialize visualizer data
             this.setupVisualizerData();
         } else {
             console.error('Web Audio API is not supported in this browser');
@@ -80,10 +87,16 @@ export class AudioPlayer {
             this.fastForwardBtn.addEventListener('click', () => this.seek(10));
         }
 
-        // Add audio ended event listener
         this.audio.addEventListener('ended', () => {
             this.playPauseBtn.textContent = 'play';
             this.isPlaying = false;
+            if (this.currentStarMesh) {
+                this.starSystem.stopPulse(this.currentStarMesh);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            this.resizeVisualizer();
         });
     }
 
@@ -99,9 +112,14 @@ export class AudioPlayer {
         try {
             console.log('Loading audio file:', audioSrc);
             this.showLoadingState();
+            
+            // Stop any existing playback
+            if (this.isPlaying) {
+                this.stop();
+            }
+
             this.audio.src = audioSrc;
             
-            // Wait for the audio to be loaded
             await new Promise((resolve, reject) => {
                 this.audio.oncanplaythrough = resolve;
                 this.audio.onerror = reject;
@@ -112,6 +130,7 @@ export class AudioPlayer {
             await this.startPlayback();
             this.hideLoadingState();
             this.startVisualizer();
+
         } catch (error) {
             console.error('Audio playback error:', error);
             this.handlePlaybackError(error);
@@ -126,6 +145,9 @@ export class AudioPlayer {
             if (this.playPauseBtn) {
                 this.playPauseBtn.textContent = 'pause';
             }
+            if (this.currentStarMesh) {
+                this.starSystem.startPulse(this.currentStarMesh);
+            }
         } catch (error) {
             console.error('Playback error:', error);
             throw error;
@@ -137,11 +159,17 @@ export class AudioPlayer {
             this.audio.play();
             this.playPauseBtn.textContent = 'pause';
             this.isPlaying = true;
+            if (this.currentStarMesh) {
+                this.starSystem.startPulse(this.currentStarMesh);
+            }
             this.startVisualizer();
         } else {
             this.audio.pause();
             this.playPauseBtn.textContent = 'play';
             this.isPlaying = false;
+            if (this.currentStarMesh) {
+                this.starSystem.stopPulse(this.currentStarMesh);
+            }
         }
     }
 
@@ -150,6 +178,10 @@ export class AudioPlayer {
         this.audio.currentTime = 0;
         this.playPauseBtn.textContent = 'play';
         this.isPlaying = false;
+        if (this.currentStarMesh) {
+            this.starSystem.stopPulse(this.currentStarMesh);
+        }
+        
         if (this.playerContainer) {
             gsap.to(this.playerContainer, {
                 opacity: 0,
@@ -167,6 +199,17 @@ export class AudioPlayer {
         this.audio.currentTime = newTime;
     }
 
+    resizeVisualizer() {
+        if (this.waveVisualizer) {
+            const rect = this.waveVisualizer.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            this.waveVisualizer.width = rect.width * dpr;
+            this.waveVisualizer.height = rect.height * dpr;
+            const ctx = this.waveVisualizer.getContext('2d');
+            ctx.scale(dpr, dpr);
+        }
+    }
+
     startVisualizer() {
         const draw = () => {
             if (!this.isPlaying) return;
@@ -179,13 +222,12 @@ export class AudioPlayer {
             const width = canvas.width;
             const height = canvas.height;
             
-            // Clear canvas
+            // Clear canvas with slight fade effect
             ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
             ctx.fillRect(0, 0, width, height);
             
-            // Draw waveform
             ctx.lineWidth = 2;
-            ctx.strokeStyle = '#00ffcc';
+            ctx.strokeStyle = UI_CONFIG.colors.waveform;
             ctx.beginPath();
             
             const sliceWidth = width / this.bufferLength;
@@ -208,14 +250,7 @@ export class AudioPlayer {
             ctx.stroke();
         };
         
-        // Make sure canvas size matches display size
-        const dpr = window.devicePixelRatio || 1;
-        const rect = this.waveVisualizer.getBoundingClientRect();
-        this.waveVisualizer.width = rect.width * dpr;
-        this.waveVisualizer.height = rect.height * dpr;
-        const ctx = this.waveVisualizer.getContext('2d');
-        ctx.scale(dpr, dpr);
-        
+        this.resizeVisualizer();
         draw();
     }
 
@@ -253,6 +288,10 @@ export class AudioPlayer {
         }
         
         this.stop();
+    }
+
+    setCurrentStar(mesh) {
+        this.currentStarMesh = mesh;
     }
 
     cleanup() {

@@ -1,4 +1,4 @@
-import gsap from 'gsap';
+const gsap = window.gsap;
 import { UI_CONFIG } from './constants.js';
 
 export class TextDisplay {

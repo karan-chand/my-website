@@ -3,7 +3,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import gsap from 'gsap';
+const gsap = window.gsap;
 import { CAMERA_CONFIG, CONTROLS_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class SceneSetup {

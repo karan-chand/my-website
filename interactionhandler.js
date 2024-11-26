@@ -1,4 +1,4 @@
-import gsap from 'gsap';
+const gsap = window.gsap;
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class InteractionHandler {

@@ -3,45 +3,58 @@ import gsap from 'gsap';
 
 export class UIManager {
     constructor() {
-        this.createBaseStructure();
+        this.appendBaseStructure();
         this.setupEventListeners();
     }
 
-    createBaseStructure() {
-        document.body.innerHTML = `
-            <header>
-                <h1 onclick="window.resetPage()">KARAN.INK</h1>
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="#" class="nav-link">stars</a>
-                            <ul class="dropdown">
-                                <li>
-                                    <a href="#" id="spica-menu" onclick="window.triggerSpica()">
-                                        nada sutra 001: spica
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-            </header>
-
-            <div id="star-name" class="static-text">♍︎</div>
-            <div id="custom-cursor" class="custom-cursor"></div>
-
-            <div id="audio-player-container" class="audio-player-container">
-                <div class="audio-controls">
-                    <button id="rewind-btn">rwd</button>
-                    <button id="play-pause-btn">play/pause</button>
-                    <button id="stop-btn">stop</button>
-                    <button id="fast-forward-btn">ffwd</button>
-                </div>
-                <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
-            </div>
-
-            <canvas id="virgo-constellation"></canvas>
+    appendBaseStructure() {
+        // Create elements
+        const header = document.createElement('header');
+        header.innerHTML = `
+            <h1 onclick="window.resetPage()">KARAN.INK</h1>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#" class="nav-link">stars</a>
+                        <ul class="dropdown">
+                            <li>
+                                <a href="#" id="spica-menu" onclick="window.triggerSpica()">
+                                    nada sutra 001: spica
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
         `;
+
+        const starName = document.createElement('div');
+        starName.id = 'star-name';
+        starName.className = 'static-text';
+        starName.textContent = '♍︎';
+
+        const cursor = document.createElement('div');
+        cursor.id = 'custom-cursor';
+        cursor.className = 'custom-cursor';
+
+        const audioPlayer = document.createElement('div');
+        audioPlayer.id = 'audio-player-container';
+        audioPlayer.className = 'audio-player-container';
+        audioPlayer.innerHTML = `
+            <div class="audio-controls">
+                <button id="rewind-btn">rwd</button>
+                <button id="play-pause-btn">play/pause</button>
+                <button id="stop-btn">stop</button>
+                <button id="fast-forward-btn">ffwd</button>
+            </div>
+            <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
+        `;
+
+        // Append elements to body
+        document.body.appendChild(header);
+        document.body.appendChild(starName);
+        document.body.appendChild(cursor);
+        document.body.appendChild(audioPlayer);
     }
 
     setupEventListeners() {

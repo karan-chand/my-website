@@ -11,21 +11,21 @@ const starData = [
         magnitude: 0.98,
         link: 'audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3',
         textPath: 'text/spica.txt',
-        connectsTo: [1, 5, 7] // Updated connections
+        connectsTo: [1, 5, 7]
     },
     { 
         name: 'β Virginis known as Zavijava', 
         x: 5.5248, y: 0.3765216, z: 0.0, 
         size: 0.3,
         magnitude: 3.61,
-        connectsTo: [2, 10] // Connected to Porrima and ν Virginis
+        connectsTo: [2, 10]
     },
     { 
         name: 'γ Virginis known as Porrima', 
         x: 2.1864, y: -0.3196296, z: -0.01463, 
         size: 0.5,
         magnitude: 2.74,
-        connectsTo: [3, 11] // Connected to Auva and ο Virginis
+        connectsTo: [3, 11]
     },
     { 
         name: 'δ Virginis known as Auva', 
@@ -46,7 +46,7 @@ const starData = [
         x: -1.2864, y: -0.0925788, z: -0.22287, 
         size: 0.35,
         magnitude: 3.37,
-        connectsTo: [0, 12] // Connected to Spica and τ Virginis
+        connectsTo: [0, 12]
     },
     { 
         name: 'η Virginis known as Zaniah', 
@@ -60,21 +60,21 @@ const starData = [
         x: 0.3936, y: -1.3079988, z: -1.82229, 
         size: 0.3,
         magnitude: 4.38,
-        connectsTo: [0, 8] // Connected to Spica and Syrma
+        connectsTo: [0, 8]
     },
     { 
         name: 'ι Virginis known as Syrma', 
         x: -4.0056, y: -1.3664424, z: -0.20083, 
         size: 0.35,
         magnitude: 4.08,
-        connectsTo: [9] // Connected to Rijl al Awwa
+        connectsTo: [9]
     },
     { 
         name: 'μ Virginis known as Rijl al Awwa', 
         x: -5.79, y: -1.3079988, z: -0.15067, 
         size: 0.35,
         magnitude: 3.88,
-        connectsTo: [13] // Connected to 109 Virginis
+        connectsTo: [13]
     },
     { 
         name: 'ν Virginis', 
@@ -105,6 +105,15 @@ const starData = [
         connectsTo: [12]
     }
 ];
+
+export class StarSystem {
+    constructor(scene) {
+        this.scene = scene;
+        this.starMeshes = [];
+        this.currentlyHoveredStar = null;
+        this.activeStar = null;
+        this.constellationLines = [];
+    }
 
     createStars() {
         // Create constellation lines first so they appear behind stars
@@ -240,6 +249,24 @@ const starData = [
                 });
             }
         });
+    }
+
+    clearHover(starNameElement) {
+        if (this.currentlyHoveredStar && this.currentlyHoveredStar !== this.activeStar) {
+            this.resetPreviousHover();
+            starNameElement.innerHTML = '♍︎';
+        }
+        this.currentlyHoveredStar = null;
+    }
+
+    findStarByName(name) {
+        return this.starMeshes.find(star => 
+            star.name.toLowerCase().includes(name.toLowerCase())
+        );
+    }
+
+    getStarData(mesh) {
+        return this.starMeshes.find(star => star.mesh === mesh);
     }
 
     resetPreviousHover() {

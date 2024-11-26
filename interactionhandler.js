@@ -44,7 +44,6 @@ export class InteractionHandler {
                 touchEndPosition.y - touchStartPosition.y
             );
 
-            // If it's a tap (short duration, small movement)
             if (touchDuration < 300 && distance < 10) {
                 this.handleClick(e.changedTouches[0]);
             }
@@ -82,11 +81,18 @@ export class InteractionHandler {
         
         this.updateMousePosition(event);
         const intersects = this.sceneSetup.raycaster.intersectObjects(
-            this.sceneSetup.scene.children
+            this.sceneSetup.scene.children, true
         );
 
-        if (intersects.length > 0) {
-            this.starSystem.handleHover(intersects[0].object, this.starNameElement);
+        // Find the first intersected object that is part of a star group
+        const starIntersect = intersects.find(intersect => 
+            intersect.object.parent && 
+            this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
+        );
+
+        if (starIntersect) {
+            const starGroup = starIntersect.object.parent;
+            this.starSystem.handleHover(starGroup, this.starNameElement);
             document.body.style.cursor = 'pointer';
         } else {
             this.starSystem.clearHover(this.starNameElement);
@@ -99,15 +105,20 @@ export class InteractionHandler {
 
         this.updateMousePosition(event);
         const intersects = this.sceneSetup.raycaster.intersectObjects(
-            this.sceneSetup.scene.children
+            this.sceneSetup.scene.children, true
         );
 
-        if (intersects.length > 0) {
-            const clickedStar = intersects[0].object;
-            const clickedStarData = this.starSystem.getStarData(clickedStar);
+        const starIntersect = intersects.find(intersect => 
+            intersect.object.parent && 
+            this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
+        );
+
+        if (starIntersect) {
+            const starGroup = starIntersect.object.parent;
+            const clickedStarData = this.starSystem.starMeshes.find(star => star.mesh === starGroup);
 
             if (clickedStarData?.link) {
-                await this.transitionToStar(clickedStar, clickedStarData);
+                await this.transitionToStar(starGroup, clickedStarData);
             }
         }
     }
@@ -164,8 +175,8 @@ export class InteractionHandler {
                 x: cameraPosition.x,
                 y: cameraPosition.y,
                 z: cameraPosition.z,
-                duration: 1.5,
-                ease: "power2.inOut"
+                duration: ANIMATION_CONFIG.longDuration,
+                ease: ANIMATION_CONFIG.defaultEase
             });
 
             // Animate controls target
@@ -173,8 +184,8 @@ export class InteractionHandler {
                 x: starPosition.x,
                 y: starPosition.y,
                 z: starPosition.z,
-                duration: 1.5,
-                ease: "power2.inOut",
+                duration: ANIMATION_CONFIG.longDuration,
+                ease: ANIMATION_CONFIG.defaultEase,
                 onUpdate: () => this.sceneSetup.controls.update(),
                 onComplete: resolve
             });
@@ -200,7 +211,7 @@ export class InteractionHandler {
     }
 
     animateStarIntensity(star) {
-        gsap.to(star.material, {
+        gsap.to(star.userData.starMesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
             duration: ANIMATION_CONFIG.defaultDuration,
             ease: ANIMATION_CONFIG.defaultEase
@@ -208,9 +219,16 @@ export class InteractionHandler {
     }
 
     triggerSpecificStar(starName) {
-        const star = this.starSystem.findStarByName(starName);
+        console.log('Triggering star:', starName);
+        const star = this.starSystem.starMeshes.find(s => 
+            s.name.toLowerCase().includes(starName.toLowerCase())
+        );
+        
         if (star) {
+            console.log('Found star:', star);
             this.transitionToStar(star.mesh, star);
+        } else {
+            console.error('Star not found:', starName);
         }
     }
 }

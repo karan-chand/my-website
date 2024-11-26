@@ -10,14 +10,14 @@ export class UIManager {
     createBaseStructure() {
         document.body.innerHTML = `
             <header>
-                <h1 onclick="resetPage()">KARAN.INK</h1>
+                <h1 onclick="window.resetPage()">KARAN.INK</h1>
                 <nav>
                     <ul>
                         <li>
                             <a href="#" class="nav-link">stars</a>
                             <ul class="dropdown">
                                 <li>
-                                    <a href="#" id="spica-menu" onclick="triggerSpica()">
+                                    <a href="#" id="spica-menu" onclick="window.triggerSpica()">
                                         nada sutra 001: spica
                                     </a>
                                 </li>
@@ -74,9 +74,12 @@ export class UIManager {
         });
 
         // Prevent default behavior for navigation links
-        document.querySelectorAll('.nav-link').forEach(link => {
+        document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                if (link.id === 'spica-menu') {
+                    window.triggerSpica();
+                }
             });
         });
 
@@ -120,5 +123,3 @@ export class UIManager {
         document.querySelector('nav')?.classList.remove('mobile-open');
     }
 }
-
-export default UIManager;

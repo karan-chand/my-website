@@ -50,7 +50,7 @@ export class InteractionHandler {
     }
 
     handleKeyPress(event) {
-        if (event.key === 'Escape') {
+        if (event.key === 'Escape' && this.starSystem.activeStar) {
             this.resetScene();
         }
     }
@@ -139,9 +139,9 @@ export class InteractionHandler {
 
             // Start star pulsing
             this.starSystem.startPulse(star);
+            
             // Animate bloom effect
             this.animateBloomEffect();
-
         } catch (error) {
             console.error('Error during star transition:', error);
         } finally {

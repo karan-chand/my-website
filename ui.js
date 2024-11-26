@@ -37,24 +37,10 @@ export class UIManager {
         cursor.id = 'custom-cursor';
         cursor.className = 'custom-cursor';
 
-        const audioPlayer = document.createElement('div');
-        audioPlayer.id = 'audio-player-container';
-        audioPlayer.className = 'audio-player-container';
-        audioPlayer.innerHTML = `
-            <div class="audio-controls">
-                <button id="rewind-btn">rwd</button>
-                <button id="play-pause-btn">play/pause</button>
-                <button id="stop-btn">stop</button>
-                <button id="fast-forward-btn">ffwd</button>
-            </div>
-            <canvas id="waveform-visualizer" class="wave-visualizer"></canvas>
-        `;
-
         // Append elements to body
         document.body.appendChild(header);
         document.body.appendChild(starName);
         document.body.appendChild(cursor);
-        document.body.appendChild(audioPlayer);
     }
 
     setupEventListeners() {

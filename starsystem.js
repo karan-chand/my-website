@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import gsap from 'gsap';
+const gsap = window.gsap; // Change the GSAP import to use window.gsap
 import { STAR_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 // Star data without constellation connections

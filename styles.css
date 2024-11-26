@@ -1,23 +1,25 @@
-/* Font declarations */
+/* Font declarations with absolute paths */
 @font-face {
     font-family: 'Stanley Regular';
-    src: url('fonts/Stanley Regular.woff2') format('woff2'),
-         url('fonts/Stanley Regular.woff') format('woff'),
-         url('fonts/Stanley Regular.ttf') format('truetype');
+    src: url('/fonts/Stanley Regular.woff2') format('woff2'),
+         url('/fonts/Stanley Regular.woff') format('woff'),
+         url('/fonts/Stanley Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    font-display: block;
 }
 
 @font-face {
     font-family: 'Halyard Text';
-    src: url('fonts/Halyard Text Regular.woff2') format('woff2'),
-         url('fonts/Halyard Text Regular.woff') format('woff'),
-         url('fonts/Halyard Text Regular.ttf') format('truetype');
+    src: url('/fonts/Halyard Text Regular.woff2') format('woff2'),
+         url('/fonts/Halyard Text Regular.woff') format('woff'),
+         url('/fonts/Halyard Text Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    font-display: block;
 }
+
+/* Rest of your CSS stays the same */
 
 /* CSS Reset and Base Styles */
 *, *::before, *::after {

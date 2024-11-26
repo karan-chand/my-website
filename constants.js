@@ -1,8 +1,8 @@
 // Star configuration
 export const STAR_CONFIG = {
-    defaultIntensity: 0.2,        // Lower base intensity
-    hoverIntensityMultiplier: 2.5, // Higher hover glow
-    clickIntensityMultiplier: 3.0, // Higher active glow
+    defaultIntensity: 0.2,
+    hoverIntensityMultiplier: 2.5,
+    clickIntensityMultiplier: 3.0,
     scaleMultiplier: 5,
     defaultColor: 0xe0e0ff,
     emissiveColor: 0xffffff,
@@ -15,7 +15,7 @@ export const STAR_CONFIG = {
 
 // Bloom effect configuration
 export const BLOOM_CONFIG = {
-    defaultStrength: 0.4,         // Lower base bloom
+    defaultStrength: 0.4,
     defaultRadius: 0.2,
     defaultThreshold: 0.08,
     activeStrength: 1.8,
@@ -25,11 +25,11 @@ export const BLOOM_CONFIG = {
 
 // Animation timings
 export const ANIMATION_CONFIG = {
-    defaultDuration: 0.5,
-    longDuration: 1.0,
-    pulseDuration: 1.8,
-    resetDuration: 2.0,
-    defaultEase: "power2.inOut",
+    defaultDuration: 0.3,     // Faster
+    longDuration: 0.5,       // Faster
+    pulseDuration: 1.8,      // Keep for smooth pulsing
+    resetDuration: 1.0,      // Faster reset
+    defaultEase: "power2.out",  // Changed to .out for snappier transitions
     pulseEase: "sine.inOut"
 };
 
@@ -50,7 +50,7 @@ export const CONTROLS_CONFIG = {
     dampingFactor: 0.05,
     rotateSpeed: 0.7,
     enableZoom: true,
-    enablePan: true,  // Changed to true to allow rotation
+    enablePan: true,
     minDistance: 20,
     maxDistance: 100,
     defaultTarget: {
@@ -68,13 +68,7 @@ export const UI_CONFIG = {
         text: '#ffffff',
         cursor: 'rgba(255, 102, 0, 0.8)',
         dropdownBg: 'rgba(0, 0, 0, 0.9)',
-        dropdownShadow: 'rgba(0, 0, 0, 0.2)',
-        waveform: '#00ffcc',
-        controls: {
-            border: 'rgba(0, 255, 204, 0.3)',
-            hover: 'rgba(0, 255, 204, 0.1)',
-            text: '#00ffcc'
-        }
+        dropdownShadow: 'rgba(0, 0, 0, 0.2)'
     },
     fonts: {
         primary: 'Stanley Regular',
@@ -87,12 +81,9 @@ export const UI_CONFIG = {
         button: '14px',
         cursorSize: '10px',
         spacing: '10px',
+        mixcloudHeight: '60px',
         playerWidth: '90vw',
-        playerMaxWidth: '1200px',
-        playerHeight: '100px',
-        waveformHeight: '40px',
-        playerPadding: '15px',
-        controlsHeight: '40px'
+        playerMaxWidth: '1200px'
     },
     zIndex: {
         header: 15,
@@ -112,13 +103,4 @@ export const FONT_CONFIG = {
             regular: 'fonts/Halyard Text Regular.woff2'
         }
     }
-};
-
-// Audio configuration
-export const AUDIO_CONFIG = {
-    fftSize: 2048,
-    smoothingTimeConstant: 0.8,
-    minDecibels: -70,
-    maxDecibels: -30,
-    defaultVolume: 0.8
 };

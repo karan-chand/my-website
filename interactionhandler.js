@@ -2,10 +2,9 @@ import gsap from 'gsap';
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class InteractionHandler {
-    constructor(sceneSetup, starSystem, audioPlayer) {
+    constructor(sceneSetup, starSystem) {
         this.sceneSetup = sceneSetup;
         this.starSystem = starSystem;
-        this.audioPlayer = audioPlayer;
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
         
@@ -51,8 +50,13 @@ export class InteractionHandler {
     }
 
     handleKeyPress(event) {
-        if (event.key === 'Escape' && this.starSystem.activeStar) {
-            this.audioPlayer.stop();
+        if (event.key === 'Escape') {
+            this.resetScene();
+        }
+    }
+
+    resetScene() {
+        if (this.starSystem.activeStar) {
             this.starSystem.resetAllStars();
             this.sceneSetup.resetCamera();
         }
@@ -84,7 +88,6 @@ export class InteractionHandler {
             this.sceneSetup.scene.children, true
         );
 
-        // Find the first intersected object that is part of a star group
         const starIntersect = intersects.find(intersect => 
             intersect.object.parent && 
             this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
@@ -127,29 +130,17 @@ export class InteractionHandler {
         try {
             this.isTransitioning = true;
 
-            // Reset any active pulse animations
-            if (this.audioPlayer.activePulseTween) {
-                this.audioPlayer.activePulseTween.kill();
-                this.audioPlayer.activePulseTween = null;
-            }
-
-            // Set active star
+            // Set active star and show Mixcloud
             this.starSystem.activeStar = star;
+            this.starSystem.showMixcloud(starData.link);
 
             // Camera transition
             await this.transitionCamera(star);
 
-            // Trigger audio and visual effects
-            document.dispatchEvent(new CustomEvent("playAudio", {
-                detail: { 
-                    audioSrc: starData.link,
-                    textPath: starData.textPath 
-                }
-            }));
-
-            // Animate bloom and star intensity
+            // Start star pulsing
+            this.starSystem.startPulse(star);
+            // Animate bloom effect
             this.animateBloomEffect();
-            this.animateStarIntensity(star);
 
         } catch (error) {
             console.error('Error during star transition:', error);
@@ -161,16 +152,14 @@ export class InteractionHandler {
     transitionCamera(star) {
         return new Promise(resolve => {
             const starPosition = star.position;
-            const distance = 30; // Optimal viewing distance
+            const distance = 30;
             
-            // Calculate camera position
             const cameraPosition = {
                 x: starPosition.x + distance,
                 y: starPosition.y + distance/2,
                 z: starPosition.z + distance
             };
 
-            // Animate camera
             gsap.to(this.sceneSetup.camera.position, {
                 x: cameraPosition.x,
                 y: cameraPosition.y,
@@ -179,7 +168,6 @@ export class InteractionHandler {
                 ease: ANIMATION_CONFIG.defaultEase
             });
 
-            // Animate controls target
             gsap.to(this.sceneSetup.controls.target, {
                 x: starPosition.x,
                 y: starPosition.y,
@@ -195,26 +183,11 @@ export class InteractionHandler {
     animateBloomEffect() {
         gsap.to(this.sceneSetup.bloomPass, {
             strength: BLOOM_CONFIG.activeStrength,
-            duration: ANIMATION_CONFIG.longDuration,
+            duration: ANIMATION_CONFIG.defaultDuration,
             ease: ANIMATION_CONFIG.defaultEase,
             onComplete: () => {
                 this.sceneSetup.bloomPass.radius = BLOOM_CONFIG.pulseRadius;
-                this.audioPlayer.activePulseTween = gsap.to(this.sceneSetup.bloomPass, {
-                    strength: BLOOM_CONFIG.pulseStrength,
-                    duration: ANIMATION_CONFIG.pulseDuration,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: ANIMATION_CONFIG.pulseEase
-                });
             }
-        });
-    }
-
-    animateStarIntensity(star) {
-        gsap.to(star.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: ANIMATION_CONFIG.defaultEase
         });
     }
 

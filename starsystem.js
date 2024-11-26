@@ -8,8 +8,7 @@ const starData = [
         name: 'α Virginis known as Spica', 
         x: -0.6396, y: -2.586, z: -1.29181, 
         size: 1.0,
-        link: 'audio/Kahin%20Deep%20Jale%20Kahin%20Dil.mp3',
-        textPath: 'text/spica.txt'
+        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&mini=1&light=1&hide_artwork=1&feed=%2Fmol_%2Fall-that-jazz-3-nina-simone-alice-coltrane-sun-ra-olu-dara-charlie-parker-yusef-lateef-povo%2F'
     },
     { 
         name: 'β Virginis known as Zavijava', 
@@ -85,6 +84,16 @@ export class StarSystem {
         this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
+        
+        // Create mixcloud container
+        this.createMixcloudContainer();
+    }
+
+    createMixcloudContainer() {
+        const container = document.createElement('div');
+        container.id = 'mixcloud-container';
+        container.style.display = 'none';
+        document.body.appendChild(container);
     }
 
     createStars() {
@@ -94,20 +103,15 @@ export class StarSystem {
             this.starMeshes.push({
                 mesh,
                 name: star.name,
-                link: star.link,
-                textPath: star.textPath
+                link: star.link
             });
         });
     }
 
     createStarMesh(star) {
-        // Base geometry
         const geometry = new THREE.SphereGeometry(star.size, 32, 32);
-        
-        // Create glow geometry
         const glowGeometry = new THREE.SphereGeometry(star.size * 1.2, 32, 32);
         
-        // Materials
         const material = new THREE.MeshStandardMaterial({
             color: STAR_CONFIG.defaultColor,
             emissive: STAR_CONFIG.emissiveColor,
@@ -123,23 +127,19 @@ export class StarSystem {
             side: THREE.BackSide
         });
 
-        // Create meshes
         const starMesh = new THREE.Mesh(geometry, material);
         const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
         
-        // Create group and add both meshes
         const group = new THREE.Group();
         group.add(starMesh);
         group.add(glowMesh);
         
-        // Position
         group.position.set(
             star.x * STAR_CONFIG.scaleMultiplier,
             star.y * STAR_CONFIG.scaleMultiplier,
             star.z * STAR_CONFIG.scaleMultiplier
         );
         
-        // Store references
         group.userData.starMesh = starMesh;
         group.userData.glowMesh = glowMesh;
         
@@ -154,7 +154,6 @@ export class StarSystem {
             this.applyHoverEffect(hoveredMesh);
             this.currentlyHoveredStar = hoveredMesh;
             
-            // Update star name without magnitude
             starNameElement.textContent = hoveredStarData.name;
         }
     }
@@ -167,6 +166,22 @@ export class StarSystem {
         this.currentlyHoveredStar = null;
     }
 
+    showMixcloud(url) {
+        const container = document.getElementById('mixcloud-container');
+        if (!container) return;
+
+        container.innerHTML = `<iframe width="100%" height="60" src="${url}" frameborder="0" ></iframe>`;
+        container.style.display = 'block';
+    }
+
+    hideMixcloud() {
+        const container = document.getElementById('mixcloud-container');
+        if (container) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+        }
+    }
+
     findStarByName(name) {
         return this.starMeshes.find(star => 
             star.name.toLowerCase().includes(name.toLowerCase())
@@ -175,6 +190,33 @@ export class StarSystem {
 
     getStarData(mesh) {
         return this.starMeshes.find(star => star.mesh === mesh);
+    }
+
+    startPulse(mesh) {
+        if (this.pulseAnimation) {
+            this.pulseAnimation.kill();
+        }
+
+        this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
+            emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
+            duration: STAR_CONFIG.pulseConfig.duration,
+            repeat: -1,
+            yoyo: true,
+            ease: ANIMATION_CONFIG.pulseEase
+        });
+    }
+
+    stopPulse(mesh) {
+        if (this.pulseAnimation) {
+            this.pulseAnimation.kill();
+            this.pulseAnimation = null;
+        }
+
+        gsap.to(mesh.userData.starMesh.material, {
+            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: ANIMATION_CONFIG.defaultEase
+        });
     }
 
     resetPreviousHover() {
@@ -210,38 +252,13 @@ export class StarSystem {
         });
     }
 
-    startPulse(mesh) {
-        if (this.pulseAnimation) {
-            this.pulseAnimation.kill();
-        }
-
-        this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
-            duration: STAR_CONFIG.pulseConfig.duration,
-            repeat: -1,
-            yoyo: true,
-            ease: ANIMATION_CONFIG.pulseEase
-        });
-    }
-
-    stopPulse(mesh) {
-        if (this.pulseAnimation) {
-            this.pulseAnimation.kill();
-            this.pulseAnimation = null;
-        }
-
-        gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: ANIMATION_CONFIG.defaultEase
-        });
-    }
-
     resetAllStars() {
         if (this.pulseAnimation) {
             this.pulseAnimation.kill();
             this.pulseAnimation = null;
         }
+
+        this.hideMixcloud();
 
         this.starMeshes.forEach(starData => {
             gsap.to(starData.mesh.userData.starMesh.material, {
@@ -264,6 +281,12 @@ export class StarSystem {
     cleanup() {
         if (this.pulseAnimation) {
             this.pulseAnimation.kill();
+        }
+
+        this.hideMixcloud();
+        const container = document.getElementById('mixcloud-container');
+        if (container) {
+            container.remove();
         }
 
         this.starMeshes.forEach(starData => {

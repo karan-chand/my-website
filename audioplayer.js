@@ -189,6 +189,8 @@ export class AudioPlayer {
                 onComplete: () => {
                     this.playerContainer.style.display = 'none';
                     this.playerContainer.style.opacity = 1;
+                    // Reset the entire page to default state
+                    window.resetPage();
                 }
             });
         }

@@ -2,40 +2,68 @@ import gsap from 'gsap';
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export class AudioPlayer {
-    constructor(starSystem, bloomPass, textDisplay) {
+    constructor(starSystem, bloomPass) {
         this.audio = new Audio();
         this.starSystem = starSystem;
         this.bloomPass = bloomPass;
-        this.textDisplay = textDisplay;
         this.isPlaying = false;
         this.activePulseTween = null;
-        this.visualizerMode = 'waveform'; // or 'frequency'
         
         this.initializeAudioContext();
-        this.setupVisualizerData();
         this.cacheElements();
         this.initializeEventListeners();
-        this.createTimeDisplay();
-        this.createVolumeControl();
-        this.setupKeyboardControls();
+    }
+
+    cacheElements() {
+        this.playerContainer = document.getElementById('audio-player-container');
+        this.playPauseBtn = document.getElementById('play-pause-btn');
+        this.stopBtn = document.getElementById('stop-btn');
+        this.rewindBtn = document.getElementById('rewind-btn');
+        this.fastForwardBtn = document.getElementById('fast-forward-btn');
+        this.waveVisualizer = document.getElementById('waveform-visualizer');
+        
+        if (!this.playerContainer || !this.playPauseBtn || !this.stopBtn || 
+            !this.rewindBtn || !this.fastForwardBtn || !this.waveVisualizer) {
+            console.error('Failed to cache audio player elements');
+        }
     }
 
     initializeAudioContext() {
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        this.analyzer = this.audioContext.createAnalyser();
-        this.analyzer.fftSize = 2048; // Increased for better resolution
-        
-        // Create filters and effects
-        this.gainNode = this.audioContext.createGain();
-        this.biquadFilter = this.audioContext.createBiquadFilter();
-        
-        // Set up audio processing chain
-        this.source = this.audioContext.createMediaElementSource(this.audio);
-        this.source
-            .connect(this.gainNode)
-            .connect(this.biquadFilter)
-            .connect(this.analyzer)
-            .connect(this.audioContext.destination);
+        if (typeof window !== 'undefined' && 
+            (window.AudioContext || window.webkitAudioContext)) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.analyzer = this.audioContext.createAnalyser();
+            this.analyzer.fftSize = 2048;
+            
+            // Create filters and effects
+            this.gainNode = this.audioContext.createGain();
+            this.biquadFilter = this.audioContext.createBiquadFilter();
+            
+            // Set up audio processing chain
+            this.source = this.audioContext.createMediaElementSource(this.audio);
+            this.source
+                .connect(this.gainNode)
+                .connect(this.biquadFilter)
+                .connect(this.analyzer)
+                .connect(this.audioContext.destination);
+        } else {
+            console.error('Web Audio API is not supported in this browser');
+        }
+    }
+
+    initializeEventListeners() {
+        if (this.playPauseBtn) {
+            this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+        }
+        if (this.stopBtn) {
+            this.stopBtn.addEventListener('click', () => this.stop());
+        }
+        if (this.rewindBtn) {
+            this.rewindBtn.addEventListener('click', () => this.seek(-30));
+        }
+        if (this.fastForwardBtn) {
+            this.fastForwardBtn.addEventListener('click', () => this.seek(30));
+        }
     }
 
     setupVisualizerData() {
@@ -338,4 +366,5 @@ export class AudioPlayer {
         this.audio.removeEventListener('timeupdate', this.updateTimeDisplay);
         // Additional cleanup...
     }
+
 }

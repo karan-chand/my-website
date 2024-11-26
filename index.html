@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>karan.ink</title>
-        <link rel="stylesheet" href="./styles.css">
-        <link rel="icon" href="data:,">
-        
-        <script async src="https://unpkg.com/es-module-shims/dist/es-module-shims.js"></script>
-        <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/examples/jsm/postprocessing/EffectComposer.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
-                "three/examples/jsm/postprocessing/RenderPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
-                "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
-                "three/examples/jsm/postprocessing/ShaderPass.js": "https://unpkg.com/three@0.128.0/examples/jsm/postprocessing/ShaderPass.js",
-                "three/examples/jsm/shaders/CopyShader.js": "https://unpkg.com/three@0.128.0/examples/jsm/shaders/CopyShader.js",
-                "three/examples/jsm/shaders/LuminosityHighPassShader.js": "https://unpkg.com/three@0.128.0/examples/jsm/shaders/LuminosityHighPassShader.js",
-                "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.128.0/examples/jsm/controls/OrbitControls.js",
-                "gsap": "https://esm.sh/gsap@3.12.2"
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARAN.INK</title>
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Import maps for module loading -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.skypack.dev/three@0.128.0",
+            "three/examples/jsm/postprocessing/EffectComposer.js": "https://cdn.skypack.dev/three@0.128.0/examples/jsm/postprocessing/EffectComposer.js",
+            "three/examples/jsm/postprocessing/RenderPass.js": "https://cdn.skypack.dev/three@0.128.0/examples/jsm/postprocessing/RenderPass.js",
+            "three/examples/jsm/postprocessing/UnrealBloomPass.js": "https://cdn.skypack.dev/three@0.128.0/examples/jsm/postprocessing/UnrealBloomPass.js",
+            "three/examples/jsm/controls/OrbitControls.js": "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js",
+            "gsap": "https://cdn.skypack.dev/gsap@3.12.0"
         }
-        </script>
-    </head>
-    <body>
-        <script type="module" src="./app.js"></script>
-    </body>
+    }
+    </script>
+</head>
+<body>
+    <!-- The UI Manager will inject the necessary HTML structure -->
+    <script type="module" src="app.js"></script>
+</body>
 </html>

@@ -1,3 +1,5 @@
+const DEBUG = false;
+
 import { initializeCustomCursor } from './cursor.js';
 import { StarSystem } from './starsystem.js';
 import { SceneSetup } from './scenesetup.js';
@@ -9,24 +11,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const uiManager = new UIManager();
 
     // Initialize scene and core components
-    console.log('Initializing core components...');
+    if (DEBUG) console.log('Initializing core components...');
     const sceneSetup = new SceneSetup();
     const starSystem = new StarSystem(sceneSetup.scene);
     const interactionHandler = new InteractionHandler(sceneSetup, starSystem);
 
     // Initialize constellation
-    console.log('Creating star system...');
+    if (DEBUG) console.log('Creating star system...');
     starSystem.createStars();
 
     // Global functions
     window.resetPage = function() {
-        console.log('Resetting page...');
+        if (DEBUG) console.log('Resetting page...');
         starSystem.resetAllStars();
         sceneSetup.resetCamera();
     }
 
     window.triggerSpica = function() {
-        console.log('Triggering Spica...');
+        if (DEBUG) console.log('Triggering Spica...');
         interactionHandler.triggerSpecificStar('Spica');
     }
 
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make sure scene is ready before starting animation
     if (sceneSetup.scene && sceneSetup.camera) {
-        console.log('Starting animation loop');
+        if (DEBUG) console.log('Starting animation loop');
         animate();
     } else {
         console.error('Scene or camera not initialized');

@@ -62,7 +62,7 @@ export class TextDisplay {
                this.createModal();
            }
            
-           const response = await fetch(`/src/text/${textPath}`);
+           const response = await fetch(`src/text/${textPath}`);
            if (!response.ok) throw new Error('Failed to load text');
            
            const text = await response.text();

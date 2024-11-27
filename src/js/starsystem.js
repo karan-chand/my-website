@@ -228,28 +228,6 @@ export class StarSystem {
         });
     }
 
-        gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut",
-            onComplete: () => {
-                this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
-                    emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
-                    duration: STAR_CONFIG.pulseConfig.duration,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut"
-                });
-            }
-        });
-
-        gsap.to(mesh.userData.glowMesh.material, {
-            opacity: 0.4,
-            duration: ANIMATION_CONFIG.defaultDuration * 1.5,
-            ease: "power2.inOut"
-        });
-    }
-
     resetAllStars() {
         if (this.pulseAnimation) {
             this.pulseAnimation.kill();

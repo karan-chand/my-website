@@ -1,34 +1,22 @@
 import { defineConfig } from 'vite';
+import path from 'path';
 
 export default defineConfig({
-  root: '.',
-  base: './',
-  publicDir: 'public',
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          three: ['three'],
-          gsap: ['gsap']
-        }
-      }
-    }
-  },
+  root: '.', // Explicitly set root
+  base: '',
   server: {
-    headers: {
-      'Content-Type': 'application/javascript'
-    }
+    port: 5176,
+    strict: false,
+    cors: true,
   },
   resolve: {
     alias: {
-      '@': '/src'
+      '@': path.resolve(__dirname, './src')
     }
   },
-  optimizeDeps: {
-    include: ['three']
-  },
-  assetsInclude: ['**/*.js', '**/*.woff2', '**/*.woff', '**/*.ttf']
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true
+  }
 });

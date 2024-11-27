@@ -5,6 +5,7 @@ export class InteractionHandler {
     constructor(sceneSetup, starSystem) {
         this.sceneSetup = sceneSetup;
         this.starSystem = starSystem;
+        this.textDisplay = new TextDisplay();
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
         
@@ -128,14 +129,19 @@ export class InteractionHandler {
     async transitionToStar(star, starData) {
         try {
             this.isTransitioning = true;
-
+    
             // Set active star and show Mixcloud
             this.starSystem.activeStar = star;
             this.starSystem.showMixcloud(starData.link);
-
+    
+            // Show text if available
+            if (starData.textPath) {
+                this.textDisplay.show(starData.name, starData.textPath);
+            }
+    
             // Camera transition
             await this.transitionCamera(star);
-
+    
             // Animate bloom effect
             this.animateBloomEffect();
         } catch (error) {

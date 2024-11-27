@@ -176,11 +176,10 @@ nav ul .dropdown li a:hover {
     max-width: 1200px;
     height: 60px;
     background-color: #292d2f;
-    border-radius: 0;
-    overflow: hidden;
+    border: none;
+    overflow: visible;
     display: none;
     z-index: 10;
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
 }
 
 .mixcloud-wrapper {
@@ -189,6 +188,7 @@ nav ul .dropdown li a:hover {
     right: 0;
     top: 0;
     bottom: 0;
+    overflow: hidden;
 }
 
 .mixcloud-wrapper iframe {
@@ -202,34 +202,35 @@ nav ul .dropdown li a:hover {
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    background-color: transparent;
     border: none;
-    color: white;
+    color: #fff;
     font-size: 32px;
+    line-height: 1;
     cursor: pointer;
     z-index: 11;
     padding: 5px;
-    transition: color 0.3s ease;
+    transition: opacity 0.3s ease;
 }
 
 .mixcloud-close-btn:hover {
-    color: rgba(255, 255, 255, 0.8);
+    opacity: 0.8;  /* Matches KARAN.INK hover opacity */
 }
 
 .mixcloud-close-btn:focus {
     outline: none;
 }
 
-/* Static Text (Virgo Symbol) */
-.static-text {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    color: white;
-    font-size: 18px;
-    z-index: 10;
-    text-align: right;
-    transition: opacity 0.3s ease;
+@media (max-width: 768px) {
+    #mixcloud-container {
+        width: 95vw;
+        bottom: 10px;
+    }
+
+    .mixcloud-close-btn {
+        font-size: 20px;
+        left: 8px;
+    }
 }
 
 /* Custom Cursor */

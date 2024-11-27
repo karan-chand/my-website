@@ -40,6 +40,7 @@ body, html {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Canvas Setup */
@@ -143,7 +144,8 @@ nav ul .dropdown {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     z-index: 100;
-    min-width: 200px;
+    width: 90vw;
+    max-width: 300px;
     padding: 8px 0;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -169,13 +171,11 @@ nav ul .dropdown li a {
     transition: all 0.3s ease;
     width: 100%;
     box-sizing: border-box;
-    height: 100%;
 }
 
 nav ul .dropdown li a:hover {
     background: rgba(0, 255, 204, 0.1);
     color: #00ffcc;
-    width: 100%;
 }
 
 /* Text Modal Styles */
@@ -209,7 +209,7 @@ nav ul .dropdown li a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 12px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -243,6 +243,7 @@ nav ul .dropdown li a:hover {
     align-items: center;
     justify-content: center;
     line-height: 1;
+    touch-action: manipulation;
 }
 
 .modal-button:hover {
@@ -254,6 +255,7 @@ nav ul .dropdown li a:hover {
     height: auto;
     max-height: calc(100vh - 280px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .text-modal.fullscreen .modal-content {
@@ -271,8 +273,9 @@ nav ul .dropdown li a:hover {
     display: none;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 6px 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
 }
 
 .text-modal.fullscreen .navigation {
@@ -284,10 +287,12 @@ nav ul .dropdown li a:hover {
     border: none;
     color: #00ffcc;
     cursor: pointer;
-    padding: 5px 10px;
+    padding: 3px 8px;
     opacity: 0.8;
     transition: opacity 0.3s ease;
     font-family: 'Halyard Text', Arial, sans-serif;
+    font-size: 13px;
+    touch-action: manipulation;
 }
 
 .navigation button:hover {
@@ -300,14 +305,14 @@ nav ul .dropdown li a:hover {
 }
 
 .page-counter {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
 }
 
 .progress-bar {
-    height: 2px;
+    height: 1px;
     background: rgba(255, 255, 255, 0.1);
-    margin-top: 10px;
+    margin-top: 6px;
 }
 
 .progress-fill {
@@ -315,29 +320,6 @@ nav ul .dropdown li a:hover {
     background: #00ffcc;
     width: 0%;
     transition: width 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .text-modal {
-        width: 95vw;
-        bottom: 80px;
-        max-height: 30vh;
-    }
-
-    .text-modal.fullscreen {
-        top: 100px;
-        height: calc(100vh - 240px);
-    }
-    
-    .text-modal.fullscreen .modal-content {
-        max-height: calc(100vh - 300px);
-    }
-
-    .modal-button {
-        width: 20px;
-        height: 20px;
-        font-size: 16px;
-    }
 }
 
 /* Mixcloud Player Container */
@@ -385,6 +367,7 @@ nav ul .dropdown li a:hover {
     z-index: 11;
     padding: 5px;
     transition: opacity 0.3s ease;
+    touch-action: manipulation;
 }
 
 .mixcloud-close-btn:hover {
@@ -396,60 +379,91 @@ nav ul .dropdown li a:hover {
 }
 
 /* Custom Cursor */
-.custom-cursor {
-    width: 10px;
-    height: 10px;
-    background-color: rgba(255, 102, 0, 0.8);
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
-    mix-blend-mode: difference;
-}
+@media (hover: hover) {
+    .custom-cursor {
+        width: 10px;
+        height: 10px;
+        background-color: rgba(255, 102, 0, 0.8);
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s ease, height 0.3s ease;
+        mix-blend-mode: difference;
+    }
 
-.custom-cursor::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    border: 1px solid rgba(255, 102, 0, 0.3);
-    border-radius: 50%;
-    transition: all 0.3s ease;
+    .custom-cursor::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 1px solid rgba(255, 102, 0, 0.3);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
 }
 
 /* Media Queries */
 @media (max-width: 768px) {
     header {
-        padding: 15px 0;
+        padding: 10px 0;
+        background: rgba(0,0,0,0.8);
     }
 
     header h1 {
         font-size: 24px;
     }
 
+    nav ul .dropdown {
+        width: 90vw;
+        max-width: none;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     .text-modal {
-        width: 95vw;
-        max-height: 70vh;
-        bottom: 80px;
+        width: 100vw;
+        bottom: 70px;
+        left: 0;
+        transform: none;
+        border-radius: 0;
+        max-height: 40vh;
+    }
+
+    .text-modal.fullscreen {
+        height: calc(100vh - 140px);
+        top: 70px;
     }
 
     #mixcloud-container {
-        width: 95vw;
-        bottom: 10px;
+        width: 100vw;
+        bottom: 0;
+        left: 0;
+        transform: none;
     }
 
     .mixcloud-close-btn {
-        font-size: 20px;
+        font-size: 24px;
         left: 8px;
     }
 
-    .modal-content {
-        max-height: 40vh;
+    .modal-button {
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+
+    .modal-title {
+        font-size: 14px;
+    }
+    
+    .text-content {
+        font-size: 15px;
+        line-height: 1.4;
     }
 }
 

@@ -97,28 +97,4 @@ export class UIManager {
         });
     }
 
-    setupMobileMenu() {
-        const nav = document.querySelector('nav');
-        if (!document.querySelector('.mobile-menu-btn')) {
-            const menuButton = document.createElement('button');
-            menuButton.className = 'mobile-menu-btn';
-            menuButton.setAttribute('aria-label', 'Toggle menu');
-            menuButton.innerHTML = '☰';
-            
-            nav.insertBefore(menuButton, nav.firstChild);
-            
-            menuButton.addEventListener('click', () => {
-                nav.classList.toggle('mobile-open');
-                menuButton.innerHTML = nav.classList.contains('mobile-open') ? '×' : '☰';
-            });
-        }
-    }
-
-    removeMobileMenu() {
-        const menuButton = document.querySelector('.mobile-menu-btn');
-        if (menuButton) {
-            menuButton.remove();
-        }
-        document.querySelector('nav')?.classList.remove('mobile-open');
-    }
 }

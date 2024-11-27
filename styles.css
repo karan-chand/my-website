@@ -205,15 +205,19 @@ nav ul .dropdown li a:hover {
     background: none;
     border: none;
     color: white;
-    font-size: 24px;
+    font-size: 32px;
     cursor: pointer;
     z-index: 11;
     padding: 5px;
-    transition: opacity 0.3s ease;
+    transition: color 0.3s ease;
 }
 
 .mixcloud-close-btn:hover {
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mixcloud-close-btn:focus {
+    outline: none;
 }
 
 /* Static Text (Virgo Symbol) */

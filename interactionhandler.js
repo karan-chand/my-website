@@ -1,5 +1,6 @@
 const gsap = window.gsap;
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
+import { TextDisplay } from './textdisplay.js';  // Add this line
 
 export class InteractionHandler {
     constructor(sceneSetup, starSystem) {

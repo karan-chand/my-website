@@ -179,7 +179,6 @@ nav ul .dropdown li a:hover {
 }
 
 /* Text Modal Styles */
-/* Text Modal Styles */
 .text-modal {
     position: fixed;
     left: 50%;
@@ -195,18 +194,15 @@ nav ul .dropdown li a:hover {
     z-index: 11;
     display: none;
     transition: all 0.3s ease;
+    height: auto;
+    max-height: 35vh;
 }
 
 .text-modal.fullscreen {
-    top: 80px;
+    top: 120px;
     bottom: auto;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 280px);
     width: 96vw;
-}
-
-.text-modal.minimized {
-    height: auto;
-    width: 200px;
 }
 
 .modal-header {
@@ -261,7 +257,7 @@ nav ul .dropdown li a:hover {
 }
 
 .text-modal.fullscreen .modal-content {
-    max-height: calc(100vh - 240px);
+    max-height: calc(100vh - 340px);
 }
 
 .text-content {
@@ -325,25 +321,22 @@ nav ul .dropdown li a:hover {
     .text-modal {
         width: 95vw;
         bottom: 80px;
+        max-height: 30vh;
     }
 
     .text-modal.fullscreen {
-        top: 70px;
-        height: calc(100vh - 160px);
+        top: 100px;
+        height: calc(100vh - 240px);
     }
     
     .text-modal.fullscreen .modal-content {
-        max-height: calc(100vh - 200px);
+        max-height: calc(100vh - 300px);
     }
 
     .modal-button {
         width: 20px;
         height: 20px;
         font-size: 16px;
-    }
-
-    .modal-content {
-        max-height: 40vh;
     }
 }
 

@@ -6,7 +6,7 @@ export class TextDisplay {
         this.setupEventListeners();
         this.currentPage = 0;
         this.pages = [];
-        this.isMinimized = false;
+        this.state = 'normal'; // 'normal', 'minimized', or 'fullscreen'
     }
 
     createModal() {
@@ -19,6 +19,7 @@ export class TextDisplay {
                     <span class="star-name"></span>
                 </div>
                 <div class="modal-controls">
+                    <button class="modal-button fullscreen" aria-label="Toggle fullscreen">□</button>
                     <button class="modal-button minimize" aria-label="Minimize">_</button>
                     <button class="modal-button close" aria-label="Close">×</button>
                 </div>
@@ -47,6 +48,7 @@ export class TextDisplay {
         // Control buttons
         this.modal.querySelector('.close').addEventListener('click', () => this.hide());
         this.modal.querySelector('.minimize').addEventListener('click', () => this.toggleMinimize());
+        this.modal.querySelector('.fullscreen').addEventListener('click', () => this.toggleFullscreen());
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -60,7 +62,13 @@ export class TextDisplay {
                     this.nextPage();
                     break;
                 case 'Escape':
-                    if (!this.isMinimized) this.toggleMinimize();
+                    if (this.state === 'fullscreen') {
+                        this.toggleFullscreen();
+                    } else if (this.state === 'normal') {
+                        this.toggleMinimize();
+                    } else {
+                        this.hide();
+                    }
                     break;
             }
         });
@@ -122,7 +130,7 @@ export class TextDisplay {
             onComplete: () => {
                 this.modal.style.display = 'none';
                 this.currentPage = 0;
-                this.isMinimized = false;
+                this.state = 'normal';
                 this.resetModalSize();
             }
         });
@@ -131,8 +139,9 @@ export class TextDisplay {
     toggleMinimize() {
         const content = this.modal.querySelector('.modal-content');
         const minimizeBtn = this.modal.querySelector('.minimize');
+        const fullscreenBtn = this.modal.querySelector('.fullscreen');
 
-        if (this.isMinimized) {
+        if (this.state === 'minimized') {
             gsap.to(this.modal, {
                 width: '90vw',
                 maxWidth: '1200px',
@@ -141,6 +150,8 @@ export class TextDisplay {
             });
             content.style.display = 'block';
             minimizeBtn.textContent = '_';
+            fullscreenBtn.style.display = 'inline-block';
+            this.state = 'normal';
         } else {
             gsap.to(this.modal, {
                 width: '200px',
@@ -149,17 +160,60 @@ export class TextDisplay {
             });
             content.style.display = 'none';
             minimizeBtn.textContent = '□';
+            fullscreenBtn.style.display = 'none';
+            this.state = 'minimized';
         }
-        
-        this.isMinimized = !this.isMinimized;
+    }
+
+    toggleFullscreen() {
+        const content = this.modal.querySelector('.modal-content');
+        const fullscreenBtn = this.modal.querySelector('.fullscreen');
+
+        if (this.state === 'fullscreen') {
+            gsap.to(this.modal, {
+                width: '90vw',
+                maxWidth: '1200px',
+                height: 'auto',
+                top: 'auto',
+                bottom: '100px',
+                duration: 0.3,
+                ease: "power2.out"
+            });
+            gsap.to(content, {
+                maxHeight: '50vh',
+                duration: 0.3
+            });
+            fullscreenBtn.textContent = '□';
+            this.state = 'normal';
+        } else {
+            gsap.to(this.modal, {
+                width: '96vw',
+                maxWidth: '100vw',
+                height: 'calc(100vh - 120px)',
+                top: '80px',
+                bottom: 'auto',
+                duration: 0.3,
+                ease: "power2.out"
+            });
+            gsap.to(content, {
+                maxHeight: 'calc(100vh - 200px)',
+                duration: 0.3
+            });
+            fullscreenBtn.textContent = '❐';
+            this.state = 'fullscreen';
+        }
     }
 
     resetModalSize() {
         gsap.set(this.modal, {
             width: '90vw',
-            maxWidth: '1200px'
+            maxWidth: '1200px',
+            height: 'auto',
+            top: 'auto',
+            bottom: '100px'
         });
         this.modal.querySelector('.modal-content').style.display = 'block';
+        this.modal.querySelector('.fullscreen').textContent = '□';
     }
 
     prevPage() {

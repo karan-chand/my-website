@@ -183,16 +183,15 @@ export class StarSystem {
     showMixcloud(url) {
         const container = document.getElementById('mixcloud-container');
         if (!container) return;
-
+    
         const wrapper = container.querySelector('.mixcloud-wrapper');
-        wrapper.innerHTML = `<iframe width="100%" height="60" src="${url}" frameborder="0"></iframe>`;
+        wrapper.innerHTML = `<iframe width="100%" height="60" src="${url}" frameborder="0" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>`;
         container.style.display = 'block';
-
+    
         if (this.activeStar) {
             this.startPulse(this.activeStar);
         }
     }
-
     hideMixcloud() {
         const container = document.getElementById('mixcloud-container');
         if (container) {

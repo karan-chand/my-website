@@ -83,6 +83,7 @@ export class StarSystem {
         this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
+        this.isPlaying = false;
         
         // Create mixcloud container
         this.createMixcloudContainer();
@@ -93,17 +94,18 @@ export class StarSystem {
         container.id = 'mixcloud-container';
         container.style.display = 'none';
         
-        // Create wrapper div for iframe
         const wrapper = document.createElement('div');
         wrapper.className = 'mixcloud-wrapper';
         container.appendChild(wrapper);
 
-        // Create close button
         const closeButton = document.createElement('button');
         closeButton.className = 'mixcloud-close-btn';
         closeButton.innerHTML = '×';
         closeButton.setAttribute('aria-label', 'Close player');
-        closeButton.addEventListener('click', () => this.resetAllStars());
+        closeButton.addEventListener('click', () => {
+            this.resetAllStars();
+            window.sceneSetup?.resetCamera();
+        });
         container.appendChild(closeButton);
 
         document.body.appendChild(container);
@@ -183,13 +185,12 @@ export class StarSystem {
         const container = document.getElementById('mixcloud-container');
         if (!container) return;
 
-        // Add iframe to wrapper
         const wrapper = container.querySelector('.mixcloud-wrapper');
         wrapper.innerHTML = `<iframe width="100%" height="60" src="${url}" frameborder="0"></iframe>`;
         container.style.display = 'block';
 
-        // Start pulsing immediately
         if (this.activeStar) {
+            // First transition to hover state, then to pulse
             this.startPulse(this.activeStar);
         }
     }
@@ -220,12 +221,28 @@ export class StarSystem {
             this.pulseAnimation.kill();
         }
 
-        this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
-            duration: STAR_CONFIG.pulseConfig.duration,
-            repeat: -1,
-            yoyo: true,
-            ease: ANIMATION_CONFIG.pulseEase
+        // First transition smoothly from current state
+        gsap.to(mesh.userData.starMesh.material, {
+            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: "power2.inOut",
+            onComplete: () => {
+                // Then start pulsing
+                this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
+                    emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
+                    duration: STAR_CONFIG.pulseConfig.duration,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            }
+        });
+
+        // Smooth glow transition
+        gsap.to(mesh.userData.glowMesh.material, {
+            opacity: 0.4,
+            duration: ANIMATION_CONFIG.defaultDuration * 1.5,
+            ease: "power2.inOut"
         });
     }
 
@@ -238,7 +255,7 @@ export class StarSystem {
         gsap.to(mesh.userData.starMesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity,
             duration: ANIMATION_CONFIG.defaultDuration,
-            ease: ANIMATION_CONFIG.defaultEase
+            ease: "power2.inOut"
         });
     }
 
@@ -250,13 +267,13 @@ export class StarSystem {
             gsap.to(this.currentlyHoveredStar.userData.starMesh.material, {
                 emissiveIntensity: STAR_CONFIG.defaultIntensity,
                 duration: ANIMATION_CONFIG.defaultDuration,
-                ease: ANIMATION_CONFIG.defaultEase
+                ease: "power2.inOut"
             });
             
             gsap.to(this.currentlyHoveredStar.userData.glowMesh.material, {
                 opacity: 0.15,
                 duration: ANIMATION_CONFIG.defaultDuration,
-                ease: ANIMATION_CONFIG.defaultEase
+                ease: "power2.inOut"
             });
         }
     }
@@ -265,13 +282,13 @@ export class StarSystem {
         gsap.to(mesh.userData.starMesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
             duration: ANIMATION_CONFIG.defaultDuration,
-            ease: ANIMATION_CONFIG.defaultEase
+            ease: "power2.inOut"
         });
 
         gsap.to(mesh.userData.glowMesh.material, {
             opacity: 0.3,
             duration: ANIMATION_CONFIG.defaultDuration,
-            ease: ANIMATION_CONFIG.defaultEase
+            ease: "power2.inOut"
         });
     }
 
@@ -287,13 +304,13 @@ export class StarSystem {
             gsap.to(starData.mesh.userData.starMesh.material, {
                 emissiveIntensity: STAR_CONFIG.defaultIntensity,
                 duration: ANIMATION_CONFIG.longDuration,
-                ease: ANIMATION_CONFIG.defaultEase
+                ease: "power2.inOut"
             });
             
             gsap.to(starData.mesh.userData.glowMesh.material, {
                 opacity: 0.15,
                 duration: ANIMATION_CONFIG.longDuration,
-                ease: ANIMATION_CONFIG.defaultEase
+                ease: "power2.inOut"
             });
         });
 

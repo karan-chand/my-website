@@ -8,8 +8,11 @@ export class InteractionHandler {
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
         
-        // Bind methods
+        // Store sceneSetup globally for reset access
+        window.sceneSetup = sceneSetup;
+        
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleIframeMessage = this.handleIframeMessage.bind(this);
         
         this.initializeEventListeners();
         this.setupTouchHandling();
@@ -18,8 +21,12 @@ export class InteractionHandler {
     initializeEventListeners() {
         window.addEventListener('pointermove', (e) => this.handleHover(e));
         window.addEventListener('pointerdown', (e) => this.handleClick(e));
-        // Add event listener in capturing phase (true parameter)
+        
+        // Add event listeners at multiple levels to ensure capture
+        document.addEventListener('keydown', this.handleKeyPress, true);
         window.addEventListener('keydown', this.handleKeyPress, true);
+        window.addEventListener('keyup', this.handleKeyPress, true);
+        window.addEventListener('message', this.handleIframeMessage);
     }
 
     setupTouchHandling() {
@@ -53,11 +60,28 @@ export class InteractionHandler {
         });
     }
 
+    handleIframeMessage(event) {
+        if (event.origin !== "https://www.mixcloud.com") return;
+        
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === "playerState") {
+                // Update player state
+                this.playerActive = data.data === "playing" || data.data === "paused";
+            }
+        } catch (e) {
+            console.error("Error parsing Mixcloud event:", e);
+        }
+    }
+
     handleKeyPress(event) {
         if (event.key === 'Escape') {
-            // Prevent default behavior
+            // Prevent default behavior and stop propagation
             event.preventDefault();
             event.stopPropagation();
+            
+            // Force focus back to main window
+            window.focus();
             
             // Reset scene regardless of player state
             this.resetScene();
@@ -214,6 +238,9 @@ export class InteractionHandler {
     }
 
     cleanup() {
+        document.removeEventListener('keydown', this.handleKeyPress, true);
         window.removeEventListener('keydown', this.handleKeyPress, true);
+        window.removeEventListener('keyup', this.handleKeyPress, true);
+        window.removeEventListener('message', this.handleIframeMessage);
     }
 }

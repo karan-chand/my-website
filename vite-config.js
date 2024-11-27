@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  root: '.',
   base: './',
+  publicDir: 'public',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -20,8 +22,13 @@ export default defineConfig({
       'Content-Type': 'application/javascript'
     }
   },
+  resolve: {
+    alias: {
+      '@': '/src'
+    }
+  },
   optimizeDeps: {
     include: ['three']
   },
-  assetsInclude: ['**/*.js']
+  assetsInclude: ['**/*.js', '**/*.woff2', '**/*.woff', '**/*.ttf']
 });

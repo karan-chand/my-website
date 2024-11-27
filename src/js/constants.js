@@ -107,10 +107,10 @@ export const UI_CONFIG = {
 export const FONT_CONFIG = {
     files: {
         stanley: {
-            regular: 'fonts/Stanley Regular.woff2'
+            regular: '/public/fonts/Stanley Regular.woff2'
         },
         halyard: {
-            regular: 'fonts/Halyard Text Regular.woff2'
+            regular: '/public/fonts/Halyard Text Regular.woff2'
         }
     }
 };

@@ -2,20 +2,20 @@ const gsap = window.gsap;
 
 export class TextDisplay {
     constructor() {
-        this.modal = this.createModal();
-        this.setupEventListeners();
         this.currentPage = 0;
         this.pages = [];
         this.state = 'default';
         this.previewLength = 150;
         this.isVisible = false;
+        this.modal = null;
     }
 
     createModal() {
-        const modal = document.createElement('div');
-        modal.className = 'text-modal';
+        this.modal = document.createElement('div');
+        this.modal.className = 'text-modal';
+        this.modal.style.display = 'none';
         
-        modal.innerHTML = `
+        this.modal.innerHTML = `
             <div class="modal-header">
                 <div class="modal-title">
                     <span class="star-name"></span>
@@ -39,11 +39,14 @@ export class TextDisplay {
             </div>
         `;
         
-        document.body.appendChild(modal);
-        return modal;
+        document.body.appendChild(this.modal);
+        this.setupEventListeners();
+        return this.modal;
     }
 
     setupEventListeners() {
+        if (!this.modal) return;
+        
         this.modal.querySelector('.prev').addEventListener('click', () => this.prevPage());
         this.modal.querySelector('.next').addEventListener('click', () => this.nextPage());
         this.modal.querySelector('.close').addEventListener('click', () => this.hide());
@@ -55,6 +58,10 @@ export class TextDisplay {
 
     async show(starName, textPath) {
         try {
+            if (!this.modal) {
+                this.createModal();
+            }
+            
             const response = await fetch(textPath);
             if (!response.ok) throw new Error('Failed to load text');
             
@@ -87,6 +94,8 @@ export class TextDisplay {
     }
 
     hide() {
+        if (!this.modal) return;
+        
         gsap.to(this.modal, {
             opacity: 0,
             y: 20,
@@ -102,6 +111,8 @@ export class TextDisplay {
     }
 
     toggleFullscreen() {
+        if (!this.modal) return;
+        
         const content = this.modal.querySelector('.text-content');
         const fullscreenBtn = this.modal.querySelector('.fullscreen');
         const minimizeBtn = this.modal.querySelector('.minimize');
@@ -160,12 +171,14 @@ export class TextDisplay {
     }
 
     updateContent() {
+        if (!this.modal) return;
         const content = this.modal.querySelector('.text-content');
         content.textContent = this.pages[this.currentPage];
         this.updateNavigationUI();
     }
 
     updateNavigationUI() {
+        if (!this.modal) return;
         const nav = this.modal.querySelector('.navigation');
         const counter = this.modal.querySelector('.page-counter');
         const prevBtn = this.modal.querySelector('.prev');
@@ -189,6 +202,7 @@ export class TextDisplay {
     }
 
     animatePageTransition(direction, callback) {
+        if (!this.modal) return;
         const content = this.modal.querySelector('.text-content');
         const xOffset = direction === 'left' ? -20 : 20;
         
@@ -216,5 +230,9 @@ export class TextDisplay {
 
     cleanup() {
         document.removeEventListener('keydown', this.handleEscape);
+        if (this.modal) {
+            this.modal.remove();
+            this.modal = null;
+        }
     }
 }

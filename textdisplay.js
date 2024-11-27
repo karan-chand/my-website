@@ -223,11 +223,22 @@ export class TextDisplay {
 
     handleEscape(event) {
         if (event.key === 'Escape') {
-            this.hide();
-            document.querySelector('header h1').click();
+            const header = document.querySelector('header h1');
+            gsap.to(this.modal, {
+                opacity: 0,
+                y: 20,
+                duration: 0.3,
+                ease: "power2.in",
+                onComplete: () => {
+                    this.modal.style.display = 'none';
+                    this.currentPage = 0;
+                    this.state = 'default';
+                    header.click();
+                }
+            });
         }
     }
-
+    
     cleanup() {
         document.removeEventListener('keydown', this.handleEscape);
         if (this.modal) {

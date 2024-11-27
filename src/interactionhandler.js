@@ -71,18 +71,48 @@ export class InteractionHandler {
         const intersects = this.sceneSetup.raycaster.intersectObjects(
             this.sceneSetup.scene.children, true
         );
-
+    
         const starIntersect = intersects.find(intersect => 
             intersect.object.parent && 
             this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
         );
-
+    
         if (starIntersect) {
             const starGroup = starIntersect.object.parent;
-            this.starSystem.handleHover(starGroup, this.starNameElement);
+            // Single animation timeline for smoother transition
+            gsap.to([this.sceneSetup.bloomPass, starGroup.userData.starMesh.material, starGroup.userData.glowMesh.material], {
+                duration: 0.15,
+                ease: "power1.out",
+                onStart: () => {
+                    this.sceneSetup.bloomPass.strength = BLOOM_CONFIG.activeStrength * 0.7;
+                    starGroup.userData.starMesh.material.emissiveIntensity = STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier;
+                    starGroup.userData.glowMesh.material.opacity = 0.4;
+                }
+            });
             document.body.style.cursor = 'pointer';
         } else {
-            this.starSystem.clearHover(this.starNameElement);
+            // Single animation timeline for smoother reset
+            gsap.to([this.sceneSetup.bloomPass], {
+                duration: 0.15,
+                ease: "power1.out",
+                onStart: () => {
+                    this.sceneSetup.bloomPass.strength = BLOOM_CONFIG.defaultStrength;
+                }
+            });
+            this.starSystem.starMeshes.forEach(star => {
+                if (star.mesh !== this.starSystem.activeStar) {
+                    gsap.to(star.mesh.userData.starMesh.material, {
+                        emissiveIntensity: STAR_CONFIG.defaultIntensity,
+                        duration: 0.15,
+                        ease: "power1.out"
+                    });
+                    gsap.to(star.mesh.userData.glowMesh.material, {
+                        opacity: 0.15,
+                        duration: 0.15,
+                        ease: "power1.out"
+                    });
+                }
+            });
             document.body.style.cursor = 'default';
         }
     }
@@ -132,15 +162,47 @@ export class InteractionHandler {
         try {
             this.isTransitioning = true;
             
-            this.starSystem.activeStar = star;
-            this.starSystem.showMixcloud(starData.link);
-            
-            if (starData.textPath) {
-                await this.textDisplay.show(starData.name, starData.textPath);
-            }
-            
-            await this.transitionCamera(star);
-            this.animateBloomEffect();
+            // Create a timeline for synchronized animations
+            const tl = gsap.timeline({
+                defaults: { duration: ANIMATION_CONFIG.longDuration, ease: ANIMATION_CONFIG.defaultEase }
+            });
+    
+            // Start all transitions together
+            tl.add([
+                // Camera movement
+                gsap.to(this.sceneSetup.camera.position, {
+                    x: star.position.x + 30,
+                    y: star.position.y + 15,
+                    z: star.position.z + 30
+                }),
+                
+                // Camera target
+                gsap.to(this.sceneSetup.controls.target, {
+                    x: star.position.x,
+                    y: star.position.y,
+                    z: star.position.z,
+                    onUpdate: () => this.sceneSetup.controls.update()
+                }),
+    
+                // Bloom effect
+                gsap.to(this.sceneSetup.bloomPass, {
+                    strength: BLOOM_CONFIG.activeStrength,
+                    onComplete: () => {
+                        this.sceneSetup.bloomPass.radius = BLOOM_CONFIG.pulseRadius;
+                    }
+                })
+            ], 0);
+    
+            // Show Mixcloud and text slightly after camera starts moving
+            tl.add(() => {
+                this.starSystem.activeStar = star;
+                this.starSystem.showMixcloud(starData.link);
+                if (starData.textPath) {
+                    this.textDisplay.show(starData.name, starData.textPath);
+                }
+            }, 0.2);
+    
+            await tl.play();
             
         } catch (error) {
             console.error('Error during star transition:', error);

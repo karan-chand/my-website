@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: './',  // This is important for GitHub Pages
+  base: './',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -14,5 +14,14 @@ export default defineConfig({
         }
       }
     }
-  }
+  },
+  server: {
+    headers: {
+      'Content-Type': 'application/javascript'
+    }
+  },
+  optimizeDeps: {
+    include: ['three']
+  },
+  assetsInclude: ['**/*.js']
 });

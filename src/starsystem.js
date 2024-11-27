@@ -8,7 +8,7 @@ const starData = [
         x: -0.6396, y: -2.586, z: -1.29181, 
         size: 1.0,
         link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&hide_artwork=1&feed=%2Fmol_%2Fall-that-jazz-3-nina-simone-alice-coltrane-sun-ra-olu-dara-charlie-parker-yusef-lateef-povo%2F',
-        textPath: './texts/spica.txt'  // Add this line
+        textPath: './text/spica.txt'
     },
     { 
         name: 'β Virginis known as Zavijava', 
@@ -81,11 +81,20 @@ export class StarSystem {
     constructor(scene) {
         this.scene = scene;
         this.starMeshes = [];
-        this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
-        
         this.createMixcloudContainer();
+        
+        // Add resize handler for mobile responsiveness
+        window.addEventListener('resize', () => this.handleResize());
+    }
+
+    handleResize() {
+        const isMobile = window.innerWidth <= 768;
+        this.starMeshes.forEach(starData => {
+            const scaleFactor = isMobile ? STAR_CONFIG.scaleMultiplier * 1.5 : STAR_CONFIG.scaleMultiplier;
+            starData.mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        });
     }
 
     createMixcloudContainer() {
@@ -110,26 +119,28 @@ export class StarSystem {
     }
 
     createStars() {
+        const isMobile = window.innerWidth <= 768;
         starData.forEach(star => {
-            const mesh = this.createStarMesh(star);
+            const mesh = this.createStarMesh(star, isMobile);
             this.scene.add(mesh);
             this.starMeshes.push({
                 mesh,
                 name: star.name,
                 link: star.link,
-                textPath: './text/spica.txt'
+                textPath: star.textPath
             });
         });
     }
 
-    createStarMesh(star) {
+    createStarMesh(star, isMobile) {
+        const scaleFactor = isMobile ? STAR_CONFIG.scaleMultiplier * 1.5 : STAR_CONFIG.scaleMultiplier;
         const geometry = new THREE.SphereGeometry(star.size, 32, 32);
         const glowGeometry = new THREE.SphereGeometry(star.size * 1.2, 32, 32);
         
         const material = new THREE.MeshStandardMaterial({
             color: STAR_CONFIG.defaultColor,
             emissive: STAR_CONFIG.emissiveColor,
-            emissiveIntensity: STAR_CONFIG.defaultIntensity,
+            emissiveIntensity: STAR_CONFIG.defaultIntensity * (isMobile ? 1.5 : 1),
             metalness: 0.1,
             roughness: 0.2
         });
@@ -149,35 +160,15 @@ export class StarSystem {
         group.add(glowMesh);
         
         group.position.set(
-            star.x * STAR_CONFIG.scaleMultiplier,
-            star.y * STAR_CONFIG.scaleMultiplier,
-            star.z * STAR_CONFIG.scaleMultiplier
+            star.x * scaleFactor,
+            star.y * scaleFactor,
+            star.z * scaleFactor
         );
         
         group.userData.starMesh = starMesh;
         group.userData.glowMesh = glowMesh;
         
         return group;
-    }
-
-    handleHover(hoveredMesh, starNameElement) {
-        const hoveredStarData = this.starMeshes.find(star => star.mesh === hoveredMesh);
-        
-        if (this.currentlyHoveredStar !== hoveredMesh && hoveredStarData) {
-            this.resetPreviousHover();
-            this.applyHoverEffect(hoveredMesh);
-            this.currentlyHoveredStar = hoveredMesh;
-            
-            starNameElement.textContent = hoveredStarData.name;
-        }
-    }
-
-    clearHover(starNameElement) {
-        if (this.currentlyHoveredStar && this.currentlyHoveredStar !== this.activeStar) {
-            this.resetPreviousHover();
-            starNameElement.textContent = '♍︎';
-        }
-        this.currentlyHoveredStar = null;
     }
 
     showMixcloud(url) {
@@ -192,6 +183,7 @@ export class StarSystem {
             this.startPulse(this.activeStar);
         }
     }
+
     hideMixcloud() {
         const container = document.getElementById('mixcloud-container');
         if (container) {
@@ -217,14 +209,30 @@ export class StarSystem {
         if (this.pulseAnimation) {
             this.pulseAnimation.kill();
         }
+    
+        // Start pulsing immediately without initial transition
+        this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
+            emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
+            duration: STAR_CONFIG.pulseConfig.duration,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            immediateRender: true  // Prevents initial flash
+        });
+    
+        // Set glow opacity smoothly
+        gsap.to(mesh.userData.glowMesh.material, {
+            opacity: 0.4,
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: "power2.inOut"
+        });
+    }
 
-        // First transition smoothly from current state
         gsap.to(mesh.userData.starMesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
             duration: ANIMATION_CONFIG.defaultDuration,
             ease: "power2.inOut",
             onComplete: () => {
-                // Then start pulsing
                 this.pulseAnimation = gsap.to(mesh.userData.starMesh.material, {
                     emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
                     duration: STAR_CONFIG.pulseConfig.duration,
@@ -235,7 +243,6 @@ export class StarSystem {
             }
         });
 
-        // Smooth glow transition
         gsap.to(mesh.userData.glowMesh.material, {
             opacity: 0.4,
             duration: ANIMATION_CONFIG.defaultDuration * 1.5,
@@ -243,92 +250,28 @@ export class StarSystem {
         });
     }
 
-    stopPulse(mesh) {
-        if (this.pulseAnimation) {
-            this.pulseAnimation.kill();
-            this.pulseAnimation = null;
-        }
-
-        gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut"
-        });
-    }
-
-    resetPreviousHover() {
-        if (this.currentlyHoveredStar && this.currentlyHoveredStar !== this.activeStar) {
-            gsap.killTweensOf(this.currentlyHoveredStar.userData.starMesh.material);
-            gsap.killTweensOf(this.currentlyHoveredStar.userData.glowMesh.material);
-            
-            gsap.to(this.currentlyHoveredStar.userData.starMesh.material, {
-                emissiveIntensity: STAR_CONFIG.defaultIntensity,
-                duration: ANIMATION_CONFIG.defaultDuration,
-                ease: "power2.inOut"
-            });
-            
-            gsap.to(this.currentlyHoveredStar.userData.glowMesh.material, {
-                opacity: 0.15,
-                duration: ANIMATION_CONFIG.defaultDuration,
-                ease: "power2.inOut"
-            });
-        }
-    }
-
-    applyHoverEffect(mesh) {
-        gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut"
-        });
-
-        gsap.to(mesh.userData.glowMesh.material, {
-            opacity: 0.3,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut"
-        });
-    }
-
     resetAllStars() {
-        // Kill all ongoing animations first
         if (this.pulseAnimation) {
             this.pulseAnimation.kill();
             this.pulseAnimation = null;
         }
     
-        // Kill any pending gsap animations on all stars
         this.starMeshes.forEach(starData => {
             gsap.killTweensOf(starData.mesh.userData.starMesh.material);
             gsap.killTweensOf(starData.mesh.userData.glowMesh.material);
-        });
-    
-        // Clear active and hovered states before animations
-        const previousActive = this.activeStar;
-        this.activeStar = null;
-        this.currentlyHoveredStar = null;
-    
-        // Hide mixcloud player
-        this.hideMixcloud();
-    
-        // Reset all stars to default state
-        this.starMeshes.forEach(starData => {
-            // Immediately set to default state
-            starData.mesh.userData.starMesh.material.emissiveIntensity = STAR_CONFIG.defaultIntensity;
-            starData.mesh.userData.glowMesh.material.opacity = 0.15;
-    
-            // Then animate smoothly to ensure any remnant states are cleaned up
-            gsap.to(starData.mesh.userData.starMesh.material, {
-                emissiveIntensity: STAR_CONFIG.defaultIntensity,
-                duration: ANIMATION_CONFIG.longDuration,
-                ease: "power2.inOut"
-            });
             
-            gsap.to(starData.mesh.userData.glowMesh.material, {
-                opacity: 0.15,
-                duration: ANIMATION_CONFIG.longDuration,
-                ease: "power2.inOut"
-            });
+            const isMobile = window.innerWidth <= 768;
+            starData.mesh.userData.starMesh.material.emissiveIntensity = 
+                STAR_CONFIG.defaultIntensity * (isMobile ? 1.5 : 1);
+            starData.mesh.userData.glowMesh.material.opacity = 0.15;
         });
+    
+        this.activeStar = null;
+        this.hideMixcloud();
+    }
+
+    cleanup() {
+        window.removeEventListener('resize', this.handleResize);
     }
 }
 

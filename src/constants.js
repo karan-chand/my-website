@@ -1,7 +1,7 @@
 // Star configuration
 export const STAR_CONFIG = {
     defaultIntensity: 0.2,
-    hoverIntensityMultiplier: 2.5,
+    hoverIntensityMultiplier: 3.0,    // Increased from 2.5
     clickIntensityMultiplier: 3.0,
     scaleMultiplier: 5,
     defaultColor: 0xe0e0ff,
@@ -15,7 +15,7 @@ export const STAR_CONFIG = {
 
 // Bloom effect configuration
 export const BLOOM_CONFIG = {
-    defaultStrength: 0.4,
+    defaultStrength: 0.6,    // Increased from 0.4
     defaultRadius: 0.2,
     defaultThreshold: 0.08,
     activeStrength: 1.8,
@@ -25,11 +25,11 @@ export const BLOOM_CONFIG = {
 
 // Animation timings
 export const ANIMATION_CONFIG = {
-    defaultDuration: 0.3,     // Faster
-    longDuration: 0.5,       // Faster
-    pulseDuration: 1.8,      // Keep for smooth pulsing
-    resetDuration: 1.0,      // Faster reset
-    defaultEase: "power2.out",  // Changed to .out for snappier transitions
+    defaultDuration: 0.2,     // Reduced from 0.3 for snappier response
+    longDuration: 0.5,
+    pulseDuration: 1.8,
+    resetDuration: 0.2,      // Reduced for quicker reset
+    defaultEase: "power1.out", // Changed to simpler easing
     pulseEase: "sine.inOut"
 };
 

@@ -8,7 +8,6 @@ export class UIManager {
     }
 
     appendBaseStructure() {
-        // Create elements
         const header = document.createElement('header');
         header.innerHTML = `
             <h1 onclick="window.resetPage()">KARAN.INK</h1>
@@ -28,30 +27,22 @@ export class UIManager {
             </nav>
         `;
 
-        const starName = document.createElement('div');
-        starName.id = 'star-name';
-        starName.className = 'static-text';
-        starName.textContent = '♍︎';
-
         const cursor = document.createElement('div');
         cursor.id = 'custom-cursor';
         cursor.className = 'custom-cursor';
 
-        // Append elements to body
         document.body.appendChild(header);
-        document.body.appendChild(starName);
         document.body.appendChild(cursor);
     }
 
     setupEventListeners() {
-        // Handle dropdown hover states
         const dropdownTriggers = document.querySelectorAll('nav ul li');
         dropdownTriggers.forEach(trigger => {
             trigger.addEventListener('mouseenter', () => {
                 const dropdown = trigger.querySelector('.dropdown');
                 if (dropdown) {
                     dropdown.style.display = 'block';
-                    gsap.fromTo(dropdown, 
+                    gsap.fromTo(dropdown,
                         { opacity: 0, y: -10 },
                         { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
                     );
@@ -72,7 +63,6 @@ export class UIManager {
             });
         });
 
-        // Prevent default behavior for navigation links
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -81,20 +71,5 @@ export class UIManager {
                 }
             });
         });
-
-        // Handle mobile menu
-        if (window.innerWidth <= 768) {
-            this.setupMobileMenu();
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth <= 768) {
-                this.setupMobileMenu();
-            } else {
-                this.removeMobileMenu();
-            }
-        });
     }
-
 }

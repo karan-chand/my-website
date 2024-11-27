@@ -182,22 +182,47 @@ nav ul .dropdown li a:hover {
 .text-modal {
     position: fixed;
     left: 50%;
-    bottom: 100px;
+    top: 140px; /* Changed from bottom positioning */
     transform: translateX(-50%);
     width: 90vw;
     max-width: 1200px;
     height: auto;
     max-height: 35vh;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease; /* Shortened transition for better sync */
+    background-color: rgba(0, 0, 0, 0.95);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
 }
 
 .text-modal.fullscreen {
-    top: 140px;
-    bottom: auto;
     height: calc(100vh - 300px);
     width: 96vw;
-    transform: translateX(-50%);
 }
+
+@media (max-width: 768px) {
+    .text-modal {
+        width: 100%;
+        left: 0;
+        right: 0;
+        transform: none;
+        border-radius: 0;
+        max-height: 40vh;
+        background-color: rgba(0, 0, 0, 0.98);
+        overflow-x: hidden;
+    }
+
+    .text-modal.fullscreen {
+        width: 100%;
+        left: 0;
+        right: 0;
+        transform: none;
+        top: 100px;
+        height: calc(100vh - 180px);
+    }
+}
+
 
 .modal-header {
     display: flex;
@@ -405,15 +430,25 @@ nav ul .dropdown li a:hover {
 }
 
 /* Media Queries */
+/* Keep all existing styles up to Media Queries section, then update that section: */
+
 @media (max-width: 768px) {
-    .text-modal {
-        width: 100vw;
-        bottom: 70px;
-        left: 0;
-        transform: none;
+    header {
+        padding: 10px 0;
+        background: rgba(0,0,0,0.8);
     }
+
     header h1 {
         font-size: 24px;
+    }
+
+    nav {
+        margin-top: 5px;
+    }
+
+    nav ul li > a {
+        font-size: 16px;
+        padding: 8px 12px;
     }
 
     nav ul .dropdown {
@@ -421,6 +456,7 @@ nav ul .dropdown li a:hover {
         max-width: none;
         left: 50%;
         transform: translateX(-50%);
+        padding: 4px 0;
     }
 
     .text-modal {
@@ -430,6 +466,7 @@ nav ul .dropdown li a:hover {
         transform: none;
         border-radius: 0;
         max-height: 40vh;
+        background-color: rgba(0, 0, 0, 0.98);
     }
 
     .text-modal.fullscreen {
@@ -439,22 +476,38 @@ nav ul .dropdown li a:hover {
         height: calc(100vh - 180px);
     }
 
+    .modal-content {
+        padding: 15px;
+        max-height: 35vh;
+    }
+
+    .text-modal.fullscreen .modal-content {
+        max-height: calc(100vh - 240px);
+        padding: 20px;
+    }
+
     #mixcloud-container {
         width: 100vw;
         bottom: 0;
         left: 0;
         transform: none;
+        height: 60px;
     }
 
     .mixcloud-close-btn {
         font-size: 24px;
         left: 8px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-button {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
     }
 
     .modal-title {
@@ -464,6 +517,46 @@ nav ul .dropdown li a:hover {
     .text-content {
         font-size: 15px;
         line-height: 1.4;
+    }
+
+    .modal-header {
+        padding: 10px 15px;
+    }
+
+    .navigation {
+        padding: 4px 15px;
+    }
+
+    .navigation button {
+        padding: 8px;
+    }
+
+    /* Enhance touch targets */
+    .modal-button,
+    .mixcloud-close-btn,
+    .navigation button {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+/* Add small screen optimizations */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 22px;
+    }
+
+    nav ul li > a {
+        font-size: 15px;
+        padding: 6px 10px;
+    }
+
+    .text-modal {
+        max-height: 45vh;
+    }
+
+    .text-modal.fullscreen {
+        height: calc(100vh - 160px);
     }
 }
 

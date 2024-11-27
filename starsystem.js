@@ -8,11 +8,7 @@ const starData = [
         x: -0.6396, y: -2.586, z: -1.29181, 
         size: 1.0,
         link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&hide_artwork=1&feed=%2Fmol_%2Fall-that-jazz-3-nina-simone-alice-coltrane-sun-ra-olu-dara-charlie-parker-yusef-lateef-povo%2F',
-<<<<<<<< HEAD:src/js/starsystem.js
         textPath: '../text/spica.txt'
-========
-        textPath: './texts/spica.txt'  // Add this line
->>>>>>>> parent of 30d0862 (updates):starsystem.js
     },
     { 
         name: 'β Virginis known as Zavijava', 
@@ -222,8 +218,6 @@ export class StarSystem {
             this.pulseAnimation.kill();
         }
 
-<<<<<<<< HEAD:src/js/starsystem.js
-========
         // First transition smoothly from current state
         gsap.to(mesh.userData.starMesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
@@ -295,7 +289,7 @@ export class StarSystem {
         });
     }
 
->>>>>>>> parent of 30d0862 (updates):starsystem.js
+
     resetAllStars() {
         // Kill all ongoing animations first
         if (this.pulseAnimation) {

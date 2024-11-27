@@ -1,63 +1,71 @@
 const gsap = window.gsap;
-import { UI_CONFIG } from './constants.js';
 
 export class TextDisplay {
-    constructor(scene, camera) {
-        this.scene = scene;
-        this.camera = camera;
-        this.textElements = new Map();
-        this.isMinimized = false;
+    constructor() {
         this.createModal();
-        this.initializeDrag();
-        this.setupKeyboardControls();
+        this.setupEventListeners();
         this.currentPage = 0;
+        this.pages = [];
+        this.isMinimized = false;
     }
 
     createModal() {
         this.modal = document.createElement('div');
         this.modal.className = 'text-modal';
-        this.modal.setAttribute('role', 'dialog');
-        this.modal.setAttribute('aria-label', 'Star Information');
         
         this.modal.innerHTML = `
-            <div class="modal-header" role="heading" aria-level="1">
+            <div class="modal-header">
                 <div class="modal-title">
-                    <span class="title-text">Star Information</span>
                     <span class="star-name"></span>
                 </div>
                 <div class="modal-controls">
-                    <button class="modal-button minimize" aria-label="Minimize">
-                        <span class="minimize-icon">_</span>
-                    </button>
-                    <button class="modal-button close" aria-label="Close">
-                        <span class="close-icon">×</span>
-                    </button>
+                    <button class="modal-button minimize" aria-label="Minimize">_</button>
+                    <button class="modal-button close" aria-label="Close">×</button>
                 </div>
             </div>
             <div class="modal-content">
-                <div class="text-content" role="article"></div>
-                <div class="navigation" role="navigation">
-                    <button class="prev" aria-label="Previous page">Previous</button>
-                    <span class="page-counter" aria-live="polite">1/1</span>
-                    <button class="next" aria-label="Next page">Next</button>
+                <div class="text-content"></div>
+                <div class="navigation">
+                    <button class="prev">Previous</button>
+                    <span class="page-counter">1/1</span>
+                    <button class="next">Next</button>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(this.modal);
-        this.bindEventListeners();
     }
 
-    bindEventListeners() {
-        this.modal.querySelector('.close').addEventListener('click', () => this.hide());
-        this.modal.querySelector('.minimize').addEventListener('click', () => this.toggleMinimize());
+    setupEventListeners() {
+        // Navigation buttons
         this.modal.querySelector('.prev').addEventListener('click', () => this.prevPage());
         this.modal.querySelector('.next').addEventListener('click', () => this.nextPage());
+        
+        // Control buttons
+        this.modal.querySelector('.close').addEventListener('click', () => this.hide());
+        this.modal.querySelector('.minimize').addEventListener('click', () => this.toggleMinimize());
 
-        // Add touch swipe support
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (this.modal.style.display === 'none') return;
+
+            switch(e.key) {
+                case 'ArrowLeft':
+                    this.prevPage();
+                    break;
+                case 'ArrowRight':
+                    this.nextPage();
+                    break;
+                case 'Escape':
+                    if (!this.isMinimized) this.toggleMinimize();
+                    break;
+            }
+        });
+
+        // Touch swipe support
         let touchStartX = 0;
         this.modal.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
@@ -77,45 +85,31 @@ export class TextDisplay {
         });
     }
 
-    setupKeyboardControls() {
-        document.addEventListener('keydown', (e) => {
-            if (!this.modal.style.display || this.modal.style.display === 'none') return;
-            
-            switch (e.key) {
-                case 'Escape':
-                    this.hide();
-                    break;
-                case 'ArrowRight':
-                    this.nextPage();
-                    break;
-                case 'ArrowLeft':
-                    this.prevPage();
-                    break;
-            }
-        });
-    }
-
     async show(starName, textPath) {
         try {
-            await this.loadContent(textPath);
+            // Load content
+            const response = await fetch(textPath);
+            if (!response.ok) throw new Error('Failed to load text content');
+            
+            const text = await response.text();
+            this.pages = text.split(/\n\n+/);
+            this.currentPage = 0;
+            
+            // Update UI
             this.modal.querySelector('.star-name').textContent = starName;
+            this.updateContent();
             
-            // Reset position and show modal
-            this.modal.style.opacity = '0';
+            // Show modal with animation
             this.modal.style.display = 'block';
-            this.modal.style.transform = 'translate(-50%, 20px)';
+            gsap.fromTo(this.modal,
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
+            );
             
-            gsap.to(this.modal, {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                ease: 'power2.out'
-            });
-            
+            this.updateNavigationButtons();
             this.updateProgressBar();
         } catch (error) {
-            console.error('Error showing text:', error);
-            this.showError();
+            console.error('Error loading text:', error);
         }
     }
 
@@ -124,89 +118,55 @@ export class TextDisplay {
             opacity: 0,
             y: 20,
             duration: 0.3,
-            ease: 'power2.in',
+            ease: "power2.in",
             onComplete: () => {
                 this.modal.style.display = 'none';
                 this.currentPage = 0;
+                this.isMinimized = false;
+                this.resetModalSize();
             }
-        });
-    }
-
-    async loadContent(textPath) {
-        const response = await fetch(textPath);
-        if (!response.ok) throw new Error('Text content not found');
-        
-        const text = await response.text();
-        this.pages = this.splitIntoPages(text);
-        this.currentPage = 0;
-        this.updateModalContent();
-    }
-
-    showError() {
-        this.modal.querySelector('.text-content').innerHTML = `
-            <div class="error-message">
-                <p>Unable to load content.</p>
-                <button onclick="this.hide()">Close</button>
-            </div>
-        `;
-    }
-
-    updateModalContent() {
-        const content = this.modal.querySelector('.text-content');
-        content.textContent = this.pages[this.currentPage];
-        
-        this.modal.querySelector('.page-counter').textContent = 
-            `${this.currentPage + 1}/${this.pages.length}`;
-            
-        this.updateProgressBar();
-    }
-
-    updateProgressBar() {
-        const progress = ((this.currentPage + 1) / this.pages.length) * 100;
-        const progressFill = this.modal.querySelector('.progress-fill');
-        
-        gsap.to(progressFill, {
-            width: `${progress}%`,
-            duration: 0.3,
-            ease: 'power2.out'
         });
     }
 
     toggleMinimize() {
         const content = this.modal.querySelector('.modal-content');
-        const minimizeIcon = this.modal.querySelector('.minimize-icon');
-        
+        const minimizeBtn = this.modal.querySelector('.minimize');
+
         if (this.isMinimized) {
             gsap.to(this.modal, {
-                width: '80%',
-                maxWidth: '800px',
+                width: '90vw',
+                maxWidth: '1200px',
                 duration: 0.3,
-                ease: 'power2.out'
+                ease: "power2.out"
             });
             content.style.display = 'block';
-            minimizeIcon.textContent = '_';
+            minimizeBtn.textContent = '_';
         } else {
             gsap.to(this.modal, {
                 width: '200px',
                 duration: 0.3,
-                ease: 'power2.out'
+                ease: "power2.out"
             });
             content.style.display = 'none';
-            minimizeIcon.textContent = '□';
+            minimizeBtn.textContent = '□';
         }
         
         this.isMinimized = !this.isMinimized;
     }
 
-    splitIntoPages(text, wordsPerPage = 200) {
-        return text.split(/\n\n+/).map(paragraph => paragraph.trim());
+    resetModalSize() {
+        gsap.set(this.modal, {
+            width: '90vw',
+            maxWidth: '1200px'
+        });
+        this.modal.querySelector('.modal-content').style.display = 'block';
     }
 
     prevPage() {
         if (this.currentPage > 0) {
             this.animatePageTransition('right', () => {
                 this.currentPage--;
-                this.updateModalContent();
+                this.updateContent();
             });
         }
     }
@@ -215,9 +175,45 @@ export class TextDisplay {
         if (this.currentPage < this.pages.length - 1) {
             this.animatePageTransition('left', () => {
                 this.currentPage++;
-                this.updateModalContent();
+                this.updateContent();
             });
         }
+    }
+
+    updateContent() {
+        const content = this.modal.querySelector('.text-content');
+        content.textContent = this.pages[this.currentPage];
+        
+        this.updateNavigationButtons();
+        this.updateProgressBar();
+        this.updatePageCounter();
+    }
+
+    updateNavigationButtons() {
+        const prevBtn = this.modal.querySelector('.prev');
+        const nextBtn = this.modal.querySelector('.next');
+        
+        prevBtn.disabled = this.currentPage === 0;
+        nextBtn.disabled = this.currentPage === this.pages.length - 1;
+        
+        prevBtn.style.visibility = this.currentPage === 0 ? 'hidden' : 'visible';
+        nextBtn.style.visibility = this.currentPage === this.pages.length - 1 ? 'hidden' : 'visible';
+    }
+
+    updatePageCounter() {
+        const counter = this.modal.querySelector('.page-counter');
+        counter.textContent = `${this.currentPage + 1}/${this.pages.length}`;
+    }
+
+    updateProgressBar() {
+        const progress = ((this.currentPage + 1) / this.pages.length) * 100;
+        const progressBar = this.modal.querySelector('.progress-fill');
+        
+        gsap.to(progressBar, {
+            width: `${progress}%`,
+            duration: 0.3,
+            ease: "power2.out"
+        });
     }
 
     animatePageTransition(direction, callback) {
@@ -228,12 +224,12 @@ export class TextDisplay {
             opacity: 0,
             x: xOffset,
             duration: 0.2,
-            ease: 'power2.in',
+            ease: "power2.in",
             onComplete: () => {
                 callback();
-                gsap.fromTo(content, 
+                gsap.fromTo(content,
                     { opacity: 0, x: -xOffset },
-                    { opacity: 1, x: 0, duration: 0.2, ease: 'power2.out' }
+                    { opacity: 1, x: 0, duration: 0.2, ease: "power2.out" }
                 );
             }
         });

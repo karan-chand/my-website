@@ -7,7 +7,8 @@ const starData = [
         name: 'α Virginis known as Spica', 
         x: -0.6396, y: -2.586, z: -1.29181, 
         size: 1.0,
-        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&hide_artwork=1&feed=%2Fmol_%2Fall-that-jazz-3-nina-simone-alice-coltrane-sun-ra-olu-dara-charlie-parker-yusef-lateef-povo%2F'
+        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&hide_artwork=1&feed=%2Fmol_%2Fall-that-jazz-3-nina-simone-alice-coltrane-sun-ra-olu-dara-charlie-parker-yusef-lateef-povo%2F',
+        textPath: '/texts/spica.txt'  // Add this line
     },
     { 
         name: 'β Virginis known as Zavijava', 

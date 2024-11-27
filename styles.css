@@ -1,22 +1,26 @@
 /* Font declarations */
 @font-face {
     font-family: 'Stanley Regular';
-    src: url('/fonts/Stanley Regular.woff2') format('woff2'),
+    src: local('Stanley Regular'),
+         url('/fonts/Stanley Regular.woff2') format('woff2') format('opentype'),
          url('/fonts/Stanley Regular.woff') format('woff'),
          url('/fonts/Stanley Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+    text-rendering: optimizeLegibility;
 }
 
 @font-face {
     font-family: 'Halyard Text';
-    src: url('/fonts/Halyard Text Regular.woff2') format('woff2'),
+    src: local('Halyard Text'),
+         url('/fonts/Halyard Text Regular.woff2') format('woff2') format('opentype'),
          url('/fonts/Halyard Text Regular.woff') format('woff'),
          url('/fonts/Halyard Text Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+    text-rendering: optimizeLegibility;
 }
 
 /* CSS Reset and Base Styles */
@@ -92,7 +96,7 @@ nav ul li {
     position: relative;
 }
 
-nav ul li a {
+nav ul li > a {
     text-decoration: none;
     color: white;
     font-size: 18px;
@@ -102,12 +106,12 @@ nav ul li a {
     transition: color 0.3s ease;
 }
 
-nav ul li a:hover {
+nav ul li > a:hover {
     color: #00ffcc;
 }
 
 /* Dropdown arrow */
-nav ul li a::after {
+nav ul li > a::after {
     content: '⌄';
     font-size: 12px;
     color: grey;
@@ -118,8 +122,12 @@ nav ul li a::after {
     transition: transform 0.3s ease;
 }
 
-nav ul li:hover a::after {
+nav ul li:hover > a::after {
     transform: rotateX(180deg);
+}
+
+nav ul .dropdown li a::after {
+    display: none;
 }
 
 /* Dropdown Menu */
@@ -150,23 +158,146 @@ nav ul .dropdown li {
     display: block;
     padding: 0;
     text-align: left;
+    width: 100%;
 }
 
 nav ul .dropdown li a {
-    padding: 10px 20px;
+    padding: 12px 20px;
     display: block;
     font-size: 16px;
     color: rgba(255, 255, 255, 0.9);
     transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100%;
 }
 
 nav ul .dropdown li a:hover {
     background: rgba(0, 255, 204, 0.1);
     color: #00ffcc;
+    width: 100%;
+}
+
+/* Text Modal Styles */
+.text-modal {
+    position: fixed;
+    left: 50%;
+    bottom: 100px; /* Position above the mixcloud player */
+    transform: translateX(-50%);
+    width: 90vw;
+    max-width: 1200px;
+    background-color: rgba(0, 0, 0, 0.95);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    z-index: 11;
+    display: none;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+    font-family: 'Stanley Regular', Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.star-name {
+    color: #00ffcc;
+}
+
+.modal-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    transition: opacity 0.3s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-button:hover {
+    opacity: 0.8;
+}
+
+.modal-content {
+    padding: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.text-content {
+    font-family: 'Halyard Text', Arial, sans-serif;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 20px;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navigation button {
+    background: transparent;
+    border: none;
+    color: #00ffcc;
+    cursor: pointer;
+    padding: 5px 10px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    font-family: 'Halyard Text', Arial, sans-serif;
+}
+
+.navigation button:hover {
+    opacity: 1;
+}
+
+.navigation button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.page-counter {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.progress-bar {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #00ffcc;
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
 /* Mixcloud Player Container */
-
 #mixcloud-container {
     position: fixed;
     bottom: 20px;
@@ -175,7 +306,7 @@ nav ul .dropdown li a:hover {
     width: 90vw;
     max-width: 1200px;
     height: 60px;
-    background-color: transparent;  /* Changed to transparent */
+    background-color: transparent;
     border: none;
     overflow: visible;
     display: none;
@@ -221,18 +352,6 @@ nav ul .dropdown li a:hover {
     outline: none;
 }
 
-@media (max-width: 768px) {
-    #mixcloud-container {
-        width: 95vw;
-        bottom: 10px;
-    }
-
-    .mixcloud-close-btn {
-        font-size: 20px;
-        left: 8px;
-    }
-}
-
 /* Custom Cursor */
 .custom-cursor {
     width: 10px;
@@ -270,6 +389,12 @@ nav ul .dropdown li a:hover {
         font-size: 24px;
     }
 
+    .text-modal {
+        width: 95vw;
+        max-height: 70vh;
+        bottom: 80px;
+    }
+
     #mixcloud-container {
         width: 95vw;
         bottom: 10px;
@@ -278,6 +403,10 @@ nav ul .dropdown li a:hover {
     .mixcloud-close-btn {
         font-size: 20px;
         left: 8px;
+    }
+
+    .modal-content {
+        max-height: 40vh;
     }
 }
 

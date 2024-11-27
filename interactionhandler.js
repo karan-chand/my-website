@@ -1,6 +1,6 @@
 const gsap = window.gsap;
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
-import { TextDisplay } from './textdisplay.js';  // Add this line
+import { TextDisplay } from './textdisplay.js';
 
 export class InteractionHandler {
     constructor(sceneSetup, starSystem) {
@@ -11,16 +11,16 @@ export class InteractionHandler {
         this.isTransitioning = false;
         
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handlePointerMove = this.handlePointerMove.bind(this);
+        this.handlePointerDown = this.handlePointerDown.bind(this);
         
         this.initializeEventListeners();
         this.setupTouchHandling();
     }
 
     initializeEventListeners() {
-        window.addEventListener('pointermove', (e) => this.handleHover(e));
-        window.addEventListener('pointerdown', (e) => this.handleClick(e));
-        
-        // Add single event listener for Escape key
+        window.addEventListener('pointermove', this.handlePointerMove);
+        window.addEventListener('pointerdown', this.handlePointerDown);
         document.addEventListener('keydown', this.handleKeyPress, true);
     }
 
@@ -50,7 +50,7 @@ export class InteractionHandler {
             );
 
             if (touchDuration < 300 && distance < 10) {
-                this.handleClick(e.changedTouches[0]);
+                this.handlePointerDown(e.changedTouches[0]);
             }
         });
     }
@@ -58,30 +58,13 @@ export class InteractionHandler {
     handleKeyPress(event) {
         if (event.key === 'Escape') {
             event.preventDefault();
+            this.textDisplay.hide();
             document.querySelector('header h1').click();
             return false;
         }
     }
 
-    updateMousePosition(event) {
-        const x = (event.clientX / window.innerWidth) * 2 - 1;
-        const y = -(event.clientY / window.innerHeight) * 2 + 1;
-        
-        gsap.to(this.sceneSetup.mouse, {
-            x,
-            y,
-            duration: 0.1,
-            ease: "power2.out",
-            onUpdate: () => {
-                this.sceneSetup.raycaster.setFromCamera(
-                    this.sceneSetup.mouse, 
-                    this.sceneSetup.camera
-                );
-            }
-        });
-    }
-
-    handleHover(event) {
+    handlePointerMove(event) {
         if (this.isTransitioning) return;
         
         this.updateMousePosition(event);
@@ -104,7 +87,7 @@ export class InteractionHandler {
         }
     }
 
-    async handleClick(event) {
+    handlePointerDown(event) {
         if (this.isTransitioning) return;
 
         this.updateMousePosition(event);
@@ -122,31 +105,43 @@ export class InteractionHandler {
             const clickedStarData = this.starSystem.starMeshes.find(star => star.mesh === starGroup);
 
             if (clickedStarData?.link) {
-                await this.transitionToStar(starGroup, clickedStarData);
+                this.transitionToStar(starGroup, clickedStarData);
             }
         }
+    }
+
+    updateMousePosition(event) {
+        const x = (event.clientX / window.innerWidth) * 2 - 1;
+        const y = -(event.clientY / window.innerHeight) * 2 + 1;
+        
+        gsap.to(this.sceneSetup.mouse, {
+            x,
+            y,
+            duration: 0.1,
+            ease: "power2.out",
+            onUpdate: () => {
+                this.sceneSetup.raycaster.setFromCamera(
+                    this.sceneSetup.mouse, 
+                    this.sceneSetup.camera
+                );
+            }
+        });
     }
 
     async transitionToStar(star, starData) {
         try {
             this.isTransitioning = true;
-            console.log('Star data:', starData); // Debug log
-    
-            // Set active star and show Mixcloud
+            
             this.starSystem.activeStar = star;
             this.starSystem.showMixcloud(starData.link);
-    
-            // Show text if available
+            
             if (starData.textPath) {
-                console.log('Attempting to show text:', starData.textPath); // Debug log
                 await this.textDisplay.show(starData.name, starData.textPath);
             }
-    
-            // Camera transition
+            
             await this.transitionCamera(star);
-    
-            // Animate bloom effect
             this.animateBloomEffect();
+            
         } catch (error) {
             console.error('Error during star transition:', error);
         } finally {
@@ -197,20 +192,19 @@ export class InteractionHandler {
     }
 
     triggerSpecificStar(starName) {
-        console.log('Triggering star:', starName);
         const star = this.starSystem.starMeshes.find(s => 
             s.name.toLowerCase().includes(starName.toLowerCase())
         );
         
         if (star) {
-            console.log('Found star:', star);
             this.transitionToStar(star.mesh, star);
-        } else {
-            console.error('Star not found:', starName);
         }
     }
 
     cleanup() {
+        window.removeEventListener('pointermove', this.handlePointerMove);
+        window.removeEventListener('pointerdown', this.handlePointerDown);
         document.removeEventListener('keydown', this.handleKeyPress, true);
+        this.textDisplay.cleanup();
     }
 }

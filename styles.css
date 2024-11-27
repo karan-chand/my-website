@@ -179,14 +179,14 @@ nav ul .dropdown li a:hover {
 }
 
 /* Text Modal Styles */
+/* Text Modal Styles */
 .text-modal {
     position: fixed;
     left: 50%;
-    bottom: 100px; /* Position above mixcloud player */
+    bottom: 100px;
     transform: translateX(-50%);
     width: 90vw;
     max-width: 1200px;
-    max-height: calc(100vh - 180px); /* Leave room for nav + padding */
     background-color: rgba(0, 0, 0, 0.95);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
@@ -195,6 +195,13 @@ nav ul .dropdown li a:hover {
     z-index: 11;
     display: none;
     transition: all 0.3s ease;
+}
+
+.text-modal.fullscreen {
+    top: 80px;
+    bottom: auto;
+    height: calc(100vh - 200px);
+    width: 96vw;
 }
 
 .text-modal.minimized {
@@ -249,8 +256,12 @@ nav ul .dropdown li a:hover {
 .modal-content {
     padding: 20px;
     height: auto;
-    max-height: calc(100vh - 280px); /* Account for header, navigation, and padding */
+    max-height: calc(100vh - 280px);
     overflow-y: auto;
+}
+
+.text-modal.fullscreen .modal-content {
+    max-height: calc(100vh - 240px);
 }
 
 .text-content {
@@ -261,11 +272,15 @@ nav ul .dropdown li a:hover {
 }
 
 .navigation {
-    display: flex;
+    display: none;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-modal.fullscreen .navigation {
+    display: flex;
 }
 
 .navigation button {
@@ -310,6 +325,15 @@ nav ul .dropdown li a:hover {
     .text-modal {
         width: 95vw;
         bottom: 80px;
+    }
+
+    .text-modal.fullscreen {
+        top: 70px;
+        height: calc(100vh - 160px);
+    }
+    
+    .text-modal.fullscreen .modal-content {
+        max-height: calc(100vh - 200px);
     }
 
     .modal-button {

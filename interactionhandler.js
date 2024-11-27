@@ -18,7 +18,8 @@ export class InteractionHandler {
     initializeEventListeners() {
         window.addEventListener('pointermove', (e) => this.handleHover(e));
         window.addEventListener('pointerdown', (e) => this.handleClick(e));
-        window.addEventListener('keydown', this.handleKeyPress);
+        // Add event listener in capturing phase (true parameter)
+        window.addEventListener('keydown', this.handleKeyPress, true);
     }
 
     setupTouchHandling() {
@@ -54,8 +55,14 @@ export class InteractionHandler {
 
     handleKeyPress(event) {
         if (event.key === 'Escape') {
+            // Prevent default behavior
             event.preventDefault();
+            event.stopPropagation();
+            
+            // Reset scene regardless of player state
             this.resetScene();
+            
+            return false;
         }
     }
 
@@ -141,13 +148,6 @@ export class InteractionHandler {
             // Camera transition
             await this.transitionCamera(star);
 
-            // Start star pulsing only if the player is playing
-            if (this.starSystem.isPlaying) {
-                this.starSystem.startPulse(star);
-            } else {
-                this.starSystem.applyHoverEffect(star);
-            }
-            
             // Animate bloom effect
             this.animateBloomEffect();
         } catch (error) {
@@ -214,6 +214,6 @@ export class InteractionHandler {
     }
 
     cleanup() {
-        window.removeEventListener('keydown', this.handleKeyPress);
+        window.removeEventListener('keydown', this.handleKeyPress, true);
     }
 }

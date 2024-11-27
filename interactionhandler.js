@@ -130,6 +130,7 @@ export class InteractionHandler {
     async transitionToStar(star, starData) {
         try {
             this.isTransitioning = true;
+            console.log('Star data:', starData); // Debug log
     
             // Set active star and show Mixcloud
             this.starSystem.activeStar = star;
@@ -137,7 +138,8 @@ export class InteractionHandler {
     
             // Show text if available
             if (starData.textPath) {
-                this.textDisplay.show(starData.name, starData.textPath);
+                console.log('Attempting to show text:', starData.textPath); // Debug log
+                await this.textDisplay.show(starData.name, starData.textPath);
             }
     
             // Camera transition

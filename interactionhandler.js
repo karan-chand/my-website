@@ -8,6 +8,9 @@ export class InteractionHandler {
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
         
+        // Bind methods
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        
         this.initializeEventListeners();
         this.setupTouchHandling();
     }
@@ -15,7 +18,7 @@ export class InteractionHandler {
     initializeEventListeners() {
         window.addEventListener('pointermove', (e) => this.handleHover(e));
         window.addEventListener('pointerdown', (e) => this.handleClick(e));
-        window.addEventListener('keydown', (e) => this.handleKeyPress(e));
+        window.addEventListener('keydown', this.handleKeyPress);
     }
 
     setupTouchHandling() {
@@ -50,13 +53,14 @@ export class InteractionHandler {
     }
 
     handleKeyPress(event) {
-        if (event.key === 'Escape' && this.starSystem.activeStar) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
             this.resetScene();
         }
     }
 
     resetScene() {
-        if (this.starSystem.activeStar) {
+        if (this.starSystem) {
             this.starSystem.resetAllStars();
             this.sceneSetup.resetCamera();
         }
@@ -137,8 +141,12 @@ export class InteractionHandler {
             // Camera transition
             await this.transitionCamera(star);
 
-            // Start star pulsing
-            this.starSystem.startPulse(star);
+            // Start star pulsing only if the player is playing
+            if (this.starSystem.isPlaying) {
+                this.starSystem.startPulse(star);
+            } else {
+                this.starSystem.applyHoverEffect(star);
+            }
             
             // Animate bloom effect
             this.animateBloomEffect();
@@ -203,5 +211,9 @@ export class InteractionHandler {
         } else {
             console.error('Star not found:', starName);
         }
+    }
+
+    cleanup() {
+        window.removeEventListener('keydown', this.handleKeyPress);
     }
 }

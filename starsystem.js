@@ -1,8 +1,7 @@
 import * as THREE from 'three';
-const gsap = window.gsap; // Change the GSAP import to use window.gsap
+const gsap = window.gsap;
 import { STAR_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
-// Star data without constellation connections
 const starData = [
     { 
         name: 'α Virginis known as Spica', 
@@ -84,9 +83,39 @@ export class StarSystem {
         this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
+        this.isPlaying = false;
         
         // Create mixcloud container
         this.createMixcloudContainer();
+        this.setupCloseButton();
+    }
+
+    setupCloseButton() {
+        this.closeButton = document.createElement('button');
+        this.closeButton.className = 'mixcloud-close-btn';
+        this.closeButton.innerHTML = '×';
+        this.closeButton.setAttribute('aria-label', 'Close player');
+        this.closeButton.style.cssText = `
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 11;
+            padding: 5px;
+            display: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        `;
+        
+        this.closeButton.addEventListener('click', () => {
+            this.resetAllStars();
+        });
+        
+        document.body.appendChild(this.closeButton);
     }
 
     createMixcloudContainer() {
@@ -170,8 +199,38 @@ export class StarSystem {
         const container = document.getElementById('mixcloud-container');
         if (!container) return;
 
+        // Show close button
+        this.closeButton.style.display = 'block';
+
         container.innerHTML = `<iframe width="100%" height="60" src="${url}" frameborder="0" ></iframe>`;
         container.style.display = 'block';
+
+        // Setup message listener for Mixcloud player events
+        window.addEventListener('message', this.handleMixcloudEvent.bind(this));
+    }
+
+    handleMixcloudEvent(event) {
+        // Verify message is from Mixcloud
+        if (event.origin !== "https://www.mixcloud.com") return;
+        
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === "playerState") {
+                this.isPlaying = data.data === "playing";
+                
+                // Update star appearance based on play state
+                if (this.activeStar) {
+                    if (this.isPlaying) {
+                        this.startPulse(this.activeStar);
+                    } else {
+                        this.stopPulse(this.activeStar);
+                        this.applyHoverEffect(this.activeStar);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Error parsing Mixcloud event:", e);
+        }
     }
 
     hideMixcloud() {
@@ -180,6 +239,9 @@ export class StarSystem {
             container.style.display = 'none';
             container.innerHTML = '';
         }
+        this.closeButton.style.display = 'none';
+        this.isPlaying = false;
+        window.removeEventListener('message', this.handleMixcloudEvent.bind(this));
     }
 
     findStarByName(name) {
@@ -213,7 +275,7 @@ export class StarSystem {
         }
 
         gsap.to(mesh.userData.starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
+            emissiveIntensity: STAR_CONFIG.defaultIntensity,
             duration: ANIMATION_CONFIG.defaultDuration,
             ease: ANIMATION_CONFIG.defaultEase
         });
@@ -288,6 +350,9 @@ export class StarSystem {
         if (container) {
             container.remove();
         }
+        
+        this.closeButton?.remove();
+        window.removeEventListener('message', this.handleMixcloudEvent.bind(this));
 
         this.starMeshes.forEach(starData => {
             starData.mesh.userData.starMesh.geometry.dispose();

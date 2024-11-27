@@ -19,8 +19,6 @@
     font-display: swap;
 }
 
-/* Rest of your CSS stays the same */
-
 /* CSS Reset and Base Styles */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -184,12 +182,40 @@ nav ul .dropdown li a:hover {
     display: none;
     z-index: 10;
     box-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+    padding-left: 40px; /* Make room for close button */
 }
 
 #mixcloud-container iframe {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* Mixcloud Close Button */
+.mixcloud-close-btn {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 11;
+    padding: 5px;
+    display: none;
+    transition: all 0.3s ease;
+}
+
+.mixcloud-close-btn:hover {
+    opacity: 0.8;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.mixcloud-close-btn:focus {
+    outline: none;
+    opacity: 0.8;
 }
 
 /* Static Text (Virgo Symbol) */
@@ -244,6 +270,12 @@ nav ul .dropdown li a:hover {
     #mixcloud-container {
         width: 95vw;
         bottom: 10px;
+        padding-left: 35px;
+    }
+
+    .mixcloud-close-btn {
+        font-size: 20px;
+        left: 5px;
     }
 }
 

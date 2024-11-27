@@ -182,10 +182,11 @@ nav ul .dropdown li a:hover {
 .text-modal {
     position: fixed;
     left: 50%;
-    bottom: 100px; /* Position above the mixcloud player */
+    bottom: 100px; /* Position above mixcloud player */
     transform: translateX(-50%);
     width: 90vw;
     max-width: 1200px;
+    max-height: calc(100vh - 180px); /* Leave room for nav + padding */
     background-color: rgba(0, 0, 0, 0.95);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
@@ -196,16 +197,9 @@ nav ul .dropdown li a:hover {
     transition: all 0.3s ease;
 }
 
-.text-modal.fullscreen {
-    width: 96vw;
-    max-width: 100vw;
-    height: calc(100vh - 120px);
-    top: 80px;
-    bottom: auto;
-}
-
-.text-modal.fullscreen .modal-content {
-    max-height: calc(100vh - 200px);
+.text-modal.minimized {
+    height: auto;
+    width: 200px;
 }
 
 .modal-header {
@@ -248,18 +242,14 @@ nav ul .dropdown li a:hover {
     line-height: 1;
 }
 
-.modal-button.fullscreen {
-    font-size: 20px;
-    display: inline-block;
-}
-
 .modal-button:hover {
     opacity: 0.8;
 }
 
 .modal-content {
     padding: 20px;
-    max-height: 50vh;
+    height: auto;
+    max-height: calc(100vh - 280px); /* Account for header, navigation, and padding */
     overflow-y: auto;
 }
 
@@ -322,16 +312,14 @@ nav ul .dropdown li a:hover {
         bottom: 80px;
     }
 
-    .text-modal.fullscreen {
-        width: 100vw;
-        height: calc(100vh - 100px);
-        top: 60px;
-    }
-
     .modal-button {
         width: 20px;
         height: 20px;
         font-size: 16px;
+    }
+
+    .modal-content {
+        max-height: 40vh;
     }
 }
 

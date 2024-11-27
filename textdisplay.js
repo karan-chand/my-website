@@ -19,7 +19,6 @@ export class TextDisplay {
                     <span class="star-name"></span>
                 </div>
                 <div class="modal-controls">
-                    <button class="modal-button fullscreen" aria-label="Toggle fullscreen">□</button>
                     <button class="modal-button minimize" aria-label="Minimize">_</button>
                     <button class="modal-button close" aria-label="Close">×</button>
                 </div>
@@ -36,10 +35,10 @@ export class TextDisplay {
                 </div>
             </div>
         `;
-
+    
         document.body.appendChild(this.modal);
     }
-
+    
     setupEventListeners() {
         // Navigation buttons
         this.modal.querySelector('.prev').addEventListener('click', () => this.prevPage());
@@ -48,37 +47,13 @@ export class TextDisplay {
         // Control buttons
         this.modal.querySelector('.close').addEventListener('click', () => this.hide());
         this.modal.querySelector('.minimize').addEventListener('click', () => this.toggleMinimize());
-        this.modal.querySelector('.fullscreen').addEventListener('click', () => this.toggleFullscreen());
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (this.modal.style.display === 'none') return;
-
-            switch(e.key) {
-                case 'ArrowLeft':
-                    this.prevPage();
-                    break;
-                case 'ArrowRight':
-                    this.nextPage();
-                    break;
-                case 'Escape':
-                    if (this.state === 'fullscreen') {
-                        this.toggleFullscreen();
-                    } else if (this.state === 'normal') {
-                        this.toggleMinimize();
-                    } else {
-                        this.hide();
-                    }
-                    break;
-            }
-        });
-
+    
         // Touch swipe support
         let touchStartX = 0;
         this.modal.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
         });
-
+    
         this.modal.addEventListener('touchend', (e) => {
             const touchEndX = e.changedTouches[0].clientX;
             const diff = touchStartX - touchEndX;

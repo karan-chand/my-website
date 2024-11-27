@@ -289,14 +289,33 @@ export class StarSystem {
     }
 
     resetAllStars() {
+        // Kill all ongoing animations first
         if (this.pulseAnimation) {
             this.pulseAnimation.kill();
             this.pulseAnimation = null;
         }
-
-        this.hideMixcloud();
-
+    
+        // Kill any pending gsap animations on all stars
         this.starMeshes.forEach(starData => {
+            gsap.killTweensOf(starData.mesh.userData.starMesh.material);
+            gsap.killTweensOf(starData.mesh.userData.glowMesh.material);
+        });
+    
+        // Clear active and hovered states before animations
+        const previousActive = this.activeStar;
+        this.activeStar = null;
+        this.currentlyHoveredStar = null;
+    
+        // Hide mixcloud player
+        this.hideMixcloud();
+    
+        // Reset all stars to default state
+        this.starMeshes.forEach(starData => {
+            // Immediately set to default state
+            starData.mesh.userData.starMesh.material.emissiveIntensity = STAR_CONFIG.defaultIntensity;
+            starData.mesh.userData.glowMesh.material.opacity = 0.15;
+    
+            // Then animate smoothly to ensure any remnant states are cleaned up
             gsap.to(starData.mesh.userData.starMesh.material, {
                 emissiveIntensity: STAR_CONFIG.defaultIntensity,
                 duration: ANIMATION_CONFIG.longDuration,
@@ -308,29 +327,6 @@ export class StarSystem {
                 duration: ANIMATION_CONFIG.longDuration,
                 ease: "power2.inOut"
             });
-        });
-
-        this.activeStar = null;
-        this.currentlyHoveredStar = null;
-    }
-
-    cleanup() {
-        if (this.pulseAnimation) {
-            this.pulseAnimation.kill();
-        }
-
-        this.hideMixcloud();
-        const container = document.getElementById('mixcloud-container');
-        if (container) {
-            container.remove();
-        }
-
-        this.starMeshes.forEach(starData => {
-            starData.mesh.userData.starMesh.geometry.dispose();
-            starData.mesh.userData.starMesh.material.dispose();
-            starData.mesh.userData.glowMesh.geometry.dispose();
-            starData.mesh.userData.glowMesh.material.dispose();
-            this.scene.remove(starData.mesh);
         });
     }
 }

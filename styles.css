@@ -175,7 +175,7 @@ nav ul .dropdown li a:hover {
     width: 90vw;
     max-width: 1200px;
     height: 60px;
-    background-color: #292d2f;
+    background-color: transparent;  /* Changed to transparent */
     border: none;
     overflow: visible;
     display: none;
@@ -214,7 +214,7 @@ nav ul .dropdown li a:hover {
 }
 
 .mixcloud-close-btn:hover {
-    opacity: 0.8;  /* Matches KARAN.INK hover opacity */
+    opacity: 0.8;
 }
 
 .mixcloud-close-btn:focus {

@@ -166,6 +166,7 @@ nav ul .dropdown li a:hover {
 }
 
 /* Mixcloud Player Container */
+
 #mixcloud-container {
     position: fixed;
     bottom: 20px;
@@ -174,10 +175,8 @@ nav ul .dropdown li a:hover {
     width: 90vw;
     max-width: 1200px;
     height: 60px;
-    background-color: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    background-color: #292d2f;
+    border-radius: 0;
     overflow: hidden;
     display: none;
     z-index: 10;
@@ -210,16 +209,10 @@ nav ul .dropdown li a:hover {
     cursor: pointer;
     z-index: 11;
     padding: 5px;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease;
 }
 
 .mixcloud-close-btn:hover {
-    opacity: 0.8;
-    transform: translateY(-50%) scale(1.1);
-}
-
-.mixcloud-close-btn:focus {
-    outline: none;
     opacity: 0.8;
 }
 

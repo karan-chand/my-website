@@ -83,9 +83,7 @@ export class StarSystem {
         this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
-        this.isPlaying = false;
         
-        // Create mixcloud container
         this.createMixcloudContainer();
     }
 
@@ -103,8 +101,7 @@ export class StarSystem {
         closeButton.innerHTML = '×';
         closeButton.setAttribute('aria-label', 'Close player');
         closeButton.addEventListener('click', () => {
-            this.resetAllStars();
-            window.sceneSetup?.resetCamera();
+            document.querySelector('header h1').click();
         });
         container.appendChild(closeButton);
 
@@ -190,7 +187,6 @@ export class StarSystem {
         container.style.display = 'block';
 
         if (this.activeStar) {
-            // First transition to hover state, then to pulse
             this.startPulse(this.activeStar);
         }
     }

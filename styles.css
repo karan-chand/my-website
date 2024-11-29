@@ -2,9 +2,9 @@
 @font-face {
     font-family: 'Stanley Regular';
     src: local('Stanley Regular'),
-         url('/public/fonts/Stanley Regular.woff2') format('woff2'),
-         url('/public/fonts/Stanley Regular.woff') format('woff'),
-         url('/public/fonts/Stanley Regular.ttf') format('truetype');
+         url('/fonts/Stanley\ Regular.woff2') format('woff2'),
+         url('/fonts/Stanley\ Regular.woff') format('woff'),
+         url('/fonts/Stanley\ Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -14,9 +14,9 @@
 @font-face {
     font-family: 'Halyard Text';
     src: local('Halyard Text'),
-         url('/public/fonts/Halyard Text Regular.woff2') format('woff2'),
-         url('/public/fonts/Halyard Text Regular.woff') format('woff'),
-         url('/public/fonts/Halyard Text Regular.ttf') format('truetype');
+         url('/fonts/Halyard\ Text\ Regular.woff2') format('woff2'),
+         url('/fonts/Halyard\ Text\ Regular.woff') format('woff'),
+         url('/fonts/Halyard\ Text\ Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;

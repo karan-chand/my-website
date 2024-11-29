@@ -3,12 +3,10 @@ const DEBUG = false;
 function initializeCustomCursor() {
     const cursor = document.getElementById('custom-cursor');
     if (!cursor) return;
-
     const updateCursor = (e) => {
         cursor.style.left = `${e.clientX}px`;
         cursor.style.top = `${e.clientY}px`;
     };
-
     window.addEventListener('mousemove', updateCursor);
     window.addEventListener('mouseout', () => cursor.style.opacity = '0');
     window.addEventListener('mouseover', () => cursor.style.opacity = '1');
@@ -19,32 +17,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Initialize UI first to ensure DOM elements exist
         const { UIManager } = await import('./ui.js');
         const uiManager = new UIManager();
-
+        
         // Initialize core components
         const { SceneSetup } = await import('./scenesetup.js');
         const { StarSystem } = await import('./starsystem.js');
         const { InteractionHandler } = await import('./interactionhandler.js');
-
         if (DEBUG) console.log('Initializing core components...');
-        
+       
         const sceneSetup = new SceneSetup();
         if (!sceneSetup.renderer) {
             throw new Error('WebGL initialization failed');
         }
-
         const starSystem = new StarSystem(sceneSetup.scene);
         const interactionHandler = new InteractionHandler(sceneSetup, starSystem);
-
+        
         // Initialize constellation
         if (DEBUG) console.log('Creating star system...');
         starSystem.createStars();
-
+        
         // Global functions with error handling
         window.resetPage = function() {
             try {
                 if (DEBUG) console.log('Resetting page...');
                 starSystem.resetAllStars();
                 sceneSetup.resetCamera();
+                interactionHandler.textDisplay.hide();  // Add this line
             } catch (error) {
                 console.error('Reset failed:', error);
             }
@@ -63,14 +60,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         let isAnimating = true;
         function animate() {
             if (!isAnimating) return;
-            
+           
             try {
                 requestAnimationFrame(animate);
-                
+               
                 if (sceneSetup.controls) {
                     sceneSetup.controls.update();
                 }
-                
+               
                 if (sceneSetup.composer) {
                     sceneSetup.composer.render();
                 } else {
@@ -105,7 +102,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             starSystem.cleanup();
             interactionHandler.cleanup();
         });
-
     } catch (error) {
         console.error('Initialization failed:', error);
         document.body.innerHTML = `

@@ -144,6 +144,9 @@ export class TextDisplay {
         this.isVisible = false;
         this.pages = [];
         this.fullText = '';
+        // Actually hide the modal
+        this.modal.style.display = 'none';
+        this.modal.style.opacity = '0';
     }
 
     toggleFullscreen() {

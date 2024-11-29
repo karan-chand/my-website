@@ -10,7 +10,7 @@ export class InteractionHandler {
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
         this.lastInteractionTime = 0;
-        this.interactionDelay = 300; // Debounce delay in ms
+        this.interactionDelay = 100;
         
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handlePointerMove = this.handlePointerMove.bind(this);
@@ -60,10 +60,51 @@ export class InteractionHandler {
     handleKeyPress(event) {
         if (event.key === 'Escape') {
             event.preventDefault();
-            this.textDisplay.hide();
-            document.querySelector('header h1').click();
+            window.resetPage();  // Call resetPage directly instead of clicking the header
             return false;
         }
+    }
+    
+    // Add this new method to handle the complete reset
+    resetEverything() {
+        this.isTransitioning = true;
+    
+        const timeline = gsap.timeline({
+            defaults: { 
+                duration: ANIMATION_CONFIG.resetDuration, 
+                ease: ANIMATION_CONFIG.defaultEase 
+            },
+            onComplete: () => {
+                this.isTransitioning = false;
+            }
+        });
+    
+        timeline
+            // Camera reset
+            .to(this.sceneSetup.camera.position, {
+                x: CAMERA_CONFIG.defaultPosition.x,
+                y: CAMERA_CONFIG.defaultPosition.y,
+                z: CAMERA_CONFIG.defaultPosition.z,
+                onUpdate: () => this.sceneSetup.camera.updateProjectionMatrix()
+            }, 0)
+            // Controls reset
+            .to(this.sceneSetup.controls.target, {
+                x: CONTROLS_CONFIG.defaultTarget.x,
+                y: CONTROLS_CONFIG.defaultTarget.y,
+                z: CONTROLS_CONFIG.defaultTarget.z,
+                onUpdate: () => this.sceneSetup.controls.update()
+            }, 0)
+            // Bloom reset
+            .to(this.sceneSetup.bloomPass, {
+                strength: BLOOM_CONFIG.defaultStrength,
+                radius: BLOOM_CONFIG.defaultRadius
+            }, 0)
+            // Add text fade out
+            .add(() => {
+                this.textDisplay.hide();
+                this.starSystem.resetAllStars();
+                this.starSystem.hideMixcloud();
+            }, 0);
     }
 
     handlePointerMove(event) {
@@ -95,6 +136,80 @@ export class InteractionHandler {
         }
     }
 
+    async transitionToStar(star, starData) {
+        if (this.isTransitioning) return;
+        
+        try {
+            this.isTransitioning = true;
+            
+            // Create a timeline for synchronized transition
+            const timeline = gsap.timeline({
+                defaults: { 
+                    duration: ANIMATION_CONFIG.longDuration, 
+                    ease: ANIMATION_CONFIG.defaultEase 
+                }
+            });
+
+            const starPosition = star.position;
+            const distance = 30;
+            const cameraPosition = {
+                x: starPosition.x + distance,
+                y: starPosition.y + distance/2,
+                z: starPosition.z + distance
+            };
+
+            // Add all transitions to happen simultaneously
+            timeline
+                .to(this.sceneSetup.camera.position, {
+                    ...cameraPosition,
+                    onUpdate: () => this.sceneSetup.camera.updateProjectionMatrix()
+                }, 0)
+                .to(this.sceneSetup.controls.target, {
+                    x: starPosition.x,
+                    y: starPosition.y,
+                    z: starPosition.z,
+                    onUpdate: () => this.sceneSetup.controls.update()
+                }, 0)
+                .to(this.sceneSetup.bloomPass, {
+                    strength: BLOOM_CONFIG.activeStrength,
+                    radius: BLOOM_CONFIG.pulseRadius
+                }, 0);
+
+            // Start other transitions
+            this.starSystem.activeStar = star;
+            if (starData.link) this.starSystem.showMixcloud(starData.link);
+            if (starData.textPath) await this.textDisplay.show(starData.name, starData.textPath);
+
+            // Wait for timeline to complete
+            await new Promise(resolve => {
+                timeline.eventCallback('onComplete', resolve);
+            });
+
+        } catch (error) {
+            console.error('Star transition error:', error);
+        } finally {
+            this.isTransitioning = false;
+        }
+    }
+
+    updateMousePosition(event) {
+        const x = (event.clientX / window.innerWidth) * 2 - 1;
+        const y = -(event.clientY / window.innerHeight) * 2 + 1;
+        
+        gsap.to(this.sceneSetup.mouse, {
+            x,
+            y,
+            duration: 0.1,
+            ease: "power2.out",
+            onUpdate: () => {
+                this.sceneSetup.raycaster.setFromCamera(
+                    this.sceneSetup.mouse, 
+                    this.sceneSetup.camera
+                );
+            }
+        });
+    }
+
     handlePointerDown(event) {
         if (this.isTransitioning) return;
 
@@ -122,87 +237,6 @@ export class InteractionHandler {
         } catch (error) {
             console.error('Pointer down error:', error);
         }
-    }
-
-    updateMousePosition(event) {
-        const x = (event.clientX / window.innerWidth) * 2 - 1;
-        const y = -(event.clientY / window.innerHeight) * 2 + 1;
-        
-        gsap.to(this.sceneSetup.mouse, {
-            x,
-            y,
-            duration: 0.1,
-            ease: "power2.out",
-            onUpdate: () => {
-                this.sceneSetup.raycaster.setFromCamera(
-                    this.sceneSetup.mouse, 
-                    this.sceneSetup.camera
-                );
-            }
-        });
-    }
-
-    async transitionToStar(star, starData) {
-        try {
-            this.isTransitioning = true;
-            
-            this.starSystem.activeStar = star;
-            this.starSystem.showMixcloud(starData.link);
-            
-            if (starData.textPath) {
-                await this.textDisplay.show(starData.name, starData.textPath);
-            }
-            
-            await this.transitionCamera(star);
-            this.animateBloomEffect();
-            
-        } catch (error) {
-            console.error('Star transition error:', error);
-        } finally {
-            this.isTransitioning = false;
-        }
-    }
-
-    transitionCamera(star) {
-        return new Promise(resolve => {
-            const starPosition = star.position;
-            const distance = 30;
-            
-            const cameraPosition = {
-                x: starPosition.x + distance,
-                y: starPosition.y + distance/2,
-                z: starPosition.z + distance
-            };
-
-            gsap.to(this.sceneSetup.camera.position, {
-                x: cameraPosition.x,
-                y: cameraPosition.y,
-                z: cameraPosition.z,
-                duration: ANIMATION_CONFIG.longDuration,
-                ease: ANIMATION_CONFIG.defaultEase
-            });
-
-            gsap.to(this.sceneSetup.controls.target, {
-                x: starPosition.x,
-                y: starPosition.y,
-                z: starPosition.z,
-                duration: ANIMATION_CONFIG.longDuration,
-                ease: ANIMATION_CONFIG.defaultEase,
-                onUpdate: () => this.sceneSetup.controls.update(),
-                onComplete: resolve
-            });
-        });
-    }
-
-    animateBloomEffect() {
-        gsap.to(this.sceneSetup.bloomPass, {
-            strength: BLOOM_CONFIG.activeStrength,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: ANIMATION_CONFIG.defaultEase,
-            onComplete: () => {
-                this.sceneSetup.bloomPass.radius = BLOOM_CONFIG.pulseRadius;
-            }
-        });
     }
 
     triggerSpecificStar(starName) {

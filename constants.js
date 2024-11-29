@@ -1,11 +1,11 @@
-// Star visual and interaction settings 
+// constants.js
 export const STAR_CONFIG = {
-    defaultIntensity: 0.2,          // Base star brightness
-    hoverIntensityMultiplier: 2.5,  // Brightness increase on hover
-    clickIntensityMultiplier: 3.0,  // Brightness increase on click
-    scaleMultiplier: 5,             // Global star size multiplier
-    defaultColor: 0xe0e0ff,         // Base star color
-    emissiveColor: 0xffffff,        // Glow color
+    defaultIntensity: 0.4,
+    hoverIntensityMultiplier: 2.5,
+    clickIntensityMultiplier: 3.0,
+    scaleMultiplier: 5,
+    defaultColor: 0xe0e0ff,
+    emissiveColor: 0xffffff,
     pulseConfig: {
         minIntensity: 1.5,
         maxIntensity: 3.0,
@@ -13,17 +13,15 @@ export const STAR_CONFIG = {
     }
 };
 
-// Post-processing bloom settings
 export const BLOOM_CONFIG = {
-    defaultStrength: 0.4,
-    defaultRadius: 0.2,
-    defaultThreshold: 0.08,
+    defaultStrength: 1.8,    // Changed from 0.4 to match activeStrength
+    defaultRadius: 0.1,      // Changed from 0.2 to match pulseRadius
+    defaultThreshold: 0.08,  // Keep this the same
     activeStrength: 1.8,
     pulseStrength: 2.8,
     pulseRadius: 0.1
 };
 
-// Animation timing settings
 export const ANIMATION_CONFIG = {
     defaultDuration: 0.3,
     longDuration: 0.5,
@@ -33,7 +31,6 @@ export const ANIMATION_CONFIG = {
     pulseEase: "sine.inOut"
 };
 
-// Camera configuration
 export const CAMERA_CONFIG = {
     fov: 75,
     near: 0.1,
@@ -41,7 +38,6 @@ export const CAMERA_CONFIG = {
     defaultPosition: { x: 0, y: 0, z: 50 }
 };
 
-// OrbitControls settings
 export const CONTROLS_CONFIG = {
     dampingFactor: 0.05,
     rotateSpeed: 0.7,
@@ -52,7 +48,6 @@ export const CONTROLS_CONFIG = {
     defaultTarget: { x: 0, y: 0, z: 0 }
 };
 
-// Audio analysis settings
 export const AUDIO_CONFIG = {
     fftSize: 2048,
     smoothingTimeConstant: 0.8,
@@ -61,7 +56,6 @@ export const AUDIO_CONFIG = {
     defaultVolume: 0.7
 };
 
-// UI theme and layout settings
 export const UI_CONFIG = {
     colors: {
         primary: '#00ffcc',
@@ -95,7 +89,6 @@ export const UI_CONFIG = {
     }
 };
 
-// Font file paths
 export const FONT_CONFIG = {
     files: {
         stanley: {

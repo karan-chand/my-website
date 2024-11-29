@@ -9,6 +9,7 @@ import { CAMERA_CONFIG, CONTROLS_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from '
 export class SceneSetup {
     constructor() {
         try {
+            this.disposables = new Set(); // Move this to the top
             this.setupScene();
             this.setupCamera();
             this.setupRenderer();
@@ -16,7 +17,6 @@ export class SceneSetup {
             this.setupControls();
             this.setupResizeHandler();
             this.setupPerformanceMonitor();
-            this.disposables = new Set();
         } catch (error) {
             console.error('Scene setup failed:', error);
             throw error;

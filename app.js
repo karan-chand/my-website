@@ -1,69 +1,117 @@
 const DEBUG = false;
 
-import { initializeCustomCursor } from './cursor.js';
-import { StarSystem } from './starsystem.js';
-import { SceneSetup } from './scenesetup.js';
-import { InteractionHandler } from './interactionhandler.js';
-import { UIManager } from './ui.js';
+function initializeCustomCursor() {
+    const cursor = document.getElementById('custom-cursor');
+    if (!cursor) return;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize UI first to ensure DOM elements exist
-    const uiManager = new UIManager();
+    const updateCursor = (e) => {
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+    };
 
-    // Initialize scene and core components
-    if (DEBUG) console.log('Initializing core components...');
-    const sceneSetup = new SceneSetup();
-    const starSystem = new StarSystem(sceneSetup.scene);
-    const interactionHandler = new InteractionHandler(sceneSetup, starSystem);
+    window.addEventListener('mousemove', updateCursor);
+    window.addEventListener('mouseout', () => cursor.style.opacity = '0');
+    window.addEventListener('mouseover', () => cursor.style.opacity = '1');
+}
 
-    // Initialize constellation
-    if (DEBUG) console.log('Creating star system...');
-    starSystem.createStars();
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Initialize UI first to ensure DOM elements exist
+        const { UIManager } = await import('./ui.js');
+        const uiManager = new UIManager();
 
-    // Global functions
-    window.resetPage = function() {
-        if (DEBUG) console.log('Resetting page...');
-        starSystem.resetAllStars();
-        sceneSetup.resetCamera();
-    }
+        // Initialize core components
+        const { SceneSetup } = await import('./scenesetup.js');
+        const { StarSystem } = await import('./starsystem.js');
+        const { InteractionHandler } = await import('./interactionhandler.js');
 
-    window.triggerSpica = function() {
-        if (DEBUG) console.log('Triggering Spica...');
-        interactionHandler.triggerSpecificStar('Spica');
-    }
-
-    // Start animation loop
-    function animate() {
-        requestAnimationFrame(animate);
+        if (DEBUG) console.log('Initializing core components...');
         
-        if (sceneSetup.controls) {
-            sceneSetup.controls.update();
+        const sceneSetup = new SceneSetup();
+        if (!sceneSetup.renderer) {
+            throw new Error('WebGL initialization failed');
         }
-        
-        if (sceneSetup.composer) {
-            sceneSetup.composer.render();
+
+        const starSystem = new StarSystem(sceneSetup.scene);
+        const interactionHandler = new InteractionHandler(sceneSetup, starSystem);
+
+        // Initialize constellation
+        if (DEBUG) console.log('Creating star system...');
+        starSystem.createStars();
+
+        // Global functions with error handling
+        window.resetPage = function() {
+            try {
+                if (DEBUG) console.log('Resetting page...');
+                starSystem.resetAllStars();
+                sceneSetup.resetCamera();
+            } catch (error) {
+                console.error('Reset failed:', error);
+            }
+        }
+
+        window.triggerSpica = function() {
+            try {
+                if (DEBUG) console.log('Triggering Spica...');
+                interactionHandler.triggerSpecificStar('Spica');
+            } catch (error) {
+                console.error('Spica trigger failed:', error);
+            }
+        }
+
+        // Animation loop with error handling
+        let isAnimating = true;
+        function animate() {
+            if (!isAnimating) return;
+            
+            try {
+                requestAnimationFrame(animate);
+                
+                if (sceneSetup.controls) {
+                    sceneSetup.controls.update();
+                }
+                
+                if (sceneSetup.composer) {
+                    sceneSetup.composer.render();
+                } else {
+                    throw new Error('Composer not initialized');
+                }
+            } catch (error) {
+                console.error('Animation error:', error);
+                isAnimating = false;
+            }
+        }
+
+        // Start animation if scene is ready
+        if (sceneSetup.scene && sceneSetup.camera) {
+            if (DEBUG) console.log('Starting animation loop');
+            animate();
         } else {
-            console.error('Composer not initialized');
+            throw new Error('Scene or camera not initialized');
         }
-    }
 
-    // Make sure scene is ready before starting animation
-    if (sceneSetup.scene && sceneSetup.camera) {
-        if (DEBUG) console.log('Starting animation loop');
-        animate();
-    } else {
-        console.error('Scene or camera not initialized');
-    }
+        // Initialize cursor
+        initializeCustomCursor();
 
-    // Initialize cursor
-    initializeCustomCursor();
+        // Error handling for WebGL
+        if (!sceneSetup.renderer) {
+            throw new Error('WebGL not properly initialized');
+        }
 
-    // Error handling for WebGL
-    if (!sceneSetup.renderer) {
-        console.error('WebGL not properly initialized');
+        // Cleanup on page unload
+        window.addEventListener('unload', () => {
+            isAnimating = false;
+            sceneSetup.cleanup();
+            starSystem.cleanup();
+            interactionHandler.cleanup();
+        });
+
+    } catch (error) {
+        console.error('Initialization failed:', error);
         document.body.innerHTML = `
             <div style="color: white; text-align: center; padding: 20px;">
-                Unable to initialize WebGL. Please check if your browser supports WebGL.
+                Unable to initialize application. Please ensure your browser supports WebGL and JavaScript.
+                <br>Error: ${error.message}
             </div>
         `;
     }

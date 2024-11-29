@@ -2,9 +2,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
-<<<<<<< HEAD
-  root: '.', // Explicitly set root
-  base: '',
+  base: './',  // For GitHub Pages
   server: {
     port: 5176,
     strict: false,
@@ -12,15 +10,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src')
+      '@': path.resolve(__dirname, './')
     }
   },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: true
-=======
-  base: './',  // This is important for GitHub Pages
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -33,6 +25,5 @@ export default defineConfig({
         }
       }
     }
->>>>>>> parent of 30d0862 (updates)
   }
 });

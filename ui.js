@@ -5,20 +5,20 @@ export class UIManager {
     constructor() {
         this.appendBaseStructure();
         this.setupEventListeners();
+        this.touchDevice = 'ontouchstart' in window;
     }
 
     appendBaseStructure() {
-        // Create elements
         const header = document.createElement('header');
         header.innerHTML = `
-            <h1 onclick="window.resetPage()">KARAN.INK</h1>
-            <nav>
+            <h1 onclick="window.resetPage()" tabindex="0" role="button" aria-label="Reset view">KARAN.INK</h1>
+            <nav role="navigation" aria-label="Main navigation">
                 <ul>
                     <li>
-                        <a href="#" class="nav-link">stars</a>
-                        <ul class="dropdown">
-                            <li>
-                                <a href="#" id="spica-menu" onclick="window.triggerSpica()">
+                        <a href="#" class="nav-link" aria-haspopup="true" aria-expanded="false">stars</a>
+                        <ul class="dropdown" role="menu">
+                            <li role="none">
+                                <a href="#" id="spica-menu" onclick="window.triggerSpica()" role="menuitem">
                                     nada sutra 001: spica
                                 </a>
                             </li>
@@ -32,35 +32,41 @@ export class UIManager {
         starName.id = 'star-name';
         starName.className = 'static-text';
         starName.textContent = '♍︎';
+        starName.setAttribute('aria-live', 'polite');
 
         const cursor = document.createElement('div');
         cursor.id = 'custom-cursor';
         cursor.className = 'custom-cursor';
+        cursor.setAttribute('aria-hidden', 'true');
 
-        // Append elements to body
         document.body.appendChild(header);
         document.body.appendChild(starName);
-        document.body.appendChild(cursor);
+        if (!this.touchDevice) {
+            document.body.appendChild(cursor);
+        }
     }
 
     setupEventListeners() {
-        // Handle dropdown hover states
         const dropdownTriggers = document.querySelectorAll('nav ul li');
+        
         dropdownTriggers.forEach(trigger => {
-            trigger.addEventListener('mouseenter', () => {
-                const dropdown = trigger.querySelector('.dropdown');
+            const dropdown = trigger.querySelector('.dropdown');
+            const link = trigger.querySelector('.nav-link');
+            
+            const showDropdown = () => {
                 if (dropdown) {
                     dropdown.style.display = 'block';
+                    link.setAttribute('aria-expanded', 'true');
                     gsap.fromTo(dropdown, 
                         { opacity: 0, y: -10 },
                         { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
                     );
                 }
-            });
+            };
 
-            trigger.addEventListener('mouseleave', () => {
-                const dropdown = trigger.querySelector('.dropdown');
+            const hideDropdown = () => {
                 if (dropdown) {
+                    link.setAttribute('aria-expanded', 'false');
                     gsap.to(dropdown, {
                         opacity: 0,
                         y: -10,
@@ -69,10 +75,31 @@ export class UIManager {
                         onComplete: () => dropdown.style.display = 'none'
                     });
                 }
+            };
+
+            if (this.touchDevice) {
+                trigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const isVisible = dropdown.style.display === 'block';
+                    isVisible ? hideDropdown() : showDropdown();
+                });
+            } else {
+                trigger.addEventListener('mouseenter', showDropdown);
+                trigger.addEventListener('mouseleave', hideDropdown);
+            }
+
+            // Keyboard navigation
+            trigger.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    showDropdown();
+                }
+                if (e.key === 'Escape') {
+                    hideDropdown();
+                }
             });
         });
 
-        // Prevent default behavior for navigation links
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -82,19 +109,20 @@ export class UIManager {
             });
         });
 
-        // Handle mobile menu
-        if (window.innerWidth <= 768) {
-            this.setupMobileMenu();
-        }
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth <= 768) {
-                this.setupMobileMenu();
-            } else {
-                this.removeMobileMenu();
+        // Title keyboard handling
+        const title = document.querySelector('header h1');
+        title.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                window.resetPage();
             }
         });
     }
 
+    cleanup() {
+        const cursor = document.getElementById('custom-cursor');
+        if (cursor) {
+            cursor.remove();
+        }
+    }
 }

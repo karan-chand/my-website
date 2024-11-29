@@ -9,6 +9,8 @@ export class InteractionHandler {
         this.textDisplay = new TextDisplay();
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
+        this.lastInteractionTime = 0;
+        this.interactionDelay = 300; // Debounce delay in ms
         
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handlePointerMove = this.handlePointerMove.bind(this);
@@ -19,7 +21,7 @@ export class InteractionHandler {
     }
 
     initializeEventListeners() {
-        window.addEventListener('pointermove', this.handlePointerMove);
+        window.addEventListener('pointermove', this.handlePointerMove, { passive: true });
         window.addEventListener('pointerdown', this.handlePointerDown);
         document.addEventListener('keydown', this.handleKeyPress, true);
     }
@@ -34,7 +36,7 @@ export class InteractionHandler {
                 x: e.touches[0].clientX,
                 y: e.touches[0].clientY
             };
-        });
+        }, { passive: true });
 
         window.addEventListener('touchend', (e) => {
             const touchEndTime = Date.now();
@@ -52,7 +54,7 @@ export class InteractionHandler {
             if (touchDuration < 300 && distance < 10) {
                 this.handlePointerDown(e.changedTouches[0]);
             }
-        });
+        }, { passive: true });
     }
 
     handleKeyPress(event) {
@@ -65,48 +67,60 @@ export class InteractionHandler {
     }
 
     handlePointerMove(event) {
-        if (this.isTransitioning) return;
+        const now = Date.now();
+        if (this.isTransitioning || now - this.lastInteractionTime < this.interactionDelay) return;
+        this.lastInteractionTime = now;
         
-        this.updateMousePosition(event);
-        const intersects = this.sceneSetup.raycaster.intersectObjects(
-            this.sceneSetup.scene.children, true
-        );
+        try {
+            this.updateMousePosition(event);
+            const intersects = this.sceneSetup.raycaster.intersectObjects(
+                this.sceneSetup.scene.children, true
+            );
 
-        const starIntersect = intersects.find(intersect => 
-            intersect.object.parent && 
-            this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
-        );
+            const starIntersect = intersects.find(intersect => 
+                intersect.object.parent && 
+                this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
+            );
 
-        if (starIntersect) {
-            const starGroup = starIntersect.object.parent;
-            this.starSystem.handleHover(starGroup, this.starNameElement);
-            document.body.style.cursor = 'pointer';
-        } else {
-            this.starSystem.clearHover(this.starNameElement);
-            document.body.style.cursor = 'default';
+            if (starIntersect) {
+                const starGroup = starIntersect.object.parent;
+                this.starSystem.handleHover(starGroup, this.starNameElement);
+                document.body.style.cursor = 'pointer';
+            } else {
+                this.starSystem.clearHover(this.starNameElement);
+                document.body.style.cursor = 'default';
+            }
+        } catch (error) {
+            console.error('Pointer move error:', error);
         }
     }
 
     handlePointerDown(event) {
         if (this.isTransitioning) return;
 
-        this.updateMousePosition(event);
-        const intersects = this.sceneSetup.raycaster.intersectObjects(
-            this.sceneSetup.scene.children, true
-        );
+        try {
+            this.updateMousePosition(event);
+            const intersects = this.sceneSetup.raycaster.intersectObjects(
+                this.sceneSetup.scene.children, true
+            );
 
-        const starIntersect = intersects.find(intersect => 
-            intersect.object.parent && 
-            this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
-        );
+            const starIntersect = intersects.find(intersect => 
+                intersect.object.parent && 
+                this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
+            );
 
-        if (starIntersect) {
-            const starGroup = starIntersect.object.parent;
-            const clickedStarData = this.starSystem.starMeshes.find(star => star.mesh === starGroup);
+            if (starIntersect) {
+                const starGroup = starIntersect.object.parent;
+                const clickedStarData = this.starSystem.starMeshes.find(
+                    star => star.mesh === starGroup
+                );
 
-            if (clickedStarData?.link) {
-                this.transitionToStar(starGroup, clickedStarData);
+                if (clickedStarData?.link) {
+                    this.transitionToStar(starGroup, clickedStarData);
+                }
             }
+        } catch (error) {
+            console.error('Pointer down error:', error);
         }
     }
 
@@ -143,7 +157,7 @@ export class InteractionHandler {
             this.animateBloomEffect();
             
         } catch (error) {
-            console.error('Error during star transition:', error);
+            console.error('Star transition error:', error);
         } finally {
             this.isTransitioning = false;
         }
@@ -204,7 +218,7 @@ export class InteractionHandler {
     cleanup() {
         window.removeEventListener('pointermove', this.handlePointerMove);
         window.removeEventListener('pointerdown', this.handlePointerDown);
-        document.removeEventListener('keydown', this.handleKeyPress, true);
+        document.removeEventListener('keydown', this.handleKeyPress);
         this.textDisplay.cleanup();
     }
 }

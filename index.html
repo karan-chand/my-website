@@ -4,13 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="KARAN.INK - Interactive Constellation Experience">
+    <meta name="theme-color" content="#000000">
+    <meta name="author" content="Karan">
+    <meta name="keywords" content="constellation, interactive, art, space, stars, virgo">
+    <meta property="og:title" content="KARAN.INK">
+    <meta property="og:description" content="Interactive Constellation Experience">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.karan.ink">
+    
     <title>KARAN.INK</title>
-    <link rel="stylesheet" href="src/styles/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="data:,">
-   
-    <!-- Load GSAP from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-   
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    
     <script type="importmap">
         {
             "imports": {
@@ -25,7 +32,7 @@
 </head>
 <body>
     <noscript>You need to enable JavaScript to run this application.</noscript>
-    <canvas id="virgo-constellation"></canvas>
-    <script type="module" src="src/js/app.js"></script>
+    <canvas id="virgo-constellation" aria-label="Interactive Virgo constellation visualization"></canvas>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

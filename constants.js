@@ -1,11 +1,11 @@
-// Star configuration
+// Star visual and interaction settings 
 export const STAR_CONFIG = {
-    defaultIntensity: 0.2,
-    hoverIntensityMultiplier: 2.5,
-    clickIntensityMultiplier: 3.0,
-    scaleMultiplier: 5,
-    defaultColor: 0xe0e0ff,
-    emissiveColor: 0xffffff,
+    defaultIntensity: 0.2,          // Base star brightness
+    hoverIntensityMultiplier: 2.5,  // Brightness increase on hover
+    clickIntensityMultiplier: 3.0,  // Brightness increase on click
+    scaleMultiplier: 5,             // Global star size multiplier
+    defaultColor: 0xe0e0ff,         // Base star color
+    emissiveColor: 0xffffff,        // Glow color
     pulseConfig: {
         minIntensity: 1.5,
         maxIntensity: 3.0,
@@ -13,7 +13,7 @@ export const STAR_CONFIG = {
     }
 };
 
-// Bloom effect configuration
+// Post-processing bloom settings
 export const BLOOM_CONFIG = {
     defaultStrength: 0.4,
     defaultRadius: 0.2,
@@ -23,29 +23,25 @@ export const BLOOM_CONFIG = {
     pulseRadius: 0.1
 };
 
-// Animation timings
+// Animation timing settings
 export const ANIMATION_CONFIG = {
-    defaultDuration: 0.3,     // Faster
-    longDuration: 0.5,       // Faster
-    pulseDuration: 1.8,      // Keep for smooth pulsing
-    resetDuration: 1.0,      // Faster reset
-    defaultEase: "power2.out",  // Changed to .out for snappier transitions
+    defaultDuration: 0.3,
+    longDuration: 0.5,
+    pulseDuration: 1.8,
+    resetDuration: 1.0,
+    defaultEase: "power2.out",
     pulseEase: "sine.inOut"
 };
 
-// Camera settings
+// Camera configuration
 export const CAMERA_CONFIG = {
     fov: 75,
     near: 0.1,
     far: 1000,
-    defaultPosition: {
-        x: 0,
-        y: 0,
-        z: 50
-    }
+    defaultPosition: { x: 0, y: 0, z: 50 }
 };
 
-// Controls settings
+// OrbitControls settings
 export const CONTROLS_CONFIG = {
     dampingFactor: 0.05,
     rotateSpeed: 0.7,
@@ -53,14 +49,10 @@ export const CONTROLS_CONFIG = {
     enablePan: true,
     minDistance: 20,
     maxDistance: 100,
-    defaultTarget: {
-        x: 0,
-        y: 0,
-        z: 0
-    }
+    defaultTarget: { x: 0, y: 0, z: 0 }
 };
 
-// Audio configuration
+// Audio analysis settings
 export const AUDIO_CONFIG = {
     fftSize: 2048,
     smoothingTimeConstant: 0.8,
@@ -69,7 +61,7 @@ export const AUDIO_CONFIG = {
     defaultVolume: 0.7
 };
 
-// UI configuration
+// UI theme and layout settings
 export const UI_CONFIG = {
     colors: {
         primary: '#00ffcc',
@@ -103,14 +95,14 @@ export const UI_CONFIG = {
     }
 };
 
-// Font loading configuration
+// Font file paths
 export const FONT_CONFIG = {
     files: {
         stanley: {
-            regular: '/public/fonts/Stanley Regular.woff2'
+            regular: './fonts/Stanley Regular.woff2'
         },
         halyard: {
-            regular: '/public/fonts/Halyard Text Regular.woff2'
+            regular: './fonts/Halyard Text Regular.woff2'
         }
     }
 };

@@ -86,8 +86,8 @@ export class StarSystem {
         this.pulseAnimation = null;
         this.disposables = new Set();
         
+        this.initializeGeometries(); // Add this line
         this.createMixcloudContainer();
-        this.initializeGeometries();
     }
 
     initializeGeometries() {

@@ -107,7 +107,7 @@ export class InteractionHandler {
 
     handlePointerMove(event) {
         const now = Date.now();
-        if (this.isTransitioning || now - this.lastInteractionTime < this.interactionDelay) return;
+        if (now - this.lastInteractionTime < this.interactionDelay) return; // Removed isTransitioning check
         this.lastInteractionTime = now;
         
         try {
@@ -115,12 +115,12 @@ export class InteractionHandler {
             const intersects = this.sceneSetup.raycaster.intersectObjects(
                 this.sceneSetup.scene.children, true
             );
-
+    
             const starIntersect = intersects.find(intersect => 
                 intersect.object.parent && 
                 this.starSystem.starMeshes.some(star => star.mesh === intersect.object.parent)
             );
-
+    
             if (starIntersect) {
                 const starGroup = starIntersect.object.parent;
                 const starData = this.starSystem.starMeshes.find(
@@ -239,12 +239,16 @@ export class InteractionHandler {
     }
 
     triggerSpecificStar(starName) {
+        console.log('Attempting to trigger star:', starName);
         const star = this.starSystem.starMeshes.find(s => 
             s.name.toLowerCase().includes(starName.toLowerCase())
         );
         
         if (star) {
+            console.log('Star found, transitioning...');
             this.transitionToStar(star.mesh, star);
+        } else {
+            console.error('Star not found:', starName);
         }
     }
 

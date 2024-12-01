@@ -12,7 +12,7 @@ export class TooltipManager {
             background: rgba(50, 50, 50, 0.95);
             padding: 12px;
             border-radius: 4px;
-            font-family: 'Freight Micro W01 Semibold It', Arial, sans-serif;
+            font-family: 'Halyard Text', Arial, sans-serif;  // Changed to match dropdown
             font-size: 14px;
             color: white;
             pointer-events: none;
@@ -33,17 +33,19 @@ export class TooltipManager {
             this.hide();
             return;
         }
-
+    
         const padding = 15;
         const x = event.clientX + padding;
         const y = event.clientY + padding;
-
+    
         const hasAudio = !!starData.link;
         const hasText = !!starData.textPath;
         const containsColor = hasAudio || hasText ? '#00ffcc' : '#ff4444';
         
         let containsText = 'contains: ';
-        if (hasAudio && hasText) {
+        if (starData.name.includes('Spica')) {
+            containsText += 'spica sound thread & track IDs';
+        } else if (hasAudio && hasText) {
             containsText += `${starData.name.toLowerCase()} mix, ${this.getFileName(starData.textPath)}`;
         } else if (hasAudio) {
             containsText += `${starData.name.toLowerCase()} mix`;
@@ -52,25 +54,25 @@ export class TooltipManager {
         } else {
             containsText += 'nothing yet';
         }
-
+    
         this.tooltip.innerHTML = `
             star: ${starData.name.toLowerCase()}<br>
-            ly from earth: calculating...<br>
+            constellation: virgo<br>
             <span style="color: ${containsColor}">${containsText}</span>
         `;
-
+    
         const tooltipRect = this.tooltip.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-
+    
         const finalX = x + tooltipRect.width > viewportWidth 
             ? event.clientX - tooltipRect.width - padding 
             : x;
-
+    
         const finalY = y + tooltipRect.height > viewportHeight 
             ? event.clientY - tooltipRect.height - padding 
             : y;
-
+    
         this.tooltip.style.transform = `translate(${finalX}px, ${finalY}px)`;
         this.show();
     }

@@ -28,12 +28,11 @@ export class UIManager {
             </nav>
         `;
 
-        // Keep the starName element but make it invisible
         const starName = document.createElement('div');
         starName.id = 'star-name';
         starName.className = 'static-text';
-        starName.style.opacity = '0';  // Make it invisible
-        starName.style.pointerEvents = 'none';  // Prevent it from interfering with interactions
+        starName.style.opacity = '0';
+        starName.style.pointerEvents = 'none';
         starName.setAttribute('aria-hidden', 'true');
 
         const cursor = document.createElement('div');
@@ -42,7 +41,7 @@ export class UIManager {
         cursor.setAttribute('aria-hidden', 'true');
 
         document.body.appendChild(header);
-        document.body.appendChild(starName);  // Keep this line
+        document.body.appendChild(starName);
         if (!this.touchDevice) {
             document.body.appendChild(cursor);
         }
@@ -54,6 +53,7 @@ export class UIManager {
         dropdownTriggers.forEach(trigger => {
             const dropdown = trigger.querySelector('.dropdown');
             const link = trigger.querySelector('.nav-link');
+            const spicaLink = trigger.querySelector('#spica-menu');
             
             const showDropdown = () => {
                 if (dropdown) {
@@ -65,7 +65,7 @@ export class UIManager {
                     );
                 }
             };
-
+    
             const hideDropdown = () => {
                 if (dropdown) {
                     link.setAttribute('aria-expanded', 'false');
@@ -78,7 +78,19 @@ export class UIManager {
                     });
                 }
             };
-
+    
+            // Handle Spica link click
+            if (spicaLink) {
+                spicaLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof window.triggerSpica === 'function') {
+                        window.triggerSpica();
+                        hideDropdown();
+                    }
+                });
+            }
+    
             if (this.touchDevice) {
                 trigger.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -89,7 +101,7 @@ export class UIManager {
                 trigger.addEventListener('mouseenter', showDropdown);
                 trigger.addEventListener('mouseleave', hideDropdown);
             }
-
+    
             // Keyboard navigation
             trigger.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -101,16 +113,7 @@ export class UIManager {
                 }
             });
         });
-
-        document.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (link.id === 'spica-menu') {
-                    window.triggerSpica();
-                }
-            });
-        });
-
+    
         // Title keyboard handling
         const title = document.querySelector('header h1');
         title.addEventListener('keydown', (e) => {

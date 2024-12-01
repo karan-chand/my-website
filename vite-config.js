@@ -19,10 +19,7 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          three: ['three'],
-          gsap: ['gsap']
-        }
+        // Remove manualChunks since we're using CDN/importmap
       }
     }
   }

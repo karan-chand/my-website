@@ -28,11 +28,13 @@ export class UIManager {
             </nav>
         `;
 
+        // Keep the starName element but make it invisible
         const starName = document.createElement('div');
         starName.id = 'star-name';
         starName.className = 'static-text';
-        starName.textContent = '♍︎';
-        starName.setAttribute('aria-live', 'polite');
+        starName.style.opacity = '0';  // Make it invisible
+        starName.style.pointerEvents = 'none';  // Prevent it from interfering with interactions
+        starName.setAttribute('aria-hidden', 'true');
 
         const cursor = document.createElement('div');
         cursor.id = 'custom-cursor';
@@ -40,7 +42,7 @@ export class UIManager {
         cursor.setAttribute('aria-hidden', 'true');
 
         document.body.appendChild(header);
-        document.body.appendChild(starName);
+        document.body.appendChild(starName);  // Keep this line
         if (!this.touchDevice) {
             document.body.appendChild(cursor);
         }

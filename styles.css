@@ -23,6 +23,16 @@
     text-rendering: optimizeLegibility;
 }
 
+@font-face {
+    font-family: 'Freight Micro W01 Semibold It';
+    src: url('/fonts/Freight Micro W01 Semibold It.woff2') format('woff2'),
+         url('/fonts/Freight Micro W01 Semibold It.woff') format('woff'),
+         url('/fonts/Freight Micro W01 Semibold It.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* CSS Reset and Base Styles */
 *, *::before, *::after {
     box-sizing: border-box;

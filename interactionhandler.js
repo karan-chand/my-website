@@ -1,12 +1,14 @@
 const gsap = window.gsap;
-import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from './constants.js';
+import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG, CAMERA_CONFIG, CONTROLS_CONFIG } from './constants.js';
 import { TextDisplay } from './textdisplay.js';
+import { TooltipManager } from './tooltipmanager.js';
 
 export class InteractionHandler {
     constructor(sceneSetup, starSystem) {
         this.sceneSetup = sceneSetup;
         this.starSystem = starSystem;
         this.textDisplay = new TextDisplay();
+        this.tooltipManager = new TooltipManager();
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
         this.lastInteractionTime = 0;
@@ -60,12 +62,11 @@ export class InteractionHandler {
     handleKeyPress(event) {
         if (event.key === 'Escape') {
             event.preventDefault();
-            window.resetPage();  // Call resetPage directly instead of clicking the header
+            window.resetPage();
             return false;
         }
     }
     
-    // Add this new method to handle the complete reset
     resetEverything() {
         this.isTransitioning = true;
     
@@ -80,28 +81,25 @@ export class InteractionHandler {
         });
     
         timeline
-            // Camera reset
             .to(this.sceneSetup.camera.position, {
                 x: CAMERA_CONFIG.defaultPosition.x,
                 y: CAMERA_CONFIG.defaultPosition.y,
                 z: CAMERA_CONFIG.defaultPosition.z,
                 onUpdate: () => this.sceneSetup.camera.updateProjectionMatrix()
             }, 0)
-            // Controls reset
             .to(this.sceneSetup.controls.target, {
                 x: CONTROLS_CONFIG.defaultTarget.x,
                 y: CONTROLS_CONFIG.defaultTarget.y,
                 z: CONTROLS_CONFIG.defaultTarget.z,
                 onUpdate: () => this.sceneSetup.controls.update()
             }, 0)
-            // Bloom reset
             .to(this.sceneSetup.bloomPass, {
                 strength: BLOOM_CONFIG.defaultStrength,
                 radius: BLOOM_CONFIG.defaultRadius
             }, 0)
-            // Add text fade out
             .add(() => {
                 this.textDisplay.hide();
+                this.tooltipManager.hide();
                 this.starSystem.resetAllStars();
                 this.starSystem.hideMixcloud();
             }, 0);
@@ -125,10 +123,15 @@ export class InteractionHandler {
 
             if (starIntersect) {
                 const starGroup = starIntersect.object.parent;
+                const starData = this.starSystem.starMeshes.find(
+                    star => star.mesh === starGroup
+                );
                 this.starSystem.handleHover(starGroup, this.starNameElement);
+                this.tooltipManager.update(event, starData);
                 document.body.style.cursor = 'pointer';
             } else {
                 this.starSystem.clearHover(this.starNameElement);
+                this.tooltipManager.hide();
                 document.body.style.cursor = 'default';
             }
         } catch (error) {
@@ -142,7 +145,6 @@ export class InteractionHandler {
         try {
             this.isTransitioning = true;
             
-            // Create a timeline for synchronized transition
             const timeline = gsap.timeline({
                 defaults: { 
                     duration: ANIMATION_CONFIG.longDuration, 
@@ -158,7 +160,6 @@ export class InteractionHandler {
                 z: starPosition.z + distance
             };
 
-            // Add all transitions to happen simultaneously
             timeline
                 .to(this.sceneSetup.camera.position, {
                     ...cameraPosition,
@@ -175,12 +176,10 @@ export class InteractionHandler {
                     radius: BLOOM_CONFIG.pulseRadius
                 }, 0);
 
-            // Start other transitions
             this.starSystem.activeStar = star;
             if (starData.link) this.starSystem.showMixcloud(starData.link);
             if (starData.textPath) await this.textDisplay.show(starData.name, starData.textPath);
 
-            // Wait for timeline to complete
             await new Promise(resolve => {
                 timeline.eventCallback('onComplete', resolve);
             });
@@ -254,5 +253,6 @@ export class InteractionHandler {
         window.removeEventListener('pointerdown', this.handlePointerDown);
         document.removeEventListener('keydown', this.handleKeyPress);
         this.textDisplay.cleanup();
+        this.tooltipManager.cleanup();
     }
 }

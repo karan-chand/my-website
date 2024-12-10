@@ -44,7 +44,7 @@ export class TooltipManager {
         
         let containsText = 'contains: ';
         if (starData.name.includes('Spica')) {
-            containsText += 'spica sound thread & track IDs';
+            containsText += 'SOUND THREAD 001: SPICA';
         } else if (hasAudio && hasText) {
             containsText += `${starData.name.toLowerCase()} mix, ${this.getFileName(starData.textPath)}`;
         } else if (hasAudio) {

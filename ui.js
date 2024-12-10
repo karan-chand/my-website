@@ -19,7 +19,7 @@ export class UIManager {
                         <ul class="dropdown" role="menu">
                             <li role="none">
                                 <a href="#" id="spica-menu" onclick="window.triggerSpica()" role="menuitem">
-                                    nada sutra 001: spica
+                                    sound thread 001: spica
                                 </a>
                             </li>
                         </ul>

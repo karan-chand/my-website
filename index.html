@@ -11,13 +11,13 @@
     <meta property="og:description" content="Interactive Constellation Experience">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.karan.ink">
-   
+    
     <title>KARAN.INK</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="data:,">
-   
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-   
+    
     <script type="importmap">
         {
             "imports": {
@@ -29,27 +29,9 @@
             }
         }
     </script>
-    <style>
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            font-family: 'Halyard Text', Arial, sans-serif;
-            color: white;
-            font-size: 24px;
-        }
-    </style>
 </head>
 <body>
     <noscript>You need to enable JavaScript to run this application.</noscript>
-    <div id="loading-screen" class="loading-screen">Loading</div>
     <canvas id="virgo-constellation" aria-label="Interactive Virgo constellation visualization"></canvas>
     <script type="module" src="app.js"></script>
 </body>

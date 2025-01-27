@@ -13,6 +13,25 @@ function initializeCustomCursor() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Create loading screen
+    const loadingScreen = document.createElement('div');
+    loadingScreen.className = 'loading-screen';
+    loadingScreen.textContent = 'Loading';
+    loadingScreen.style.position = 'fixed';
+    loadingScreen.style.top = '0';
+    loadingScreen.style.left = '0';
+    loadingScreen.style.width = '100%';
+    loadingScreen.style.height = '100%';
+    loadingScreen.style.backgroundColor = 'black';
+    loadingScreen.style.display = 'flex';
+    loadingScreen.style.justifyContent = 'center';
+    loadingScreen.style.alignItems = 'center';
+    loadingScreen.style.zIndex = '1000';
+    loadingScreen.style.fontFamily = "'Halyard Text', Arial, sans-serif";
+    loadingScreen.style.color = 'white';
+    loadingScreen.style.fontSize = '24px';
+    document.body.appendChild(loadingScreen);
+
     try {
         // Initialize UI first to ensure DOM elements exist
         const { UIManager } = await import('./ui.js');
@@ -35,13 +54,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (DEBUG) console.log('Creating star system...');
         starSystem.createStars();
         
+        // Remove loading screen with fade
+        loadingScreen.style.transition = 'opacity 0.5s ease-out';
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+            loadingScreen.remove();
+        }, 500);
+
         // Global functions with error handling
         window.resetPage = function() {
             try {
                 if (DEBUG) console.log('Resetting page...');
                 starSystem.resetAllStars();
                 sceneSetup.resetCamera();
-                interactionHandler.textDisplay.hide();  // Add this line
+                interactionHandler.textDisplay.hide();
             } catch (error) {
                 console.error('Reset failed:', error);
             }
@@ -104,11 +130,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     } catch (error) {
         console.error('Initialization failed:', error);
-        document.body.innerHTML = `
-            <div style="color: white; text-align: center; padding: 20px;">
-                Unable to initialize application. Please ensure your browser supports WebGL and JavaScript.
-                <br>Error: ${error.message}
-            </div>
-        `;
+        if (loadingScreen) {
+            loadingScreen.innerHTML = `
+                <div style="color: white; text-align: center; padding: 20px;">
+                    Unable to initialize application. Please ensure your browser supports WebGL and JavaScript.
+                    <br>Error: ${error.message}
+                </div>
+            `;
+        } else {
+            document.body.innerHTML = `
+                <div style="color: white; text-align: center; padding: 20px;">
+                    Unable to initialize application. Please ensure your browser supports WebGL and JavaScript.
+                    <br>Error: ${error.message}
+                </div>
+            `;
+        }
     }
 });

@@ -1,13 +1,13 @@
 const gsap = window.gsap;
 import { STAR_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG, CAMERA_CONFIG, CONTROLS_CONFIG } from './constants.js';
-import { TextDisplay } from './textdisplay.js';
+import { ContentPanel } from './contentpanel.js';
 import { TooltipManager } from './tooltipmanager.js';
 
 export class InteractionHandler {
     constructor(sceneSetup, starSystem) {
         this.sceneSetup = sceneSetup;
         this.starSystem = starSystem;
-        this.textDisplay = new TextDisplay();
+        this.contentPanel = new ContentPanel();
         this.tooltipManager = new TooltipManager();
         this.starNameElement = document.getElementById('star-name');
         this.isTransitioning = false;
@@ -141,7 +141,7 @@ export class InteractionHandler {
                 radius: BLOOM_CONFIG.defaultRadius
             }, 0)
             .add(() => {
-                this.textDisplay.hide();
+                this.contentPanel.hide();
                 this.tooltipManager.hide();
                 this.starSystem.resetAllStars();
                 this.starSystem.hideMixcloud();
@@ -221,7 +221,9 @@ export class InteractionHandler {
 
             this.starSystem.activeStar = star;
             if (starData.link) this.starSystem.showMixcloud(starData.link);
-            if (starData.textPath) await this.textDisplay.show(starData.name, starData.textPath);
+            if (starData.textPath) {
+                this.contentPanel.show(starData.name, starData.textPath);
+            }
 
             await new Promise(resolve => {
                 timeline.eventCallback('onComplete', resolve);
@@ -299,7 +301,7 @@ export class InteractionHandler {
         window.removeEventListener('pointermove', this.handlePointerMove);
         window.removeEventListener('pointerdown', this.handlePointerDown);
         document.removeEventListener('keydown', this.handleKeyPress);
-        this.textDisplay.cleanup();
+        this.contentPanel.cleanup();
         this.tooltipManager.cleanup();
     }
 }

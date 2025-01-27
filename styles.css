@@ -188,148 +188,72 @@ nav ul .dropdown li a:hover {
     color: #00ffcc;
 }
 
-/* Text Modal Styles */
-.text-modal {
+/* Content Panel Styles */
+.content-panel {
     position: fixed;
-    left: 50%;
-    bottom: 100px;
-    transform: translateX(-50%);
-    width: 90vw;
-    max-width: 1200px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 70vh;
     background-color: rgba(0, 0, 0, 0.95);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    z-index: 11;
-    display: none;
-    transition: all 0.3s ease;
-    height: auto;
-    max-height: 35vh;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    z-index: 1000;
+    transform: translateY(100%);
+    touch-action: none;
 }
 
-.text-modal.fullscreen {
-    top: 120px;
-    bottom: auto;
-    height: calc(100vh - 280px);
-    width: 96vw;
-}
-
-.modal-header {
+.panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px;
+    padding: 16px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: grab;
 }
 
-.modal-title {
-    font-family: 'Stanley Regular', Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.panel-header:before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
 }
 
-.star-name {
+.panel-title {
+    font-family: 'Halyard Text', Arial, sans-serif;
     color: #00ffcc;
+    font-size: 16px;
 }
 
-.modal-controls {
-    display: flex;
-    gap: 8px;
-}
-
-.modal-button {
+.panel-close {
     background: transparent;
     border: none;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    font-size: 18px;
+    color: white;
+    font-size: 24px;
     cursor: pointer;
     padding: 0;
-    transition: opacity 0.3s ease;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    touch-action: manipulation;
 }
 
-.modal-button:hover {
-    opacity: 0.8;
-}
-
-.modal-content {
+.panel-content {
     padding: 20px;
-    height: auto;
-    max-height: calc(100vh - 280px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.text-modal.fullscreen .modal-content {
-    max-height: calc(100vh - 340px);
-}
-
-.text-content {
+    color: white;
     font-family: 'Halyard Text', Arial, sans-serif;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 20px;
-}
-
-.navigation {
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 14px;
-}
-
-.text-modal.fullscreen .navigation {
-    display: flex;
-}
-
-.navigation button {
-    background: transparent;
-    border: none;
-    color: #00ffcc;
-    cursor: pointer;
-    padding: 3px 8px;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-    font-family: 'Halyard Text', Arial, sans-serif;
-    font-size: 13px;
-    touch-action: manipulation;
-}
-
-.navigation button:hover {
-    opacity: 1;
-}
-
-.navigation button:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.page-counter {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 12px;
-}
-
-.progress-bar {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin-top: 6px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: #00ffcc;
-    width: 0%;
-    transition: width 0.3s ease;
+    overflow-y: auto;
+    max-height: calc(70vh - 65px);
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Mixcloud Player Container */
@@ -435,18 +359,14 @@ nav ul .dropdown li a:hover {
         transform: translateX(-50%);
     }
 
-    .text-modal {
-        width: 100vw;
-        bottom: 70px;
-        left: 0;
-        transform: none;
-        border-radius: 0;
-        max-height: 40vh;
+    .content-panel {
+        max-height: 80vh;
     }
 
-    .text-modal.fullscreen {
-        height: calc(100vh - 140px);
-        top: 70px;
+    .panel-content {
+        max-height: calc(80vh - 65px);
+        font-size: 15px;
+        line-height: 1.4;
     }
 
     #mixcloud-container {
@@ -460,21 +380,18 @@ nav ul .dropdown li a:hover {
         font-size: 24px;
         left: 8px;
     }
+}
 
-    .modal-button {
-        width: 44px;
-        height: 44px;
-        font-size: 20px;
-    }
-
-    .modal-title {
-        font-size: 14px;
-    }
-    
-    .text-content {
-        font-size: 15px;
-        line-height: 1.4;
-    }
+/* Static Text */
+.static-text {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    color: white;
+    font-size: 18px;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* Animation Classes */

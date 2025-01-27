@@ -13,19 +13,37 @@ export class InteractionHandler {
         this.isTransitioning = false;
         this.lastInteractionTime = 0;
         this.interactionDelay = 100;
+        this.touchStartPosition = null;
+        this.lastTapTime = 0;
         
+        // Bind methods
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handlePointerMove = this.handlePointerMove.bind(this);
         this.handlePointerDown = this.handlePointerDown.bind(this);
+        this.handleTouchStart = this.handleTouchStart.bind(this);
+        this.handleTouchEnd = this.handleTouchEnd.bind(this);
         
         this.initializeEventListeners();
         this.setupTouchHandling();
+        this.setupGestureHandling();
     }
 
     initializeEventListeners() {
         window.addEventListener('pointermove', this.handlePointerMove, { passive: true });
         window.addEventListener('pointerdown', this.handlePointerDown);
         document.addEventListener('keydown', this.handleKeyPress, true);
+        
+        // Handle WebGL context loss
+        this.sceneSetup.renderer.domElement.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            this.showErrorMessage('WebGL context lost. Attempting to restore...');
+        });
+        
+        this.sceneSetup.renderer.domElement.addEventListener('webglcontextrestored', () => {
+            this.sceneSetup.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.sceneSetup.composer.setSize(window.innerWidth, window.innerHeight);
+            this.starSystem.resetAllStars();
+        });
     }
 
     setupTouchHandling() {
@@ -57,6 +75,42 @@ export class InteractionHandler {
                 this.handlePointerDown(e.changedTouches[0]);
             }
         }, { passive: true });
+    }
+
+    setupGestureHandling() {
+        let initialDistance = 0;
+        let isZooming = false;
+
+        const handlePinchZoom = (event) => {
+            if (event.touches.length !== 2) return;
+            
+            const touch1 = event.touches[0];
+            const touch2 = event.touches[1];
+            const distance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+
+            if (!isZooming) {
+                isZooming = true;
+                initialDistance = distance;
+                return;
+            }
+
+            const scale = distance / initialDistance;
+            const zoomSpeed = 0.5;
+            this.sceneSetup.camera.position.z *= Math.pow(scale, zoomSpeed);
+            this.sceneSetup.camera.updateProjectionMatrix();
+            
+            initialDistance = distance;
+        };
+
+        window.addEventListener('touchmove', (event) => {
+            if (event.touches.length === 2) {
+                event.preventDefault();
+                handlePinchZoom(event);
+            }
+        }, { passive: false });
     }
 
     handleKeyPress(event) {
@@ -107,7 +161,7 @@ export class InteractionHandler {
 
     handlePointerMove(event) {
         const now = Date.now();
-        if (now - this.lastInteractionTime < this.interactionDelay) return; // Removed isTransitioning check
+        if (now - this.lastInteractionTime < this.interactionDelay) return;
         this.lastInteractionTime = now;
         
         try {
@@ -144,6 +198,7 @@ export class InteractionHandler {
         
         try {
             this.isTransitioning = true;
+            this.showLoadingState();
             
             const timeline = gsap.timeline({
                 defaults: { 
@@ -153,7 +208,7 @@ export class InteractionHandler {
             });
 
             const starPosition = star.position;
-            const distance = 30;
+            const distance = this.calculateOptimalDistance(star);
             const cameraPosition = {
                 x: starPosition.x + distance,
                 y: starPosition.y + distance/2,
@@ -186,9 +241,36 @@ export class InteractionHandler {
 
         } catch (error) {
             console.error('Star transition error:', error);
+            this.showErrorMessage('Failed to transition to star');
         } finally {
             this.isTransitioning = false;
+            this.hideLoadingState();
         }
+    }
+
+    calculateOptimalDistance(star) {
+        const size = star.scale.x;
+        return 30 + (size * 10); // Base distance + adjustment for star size
+    }
+
+    showLoadingState() {
+        const loader = document.createElement('div');
+        loader.className = 'transition-loader';
+        loader.setAttribute('aria-label', 'Loading star view');
+        document.body.appendChild(loader);
+    }
+
+    hideLoadingState() {
+        document.querySelector('.transition-loader')?.remove();
+    }
+
+    showErrorMessage(message) {
+        const errorElement = document.createElement('div');
+        errorElement.className = 'error-message';
+        errorElement.textContent = message;
+        document.body.appendChild(errorElement);
+        
+        setTimeout(() => errorElement.remove(), 3000);
     }
 
     updateMousePosition(event) {

@@ -91,7 +91,7 @@ body, html {
 }
 
 .text-content-inner {
-    padding: 60px 20px 80px 20px;  /* Changed from 20px to 60px for top padding */
+    padding: 20px 20px 80px 20px;  /* Back to original 20px top padding */
     max-width: 800px;
     margin: 0 auto;
     font-family: 'Halyard Text', Arial, sans-serif;
@@ -118,7 +118,7 @@ body, html {
 
 .expand-collapse {
     position: absolute;
-    top: 60px;  /* Changed from 20px to 60px to match new padding */
+    top: 20px;  /* Back to original 20px top position */
     right: 20px;
     background: transparent;
     border: none;

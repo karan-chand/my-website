@@ -14,7 +14,6 @@ export class LayoutManager {
     createLayout() {
         const layoutContainer = document.createElement('div');
         layoutContainer.className = 'layout-container';
-        layoutContainer.style.zIndex = '1001'; // Ensure it's above the mixcloud player
 
         const constellationView = document.createElement('div');
         constellationView.className = 'constellation-view';
@@ -117,15 +116,16 @@ export class LayoutManager {
     updateLayout(textHeight) {
         const mixcloudHeight = this.layout.mixcloudContainer?.classList.contains('visible') ? 60 : 0;
         const availableHeight = window.innerHeight - mixcloudHeight;
+        const adjustedTextHeight = Math.min(textHeight, availableHeight * 0.7);
         
         gsap.to(this.layout.textContent, {
-            height: Math.min(textHeight, availableHeight * 0.7),
+            height: adjustedTextHeight,
             duration: 0.3,
             ease: 'power2.out'
         });
 
         gsap.to(this.layout.constellationView, {
-            height: availableHeight - Math.min(textHeight, availableHeight * 0.7),
+            height: availableHeight - adjustedTextHeight,
             duration: 0.3,
             ease: 'power2.out'
         });

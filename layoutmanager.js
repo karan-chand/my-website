@@ -71,7 +71,7 @@ export class LayoutManager {
         
         if (this.isExpanded) {
             // Collapse to just title
-            this.updateLayout(80);
+            this.updateLayout(120);
             this.layout.expandBtn.textContent = 'Expand';
         } else {
             // Expand to show full text
@@ -90,13 +90,13 @@ export class LayoutManager {
             const text = await response.text();
             this.layout.textInner.innerHTML = `
                 <h2 style="color: #00ffcc; margin-bottom: 1em; font-family: 'Stanley Regular', Arial, sans-serif;">${title}</h2>
-                <div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6;">
+                <div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6; white-space: pre-wrap;">
                     ${text}
                 </div>
             `;
             
             // Show with just title initially
-            this.updateLayout(80);
+            this.updateLayout(120);
             this.layout.expandBtn.textContent = 'Expand';
             this.isExpanded = false;
             

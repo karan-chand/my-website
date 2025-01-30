@@ -8,6 +8,7 @@ export class LayoutManager {
         this.startY = 0;
         this.startHeight = 0;
         this.isExpanded = false;
+        this.minHeight = 60;  // Minimum height for collapsed state
     }
 
     createLayout() {
@@ -24,8 +25,8 @@ export class LayoutManager {
         const textContent = document.createElement('div');
         textContent.className = 'text-content';
         textContent.innerHTML = `
-            <div class="handle"></div>
-            <button class="expand-collapse">Expand</button>
+            <div class="handle" role="slider" aria-label="Drag to resize text panel"></div>
+            <button class="expand-collapse" aria-label="Toggle text panel size">Expand</button>
             <div class="text-content-inner"></div>
         `;
 
@@ -45,7 +46,71 @@ export class LayoutManager {
     }
 
     setupEventListeners() {
+        // Expand/Collapse button
         this.layout.expandBtn.addEventListener('click', this.toggleExpand.bind(this));
+        
+        // Handle drag functionality
+        this.layout.handle.addEventListener('mousedown', this.startDragging.bind(this));
+        document.addEventListener('mousemove', this.handleDrag.bind(this));
+        document.addEventListener('mouseup', this.stopDragging.bind(this));
+        
+        // Touch events for mobile
+        this.layout.handle.addEventListener('touchstart', this.startDragging.bind(this), { passive: true });
+        document.addEventListener('touchmove', this.handleDrag.bind(this), { passive: false });
+        document.addEventListener('touchend', this.stopDragging.bind(this));
+        
+        // Keyboard accessibility
+        this.layout.handle.addEventListener('keydown', (e) => {
+            const step = 20;
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.updateLayout(Math.max(this.minHeight, this.layout.textContent.offsetHeight - step));
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const maxHeight = window.innerHeight * 0.7;
+                this.updateLayout(Math.min(maxHeight, this.layout.textContent.offsetHeight + step));
+            }
+        });
+    }
+
+    startDragging(e) {
+        this.isDragging = true;
+        this.startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        this.startHeight = this.layout.textContent.offsetHeight;
+        document.body.style.cursor = 'row-resize';
+        this.layout.handle.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+    }
+
+    handleDrag(e) {
+        if (!this.isDragging) return;
+        
+        e.preventDefault();
+        const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        const deltaY = this.startY - currentY;
+        const newHeight = Math.max(this.minHeight, this.startHeight + deltaY);
+        const maxHeight = window.innerHeight * 0.7;
+        
+        if (newHeight <= maxHeight) {
+            this.updateLayout(newHeight);
+            this.isExpanded = newHeight > this.minHeight;
+            this.layout.expandBtn.textContent = this.isExpanded ? 'Collapse' : 'Expand';
+        }
+    }
+
+    stopDragging() {
+        if (!this.isDragging) return;
+        
+        this.isDragging = false;
+        document.body.style.cursor = '';
+        this.layout.handle.style.backgroundColor = '';
+        
+        // Snap to either expanded or collapsed state based on current height
+        const threshold = this.minHeight + 50;
+        if (this.layout.textContent.offsetHeight < threshold && this.layout.textContent.offsetHeight > this.minHeight) {
+            this.updateLayout(this.minHeight);
+            this.isExpanded = false;
+            this.layout.expandBtn.textContent = 'Expand';
+        }
     }
 
     updateLayout(textHeight) {
@@ -53,13 +118,13 @@ export class LayoutManager {
         const availableHeight = window.innerHeight - mixcloudHeight;
         
         gsap.to(this.layout.textContent, {
-            height: textHeight,
+            height: Math.min(textHeight, availableHeight * 0.7),
             duration: 0.3,
             ease: 'power2.out'
         });
 
         gsap.to(this.layout.constellationView, {
-            height: availableHeight - textHeight,
+            height: availableHeight - Math.min(textHeight, availableHeight * 0.7),
             duration: 0.3,
             ease: 'power2.out'
         });
@@ -70,8 +135,8 @@ export class LayoutManager {
         const availableHeight = window.innerHeight - mixcloudHeight;
         
         if (this.isExpanded) {
-            // Collapse to just title
-            this.updateLayout(120);
+            // Collapse to minimal height
+            this.updateLayout(this.minHeight);
             this.layout.expandBtn.textContent = 'Expand';
         } else {
             // Expand to show full text
@@ -89,14 +154,13 @@ export class LayoutManager {
             
             const text = await response.text();
             this.layout.textInner.innerHTML = `
-                <h2 style="color: #00ffcc; margin-bottom: 1em; font-family: 'Stanley Regular', Arial, sans-serif;">${title}</h2>
                 <div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6; white-space: pre-wrap;">
                     ${text}
                 </div>
             `;
             
-            // Show with just title initially
-            this.updateLayout(120);
+            // Show with minimal height initially
+            this.updateLayout(this.minHeight);
             this.layout.expandBtn.textContent = 'Expand';
             this.isExpanded = false;
             
@@ -106,7 +170,11 @@ export class LayoutManager {
             
         } catch (error) {
             console.error('Error loading content:', error);
-            this.layout.textInner.innerHTML = 'Failed to load content';
+            this.layout.textInner.innerHTML = `
+                <div style="color: #ff4444; padding: 20px;">
+                    Failed to load content. Please try again later.
+                </div>
+            `;
         }
     }
 
@@ -119,6 +187,7 @@ export class LayoutManager {
             onComplete: () => {
                 // Reset state
                 this.layout.textContent.scrollTop = 0;
+                this.layout.textInner.innerHTML = '';
                 this.layout.expandBtn.textContent = 'Expand';
                 this.isExpanded = false;
             }
@@ -138,6 +207,16 @@ export class LayoutManager {
     }
 
     cleanup() {
+        // Remove event listeners
+        this.layout.expandBtn.removeEventListener('click', this.toggleExpand);
+        this.layout.handle.removeEventListener('mousedown', this.startDragging);
+        document.removeEventListener('mousemove', this.handleDrag);
+        document.removeEventListener('mouseup', this.stopDragging);
+        this.layout.handle.removeEventListener('touchstart', this.startDragging);
+        document.removeEventListener('touchmove', this.handleDrag);
+        document.removeEventListener('touchend', this.stopDragging);
+        
+        // Remove DOM elements
         if (this.layout.container && this.layout.container.parentNode) {
             this.layout.container.parentNode.removeChild(this.layout.container);
         }

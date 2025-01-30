@@ -96,6 +96,7 @@ body, html {
     margin: 0 auto;
     font-family: 'Halyard Text', Arial, sans-serif;
     line-height: 1.6;
+    white-space: pre-wrap;  /* Add this line */
 }
 
 .handle {

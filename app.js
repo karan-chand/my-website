@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (DEBUG) console.log('Resetting page...');
                 starSystem.resetAllStars();
                 sceneSetup.resetCamera();
-                layoutManager.hideContent()
+                interactionHandler.layoutManager.hideContent();
             } catch (error) {
                 console.error('Reset failed:', error);
             }

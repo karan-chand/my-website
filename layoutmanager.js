@@ -7,6 +7,7 @@ export class LayoutManager {
         this.isDragging = false;
         this.startY = 0;
         this.startHeight = 0;
+        this.isExpanded = false;
     }
 
     createLayout() {
@@ -44,55 +45,7 @@ export class LayoutManager {
     }
 
     setupEventListeners() {
-        // Mouse events
-        this.layout.handle.addEventListener('mousedown', this.startDragging.bind(this));
-        window.addEventListener('mousemove', this.handleDrag.bind(this));
-        window.addEventListener('mouseup', this.stopDragging.bind(this));
-        
-        // Touch events
-        this.layout.handle.addEventListener('touchstart', this.startDragging.bind(this));
-        window.addEventListener('touchmove', this.handleDrag.bind(this));
-        window.addEventListener('touchend', this.stopDragging.bind(this));
-        
-        // Expand/collapse button
         this.layout.expandBtn.addEventListener('click', this.toggleExpand.bind(this));
-        
-        // ESC key to collapse
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.hideContent();
-            }
-        });
-    }
-
-    startDragging(e) {
-        e.preventDefault();
-        this.isDragging = true;
-        this.startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-        this.startHeight = this.layout.textContent.offsetHeight;
-        
-        document.body.style.cursor = 'ns-resize';
-        this.layout.handle.style.background = 'rgba(255, 255, 255, 0.4)';
-    }
-
-    handleDrag(e) {
-        if (!this.isDragging) return;
-        
-        const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-        const deltaY = this.startY - currentY;
-        const mixcloudHeight = this.layout.mixcloudContainer?.classList.contains('visible') ? 60 : 0;
-        const maxHeight = window.innerHeight - mixcloudHeight;
-        const newHeight = Math.min(Math.max(0, this.startHeight + deltaY), maxHeight * 0.9);
-        
-        this.updateLayout(newHeight);
-    }
-
-    stopDragging() {
-        this.isDragging = false;
-        document.body.style.cursor = '';
-        if (this.layout.handle) {
-            this.layout.handle.style.background = 'rgba(255, 255, 255, 0.2)';
-        }
     }
 
     updateLayout(textHeight) {
@@ -110,18 +63,23 @@ export class LayoutManager {
             duration: 0.3,
             ease: 'power2.out'
         });
-
-        if (this.layout.expandBtn) {
-            this.layout.expandBtn.textContent = textHeight > availableHeight * 0.5 ? 'Collapse' : 'Expand';
-        }
     }
 
     toggleExpand() {
         const mixcloudHeight = this.layout.mixcloudContainer?.classList.contains('visible') ? 60 : 0;
         const availableHeight = window.innerHeight - mixcloudHeight;
-        const isExpanded = this.layout.textContent.offsetHeight > availableHeight * 0.5;
         
-        this.updateLayout(isExpanded ? availableHeight * 0.3 : availableHeight * 0.7);
+        if (this.isExpanded) {
+            // Collapse to just title
+            this.updateLayout(80);
+            this.layout.expandBtn.textContent = 'Expand';
+        } else {
+            // Expand to show full text
+            this.updateLayout(availableHeight * 0.7);
+            this.layout.expandBtn.textContent = 'Collapse';
+        }
+        
+        this.isExpanded = !this.isExpanded;
     }
 
     async showContent(title, textPath, withMixcloud = false) {
@@ -137,17 +95,14 @@ export class LayoutManager {
                 </div>
             `;
             
-            // If there's a Mixcloud player, show it
+            // Show with just title initially
+            this.updateLayout(80);
+            this.layout.expandBtn.textContent = 'Expand';
+            this.isExpanded = false;
+            
             if (withMixcloud && this.layout.mixcloudContainer) {
                 this.layout.mixcloudContainer.classList.add('visible');
             }
-            
-            // Calculate available height
-            const mixcloudHeight = withMixcloud ? 60 : 0;
-            const availableHeight = window.innerHeight - mixcloudHeight;
-            
-            // Show content with animation
-            this.updateLayout(availableHeight * 0.5);
             
         } catch (error) {
             console.error('Error loading content:', error);
@@ -156,8 +111,25 @@ export class LayoutManager {
     }
 
     hideContent() {
-        // Hide text content
-        this.updateLayout(0);
+        // Animate to zero height
+        gsap.to(this.layout.textContent, {
+            height: 0,
+            duration: 0.3,
+            ease: 'power2.out',
+            onComplete: () => {
+                // Reset state
+                this.layout.textContent.scrollTop = 0;
+                this.layout.expandBtn.textContent = 'Expand';
+                this.isExpanded = false;
+            }
+        });
+
+        // Restore constellation to full height
+        gsap.to(this.layout.constellationView, {
+            height: '100%',
+            duration: 0.3,
+            ease: 'power2.out'
+        });
         
         // Hide Mixcloud player if visible
         if (this.layout.mixcloudContainer?.classList.contains('visible')) {
@@ -166,13 +138,6 @@ export class LayoutManager {
     }
 
     cleanup() {
-        // Remove event listeners
-        window.removeEventListener('mousemove', this.handleDrag.bind(this));
-        window.removeEventListener('mouseup', this.stopDragging.bind(this));
-        window.removeEventListener('touchmove', this.handleDrag.bind(this));
-        window.removeEventListener('touchend', this.stopDragging.bind(this));
-        
-        // Remove DOM elements
         if (this.layout.container && this.layout.container.parentNode) {
             this.layout.container.parentNode.removeChild(this.layout.container);
         }

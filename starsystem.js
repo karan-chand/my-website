@@ -60,7 +60,7 @@ export class StarSystem {
         closeButton.innerHTML = '×';
         closeButton.setAttribute('aria-label', 'Close player');
         closeButton.addEventListener('click', () => {
-            document.querySelector('header h1')?.click();
+            window.resetPage();  // Use the global reset function instead of just clicking the title
         });
 
         container.append(wrapper, closeButton);

@@ -14,6 +14,7 @@ export class LayoutManager {
     createLayout() {
         const layoutContainer = document.createElement('div');
         layoutContainer.className = 'layout-container';
+        layoutContainer.style.zIndex = '1001'; // Ensure it's above the mixcloud player
 
         const constellationView = document.createElement('div');
         constellationView.className = 'constellation-view';
@@ -26,7 +27,7 @@ export class LayoutManager {
         textContent.className = 'text-content';
         textContent.innerHTML = `
             <div class="handle" role="slider" aria-label="Drag to resize text panel"></div>
-            <button class="expand-collapse" aria-label="Toggle text panel size">Expand</button>
+            <button class="expand-collapse" aria-label="Toggle track IDs visibility">show track IDs</button>
             <div class="text-content-inner"></div>
         `;
 
@@ -93,7 +94,7 @@ export class LayoutManager {
         if (newHeight <= maxHeight) {
             this.updateLayout(newHeight);
             this.isExpanded = newHeight > this.minHeight;
-            this.layout.expandBtn.textContent = this.isExpanded ? 'Collapse' : 'Expand';
+            this.layout.expandBtn.textContent = this.isExpanded ? 'hide track IDs' : 'show track IDs';
         }
     }
 
@@ -109,7 +110,7 @@ export class LayoutManager {
         if (this.layout.textContent.offsetHeight < threshold && this.layout.textContent.offsetHeight > this.minHeight) {
             this.updateLayout(this.minHeight);
             this.isExpanded = false;
-            this.layout.expandBtn.textContent = 'Expand';
+            this.layout.expandBtn.textContent = 'show track IDs';
         }
     }
 
@@ -137,11 +138,11 @@ export class LayoutManager {
         if (this.isExpanded) {
             // Collapse to minimal height
             this.updateLayout(this.minHeight);
-            this.layout.expandBtn.textContent = 'Expand';
+            this.layout.expandBtn.textContent = 'show track IDs';
         } else {
             // Expand to show full text
             this.updateLayout(availableHeight * 0.7);
-            this.layout.expandBtn.textContent = 'Collapse';
+            this.layout.expandBtn.textContent = 'hide track IDs';
         }
         
         this.isExpanded = !this.isExpanded;
@@ -161,7 +162,7 @@ export class LayoutManager {
             
             // Show with minimal height initially
             this.updateLayout(this.minHeight);
-            this.layout.expandBtn.textContent = 'Expand';
+            this.layout.expandBtn.textContent = 'show track IDs';
             this.isExpanded = false;
             
             if (withMixcloud && this.layout.mixcloudContainer) {
@@ -188,7 +189,7 @@ export class LayoutManager {
                 // Reset state
                 this.layout.textContent.scrollTop = 0;
                 this.layout.textInner.innerHTML = '';
-                this.layout.expandBtn.textContent = 'Expand';
+                this.layout.expandBtn.textContent = 'show track IDs';
                 this.isExpanded = false;
             }
         });

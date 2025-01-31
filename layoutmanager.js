@@ -152,6 +152,12 @@ export class LayoutManager {
             const response = await fetch(textPath);
             if (!response.ok) throw new Error(`Failed to load text: ${response.status}`);
             
+            if (withMixcloud && this.layout.mixcloudContainer) {
+                this.layout.mixcloudContainer.classList.add('visible');
+                // Wait briefly for mixcloud display state to update
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+    
             const text = await response.text();
             this.layout.textInner.innerHTML = `
                 <div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6; white-space: pre-wrap;">
@@ -159,14 +165,9 @@ export class LayoutManager {
                 </div>
             `;
             
-            // Start collapsed
             this.updateLayout(this.minHeight);
             this.layout.expandBtn.textContent = 'show track IDs';
             this.isExpanded = false;
-            
-            if (withMixcloud && this.layout.mixcloudContainer) {
-                this.layout.mixcloudContainer.classList.add('visible');
-            }
             
         } catch (error) {
             console.error('Error loading content:', error);

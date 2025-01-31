@@ -14,7 +14,6 @@ export class InteractionHandler {
         this.lastInteractionTime = 0;
         this.interactionDelay = 100;
         
-        // Bind methods
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handlePointerMove = this.handlePointerMove.bind(this);
         this.handlePointerDown = this.handlePointerDown.bind(this);
@@ -28,7 +27,6 @@ export class InteractionHandler {
         window.addEventListener('pointerdown', this.handlePointerDown);
         document.addEventListener('keydown', this.handleKeyPress, true);
         
-        // Handle WebGL context loss
         this.sceneSetup.renderer.domElement.addEventListener('webglcontextlost', (event) => {
             event.preventDefault();
             this.showErrorMessage('WebGL context lost. Attempting to restore...');
@@ -71,7 +69,6 @@ export class InteractionHandler {
             }
         }, { passive: true });
 
-        // Add pinch-zoom support
         let initialDistance = 0;
         let isZooming = false;
 
@@ -188,6 +185,11 @@ export class InteractionHandler {
         try {
             this.isTransitioning = true;
             
+            // Show content first if available
+            if (starData.textPath) {
+                await this.layoutManager.showContent(starData.name, starData.textPath, !!starData.link);
+            }
+            
             const timeline = gsap.timeline({
                 defaults: { 
                     duration: ANIMATION_CONFIG.longDuration, 
@@ -223,13 +225,8 @@ export class InteractionHandler {
             if (starData.link) {
                 this.starSystem.showMixcloud(starData.link);
             }
-            if (starData.textPath) {
-                this.layoutManager.showContent(starData.name, starData.textPath, !!starData.link);
-            }
 
-            await new Promise(resolve => {
-                timeline.eventCallback('onComplete', resolve);
-            });
+            await timeline;
 
         } catch (error) {
             console.error('Star transition error:', error);

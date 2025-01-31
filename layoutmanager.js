@@ -154,21 +154,8 @@ export class LayoutManager {
             
             if (withMixcloud && this.layout.mixcloudContainer) {
                 this.layout.mixcloudContainer.classList.add('visible');
-                // Wait for mixcloud container to be fully visible
-                await new Promise(resolve => {
-                    const observer = new MutationObserver((mutations) => {
-                        const container = document.getElementById('mixcloud-container');
-                        if (container && getComputedStyle(container).transform === 'matrix(1, 0, 0, 1, 0, 0)') {
-                            observer.disconnect();
-                            resolve();
-                        }
-                    });
-                    
-                    observer.observe(document.getElementById('mixcloud-container'), {
-                        attributes: true,
-                        attributeFilter: ['style']
-                    });
-                });
+                // Wait briefly for mixcloud display state to update
+                await new Promise(resolve => setTimeout(resolve, 50));
             }
     
             const text = await response.text();

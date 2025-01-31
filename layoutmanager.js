@@ -159,12 +159,10 @@ export class LayoutManager {
                 </div>
             `;
             
-            // Show expanded initially
-            const mixcloudHeight = this.layout.mixcloudContainer?.classList.contains('visible') ? 60 : 0;
-            const availableHeight = window.innerHeight - mixcloudHeight;
-            this.updateLayout(availableHeight * 0.7);
-            this.layout.expandBtn.textContent = 'hide track IDs';
-            this.isExpanded = true;
+            // Start collapsed
+            this.updateLayout(this.minHeight);
+            this.layout.expandBtn.textContent = 'show track IDs';
+            this.isExpanded = false;
             
             if (withMixcloud && this.layout.mixcloudContainer) {
                 this.layout.mixcloudContainer.classList.add('visible');

@@ -142,7 +142,7 @@ header {
     width: 100%;
     padding: 20px 0;
     text-align: center;
-    z-index: 15;
+    z-index: 1200;  /* Increased to be above layout-container */
     background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%);
 }
 

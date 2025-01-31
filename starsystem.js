@@ -151,17 +151,21 @@ export class StarSystem {
 
     showMixcloud(url) {
         if (!url) return;
-
+    
         const container = document.getElementById('mixcloud-container');
         const wrapper = container?.querySelector('.mixcloud-wrapper');
         if (!container || !wrapper) return;
     
-        wrapper.innerHTML = `<iframe width="100%" height="60" src="${url}" frameborder="0" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>`;
+        wrapper.innerHTML = `<iframe 
+            width="100%" 
+            height="60" 
+            src="${url}" 
+            frameborder="0" 
+            sandbox="allow-scripts allow-same-origin allow-presentation"
+            allow="autoplay"
+            crossorigin="anonymous"
+        ></iframe>`;
         container.style.display = 'block';
-    
-        if (this.activeStar) {
-            this.startPulse(this.activeStar);
-        }
     }
 
     hideMixcloud() {

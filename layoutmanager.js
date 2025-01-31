@@ -8,12 +8,18 @@ export class LayoutManager {
         this.startY = 0;
         this.startHeight = 0;
         this.isExpanded = false;
-        this.minHeight = 60;  // Minimum height for collapsed state
+        this.minHeight = 60;
     }
 
     createLayout() {
         const layoutContainer = document.createElement('div');
         layoutContainer.className = 'layout-container';
+        layoutContainer.style.position = 'absolute';
+        layoutContainer.style.top = '0';
+        layoutContainer.style.left = '0';
+        layoutContainer.style.width = '100%';
+        layoutContainer.style.height = '100%';
+        layoutContainer.style.zIndex = '15';
 
         const constellationView = document.createElement('div');
         constellationView.className = 'constellation-view';
@@ -46,20 +52,16 @@ export class LayoutManager {
     }
 
     setupEventListeners() {
-        // Expand/Collapse button
         this.layout.expandBtn.addEventListener('click', this.toggleExpand.bind(this));
         
-        // Handle drag functionality
         this.layout.handle.addEventListener('mousedown', this.startDragging.bind(this));
         document.addEventListener('mousemove', this.handleDrag.bind(this));
         document.addEventListener('mouseup', this.stopDragging.bind(this));
         
-        // Touch events for mobile
         this.layout.handle.addEventListener('touchstart', this.startDragging.bind(this), { passive: true });
         document.addEventListener('touchmove', this.handleDrag.bind(this), { passive: false });
         document.addEventListener('touchend', this.stopDragging.bind(this));
         
-        // Keyboard accessibility
         this.layout.handle.addEventListener('keydown', (e) => {
             const step = 20;
             if (e.key === 'ArrowUp') {
@@ -104,7 +106,6 @@ export class LayoutManager {
         document.body.style.cursor = '';
         this.layout.handle.style.backgroundColor = '';
         
-        // Snap to either expanded or collapsed state based on current height
         const threshold = this.minHeight + 50;
         if (this.layout.textContent.offsetHeight < threshold && this.layout.textContent.offsetHeight > this.minHeight) {
             this.updateLayout(this.minHeight);
@@ -136,11 +137,9 @@ export class LayoutManager {
         const availableHeight = window.innerHeight - mixcloudHeight;
         
         if (this.isExpanded) {
-            // Collapse to minimal height
             this.updateLayout(this.minHeight);
             this.layout.expandBtn.textContent = 'show track IDs';
         } else {
-            // Expand to show full text
             this.updateLayout(availableHeight * 0.7);
             this.layout.expandBtn.textContent = 'hide track IDs';
         }
@@ -160,10 +159,12 @@ export class LayoutManager {
                 </div>
             `;
             
-            // Show with minimal height initially
-            this.updateLayout(this.minHeight);
-            this.layout.expandBtn.textContent = 'show track IDs';
-            this.isExpanded = false;
+            // Show expanded initially
+            const mixcloudHeight = this.layout.mixcloudContainer?.classList.contains('visible') ? 60 : 0;
+            const availableHeight = window.innerHeight - mixcloudHeight;
+            this.updateLayout(availableHeight * 0.7);
+            this.layout.expandBtn.textContent = 'hide track IDs';
+            this.isExpanded = true;
             
             if (withMixcloud && this.layout.mixcloudContainer) {
                 this.layout.mixcloudContainer.classList.add('visible');
@@ -180,13 +181,11 @@ export class LayoutManager {
     }
 
     hideContent() {
-        // Animate to zero height
         gsap.to(this.layout.textContent, {
             height: 0,
             duration: 0.3,
             ease: 'power2.out',
             onComplete: () => {
-                // Reset state
                 this.layout.textContent.scrollTop = 0;
                 this.layout.textInner.innerHTML = '';
                 this.layout.expandBtn.textContent = 'show track IDs';
@@ -194,21 +193,18 @@ export class LayoutManager {
             }
         });
 
-        // Restore constellation to full height
         gsap.to(this.layout.constellationView, {
             height: '100%',
             duration: 0.3,
             ease: 'power2.out'
         });
         
-        // Hide Mixcloud player if visible
         if (this.layout.mixcloudContainer?.classList.contains('visible')) {
             this.layout.mixcloudContainer.classList.remove('visible');
         }
     }
 
     cleanup() {
-        // Remove event listeners
         this.layout.expandBtn.removeEventListener('click', this.toggleExpand);
         this.layout.handle.removeEventListener('mousedown', this.startDragging);
         document.removeEventListener('mousemove', this.handleDrag);
@@ -217,7 +213,6 @@ export class LayoutManager {
         document.removeEventListener('touchmove', this.handleDrag);
         document.removeEventListener('touchend', this.stopDragging);
         
-        // Remove DOM elements
         if (this.layout.container && this.layout.container.parentNode) {
             this.layout.container.parentNode.removeChild(this.layout.container);
         }

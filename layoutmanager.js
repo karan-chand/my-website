@@ -148,29 +148,29 @@ export class LayoutManager {
    }
 
    async showContent(title, textPath, withMixcloud = false) {
-       try {
-           const response = await fetch(textPath);
-           if (!response.ok) throw new Error(`Failed to load text: ${response.status}`);
-           
-           if (withMixcloud && this.layout.mixcloudContainer) {
-               this.layout.mixcloudContainer.classList.add('visible');
-               await new Promise(resolve => setTimeout(resolve, 50));
-           }
-   
-           const text = await response.text();
-           console.log("Loaded text:", text.split('\n').map((line, i) => `${i}: "${line}"`));
-           
-           this.layout.textInner.innerHTML = `<div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6; white-space: pre-wrap">${text.trim()}</div>`;
-           
-           this.updateLayout(this.minHeight);
-           this.layout.expandBtn.textContent = 'show track IDs';
-           this.isExpanded = false;
-           
-       } catch (error) {
-           console.error('Error loading content:', error);
-           this.layout.textInner.innerHTML = `<div style="color: #ff4444; padding: 20px;">Failed to load content. Please try again later.</div>`;
-       }
-   }
+    try {
+        const response = await fetch(textPath);
+        if (!response.ok) throw new Error(`Failed to load text: ${response.status}`);
+        
+        if (withMixcloud && this.layout.mixcloudContainer) {
+            this.layout.mixcloudContainer.classList.add('visible');
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+ 
+        const text = await response.text();
+        const processedText = text.replace(/^(\n*)[\s\n]*(.+?)[\s\n]*$/s, '$1$2');
+        
+        this.layout.textInner.innerHTML = `<div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6; white-space: pre-wrap">${processedText}</div>`;
+        
+        this.updateLayout(this.minHeight);
+        this.layout.expandBtn.textContent = 'show track IDs';
+        this.isExpanded = false;
+        
+    } catch (error) {
+        console.error('Error loading content:', error);
+        this.layout.textInner.innerHTML = `<div style="color: #ff4444; padding: 20px;">Failed to load content. Please try again later.</div>`;
+    }
+ }
 
    hideContent() {
        gsap.to(this.layout.textContent, {

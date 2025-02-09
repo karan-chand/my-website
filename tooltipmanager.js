@@ -12,7 +12,7 @@ export class TooltipManager {
             background: rgba(50, 50, 50, 0.95);
             padding: 12px;
             border-radius: 4px;
-            font-family: 'Halyard Text', Arial, sans-serif;  // Changed to match dropdown
+            font-family: 'Halyard Text', Arial, sans-serif;
             font-size: 14px;
             color: white;
             pointer-events: none;
@@ -44,7 +44,7 @@ export class TooltipManager {
         
         let containsText = 'contains: ';
         if (starData.name.includes('Spica')) {
-            containsText += 'SOUND THREAD 001: SPICA';
+            containsText += 'feb25 jazz & ragas [mixcloud]';
         } else if (hasAudio && hasText) {
             containsText += `${starData.name.toLowerCase()} mix, ${this.getFileName(starData.textPath)}`;
         } else if (hasAudio) {
@@ -52,12 +52,11 @@ export class TooltipManager {
         } else if (hasText) {
             containsText += this.getFileName(starData.textPath);
         } else {
-            containsText += 'nothing yet';
+            containsText += 'nothing for now';
         }
     
         this.tooltip.innerHTML = `
             star: ${starData.name.toLowerCase()}<br>
-            constellation: virgo<br>
             <span style="color: ${containsColor}">${containsText}</span>
         `;
     

@@ -160,14 +160,35 @@ export class StarSystem {
         const wrapper = container?.querySelector('.mixcloud-wrapper');
         if (!container || !wrapper) return;
     
-        wrapper.innerHTML = `<iframe 
-            width="100%" 
-            height="120" 
-            src="${url}" 
-            frameborder="0">
-        </iframe>`;
+        // Clear existing content
+        wrapper.innerHTML = '';
         
+        // Create new iframe
+        const iframe = document.createElement('iframe');
+        iframe.width = '100%';
+        iframe.height = '120';
+        iframe.src = url;
+        iframe.frameBorder = '0';
+        iframe.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            border: none;
+            display: block;
+        `;
+        
+        // Add the iframe to wrapper
+        wrapper.appendChild(iframe);
+        
+        // Show container
         container.style.display = 'block';
+        
+        // Force reflow
+        container.offsetHeight;
+        
+        // Add visible class
         container.classList.add('visible');
     }
 

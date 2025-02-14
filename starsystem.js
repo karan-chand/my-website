@@ -8,7 +8,7 @@ export const starData = [
         name: 'α Virginis known as Spica',
         x: -0.6396, y: -2.586, z: -1.29181,
         size: 1.0,
-        link: 'https://player-widget.mixcloud.com/widget/iframe/?feed=%2Fkaranchand%2Fkaran-chand-spica%2F&hide_cover=1&embed_type=widget_standard',
+        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Fkaranchand%2Fkaran-chand-spica%2F',
         textPath: './text/spica.txt'
     },
     { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },
@@ -160,34 +160,15 @@ export class StarSystem {
         const wrapper = container?.querySelector('.mixcloud-wrapper');
         if (!container || !wrapper) return;
     
-        // Clear existing content
-        wrapper.innerHTML = '';
+        wrapper.innerHTML = `<iframe 
+            width="100%" 
+            height="120" 
+            src="${url}" 
+            frameborder="0">
+        </iframe>`;
         
-        // Create new iframe with all necessary attributes
-        const iframe = document.createElement('iframe');
-        iframe.width = '100%';
-        iframe.height = '120';
-        iframe.src = url;
-        iframe.frameBorder = '0';
-        iframe.allow = 'autoplay; encrypted-media';
-        iframe.style.display = 'block';
-        iframe.style.position = 'absolute';
-        iframe.style.top = '0';
-        iframe.style.left = '0';
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-presentation allow-popups');
-        
-        // Add the iframe to wrapper
-        wrapper.appendChild(iframe);
-        
-        // Show container with a slight delay to ensure proper rendering
-        setTimeout(() => {
-            container.style.display = 'block';
-            requestAnimationFrame(() => {
-                container.classList.add('visible');
-            });
-        }, 100);
+        container.style.display = 'block';
+        container.classList.add('visible');
     }
 
     hideMixcloud() {

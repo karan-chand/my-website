@@ -4,13 +4,13 @@ const gsap = window.gsap;
 import { STAR_CONFIG, ANIMATION_CONFIG } from './constants.js';
 
 export const starData = [
-    { 
-        name: 'α Virginis known as Spica', 
-        x: -0.6396, y: -2.586, z: -1.29181, 
+    {
+        name: 'α Virginis known as Spica',
+        x: -0.6396, y: -2.586, z: -1.29181,
         size: 1.0,
-        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Fkaranchand%2Fkaran-chand-spica%2F',
+        link: 'https://player-widget.mixcloud.com/widget/iframe/?feed=%2Fkaranchand%2Fkaran-chand-spica%2F&hide_cover=1&embed_type=widget_standard',
         textPath: './text/spica.txt'
-    },
+    }
     { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },
     { name: 'γ Virginis known as Porrima', x: 2.1864, y: -0.3196296, z: -0.01463, size: 0.5 },
     { name: 'δ Virginis known as Auva', x: 1.3512, y: 0.7918332, z: -1.14551, size: 0.4 },
@@ -163,26 +163,31 @@ export class StarSystem {
         // Clear existing content
         wrapper.innerHTML = '';
         
-        // Create new iframe
+        // Create new iframe with all necessary attributes
         const iframe = document.createElement('iframe');
         iframe.width = '100%';
         iframe.height = '120';
         iframe.src = url;
         iframe.frameBorder = '0';
-        iframe.allow = 'autoplay';
-        iframe.style.display = 'block';  // Ensure iframe is block-level
+        iframe.allow = 'autoplay; encrypted-media';
+        iframe.style.display = 'block';
+        iframe.style.position = 'absolute';
+        iframe.style.top = '0';
+        iframe.style.left = '0';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-presentation allow-popups');
         
         // Add the iframe to wrapper
         wrapper.appendChild(iframe);
         
-        // Show container
-        container.style.display = 'block';
-        
-        // Force reflow
-        container.offsetHeight;
-        
-        // Add visible class
-        container.classList.add('visible');
+        // Show container with a slight delay to ensure proper rendering
+        setTimeout(() => {
+            container.style.display = 'block';
+            requestAnimationFrame(() => {
+                container.classList.add('visible');
+            });
+        }, 100);
     }
 
     hideMixcloud() {

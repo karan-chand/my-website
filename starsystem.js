@@ -60,7 +60,7 @@ export class StarSystem {
         closeButton.innerHTML = '×';
         closeButton.setAttribute('aria-label', 'Close player');
         closeButton.addEventListener('click', () => {
-            window.resetPage();  // Use the global reset function instead of just clicking the title
+            window.resetPage();
         });
 
         container.append(wrapper, closeButton);
@@ -138,6 +138,7 @@ export class StarSystem {
             this.applyHoverEffect(hoveredMesh);
             this.currentlyHoveredStar = hoveredMesh;
             starNameElement.textContent = hoveredStarData.name;
+            starNameElement.style.opacity = '1';
         }
     }
 
@@ -145,7 +146,10 @@ export class StarSystem {
         if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
         
         this.resetPreviousHover();
-        if (starNameElement) starNameElement.textContent = '♍︎';
+        if (starNameElement) {
+            starNameElement.textContent = '♍︎';
+            starNameElement.style.opacity = '1';
+        }
         this.currentlyHoveredStar = null;
     }
 
@@ -161,18 +165,34 @@ export class StarSystem {
             height="120" 
             src="${url}" 
             frameborder="0" 
-            sandbox="allow-scripts allow-same-origin allow-presentation"
-            allow="autoplay"
-            crossorigin="anonymous"
-        ></iframe>`;
+            allow="autoplay">
+        </iframe>`;
+        
+        // Set display block first
         container.style.display = 'block';
+        
+        // Force a reflow
+        container.offsetHeight;
+        
+        // Then add visible class (triggers any CSS transitions)
+        container.classList.add('visible');
     }
 
     hideMixcloud() {
         const container = document.getElementById('mixcloud-container');
-        const wrapper = container?.querySelector('.mixcloud-wrapper');
-        if (wrapper) wrapper.innerHTML = '';
-        if (container) container.style.display = 'none';
+        if (!container) return;
+        
+        // First remove the visible class
+        container.classList.remove('visible');
+        
+        // Wait for any CSS transitions to complete
+        setTimeout(() => {
+            container.style.display = 'none';
+            const wrapper = container.querySelector('.mixcloud-wrapper');
+            if (wrapper) {
+                wrapper.innerHTML = '';
+            }
+        }, 300); // Match your CSS transition duration
     }
 
     startPulse(mesh) {

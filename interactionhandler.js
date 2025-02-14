@@ -140,6 +140,9 @@ export class InteractionHandler {
             .add(() => {
                 this.layoutManager.hideContent();
                 this.tooltipManager.hide();
+                if (this.starSystem.activeStar) {
+                    this.starSystem.stopPulse(this.starSystem.activeStar);
+                }
                 this.starSystem.resetAllStars();
                 this.starSystem.hideMixcloud();
             }, 0);
@@ -222,6 +225,9 @@ export class InteractionHandler {
                 }, 0);
 
             this.starSystem.activeStar = star;
+            if (starData.link || starData.textPath) {
+                this.starSystem.startPulse(star);
+            }
             if (starData.link) {
                 this.starSystem.showMixcloud(starData.link);
             }

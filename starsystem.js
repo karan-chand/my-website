@@ -160,21 +160,28 @@ export class StarSystem {
         const wrapper = container?.querySelector('.mixcloud-wrapper');
         if (!container || !wrapper) return;
     
-        wrapper.innerHTML = `<iframe 
-            width="100%" 
-            height="120" 
-            src="${url}" 
-            frameborder="0" 
-            allow="autoplay">
-        </iframe>`;
+        // Clear existing content
+        wrapper.innerHTML = '';
         
-        // Set display block first
+        // Create new iframe
+        const iframe = document.createElement('iframe');
+        iframe.width = '100%';
+        iframe.height = '120';
+        iframe.src = url;
+        iframe.frameBorder = '0';
+        iframe.allow = 'autoplay';
+        iframe.style.display = 'block';  // Ensure iframe is block-level
+        
+        // Add the iframe to wrapper
+        wrapper.appendChild(iframe);
+        
+        // Show container
         container.style.display = 'block';
         
-        // Force a reflow
+        // Force reflow
         container.offsetHeight;
         
-        // Then add visible class (triggers any CSS transitions)
+        // Add visible class
         container.classList.add('visible');
     }
 

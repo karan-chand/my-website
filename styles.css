@@ -272,14 +272,11 @@ nav ul .dropdown li a:hover {
     background-color: rgba(0, 0, 0, 0.95);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1200;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    display: none;
 }
 
 #mixcloud-container.visible {
-    opacity: 1;
-    visibility: visible;
+    display: block;
 }
 
 .mixcloud-wrapper {
@@ -290,15 +287,16 @@ nav ul .dropdown li a:hover {
     bottom: 0;
     overflow: hidden;
     z-index: 1201;
+    display: flex;  /* Added */
+    align-items: center;  /* Added */
 }
 
 .mixcloud-wrapper iframe {
     width: 100%;
-    height: 100%;
+    height: 120px;  /* Explicit height */
     border: none;
-    position: relative;
-    z-index: 1202;
     display: block;
+    z-index: 1202;
 }
 
 .mixcloud-close-btn {

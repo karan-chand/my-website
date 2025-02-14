@@ -77,7 +77,7 @@ export const UI_CONFIG = {
         button: '14px',
         cursorSize: '10px',
         spacing: '10px',
-        mixcloudHeight: '60px',
+        mixcloudHeight: '120px',
         playerWidth: '90vw',
         playerMaxWidth: '1200px'
     },

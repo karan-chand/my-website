@@ -19,7 +19,7 @@ export class UIManager {
                         <ul class="dropdown" role="menu">
                             <li role="none">
                                 <a href="#" id="spica-menu" onclick="window.triggerSpica()" role="menuitem">
-                                    sound thread 001: spica
+                                    spica - feb25 jazz & ragas [mixcloud]
                                 </a>
                             </li>
                         </ul>

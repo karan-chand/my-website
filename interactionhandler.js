@@ -183,13 +183,20 @@ export class InteractionHandler {
     }
 
     async transitionToStar(star, starData) {
-        if (this.isTransitioning) return;
+        console.log('transitionToStar called with data:', starData);
+        
+        if (this.isTransitioning) {
+            console.log('Already transitioning, skipping');
+            return;
+        }
         
         try {
             this.isTransitioning = true;
+            console.log('Starting transition');
             
             // Show content first if available
             if (starData.textPath) {
+                console.log('Loading text content from:', starData.textPath);
                 await this.layoutManager.showContent(starData.name, starData.textPath, !!starData.link);
             }
             
@@ -208,6 +215,8 @@ export class InteractionHandler {
                 z: starPosition.z + distance
             };
 
+            console.log('Moving camera to:', cameraPosition);
+
             timeline
                 .to(this.sceneSetup.camera.position, {
                     ...cameraPosition,
@@ -225,14 +234,20 @@ export class InteractionHandler {
                 }, 0);
 
             this.starSystem.activeStar = star;
+            console.log('Set active star');
+
             if (starData.link || starData.textPath) {
+                console.log('Starting pulse animation');
                 this.starSystem.startPulse(star);
             }
+            
             if (starData.link) {
+                console.log('Showing Mixcloud with URL:', starData.link);
                 this.starSystem.showMixcloud(starData.link);
             }
 
             await timeline;
+            console.log('Transition complete');
 
         } catch (error) {
             console.error('Star transition error:', error);

@@ -1,4 +1,4 @@
-const DEBUG = false;
+const DEBUG = true;  // Changed to true for debugging
 
 function initializeCustomCursor() {
     const cursor = document.getElementById('custom-cursor');
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { SceneSetup } = await import('./scenesetup.js');
         const { StarSystem } = await import('./starsystem.js');
         const { InteractionHandler } = await import('./interactionhandler.js');
-        if (DEBUG) console.log('Initializing core components...');
+        console.log('Initializing core components...'); // Added logging
        
         const sceneSetup = new SceneSetup();
         if (!sceneSetup.renderer) {
@@ -32,13 +32,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const interactionHandler = new InteractionHandler(sceneSetup, starSystem);
         
         // Initialize constellation
-        if (DEBUG) console.log('Creating star system...');
+        console.log('Creating star system...'); // Added logging
         starSystem.createStars();
         
         // Global functions with error handling
         window.resetPage = function() {
             try {
-                if (DEBUG) console.log('Resetting page...');
+                console.log('Reset page called'); // Added logging
                 starSystem.resetAllStars();
                 sceneSetup.resetCamera();
                 interactionHandler.layoutManager.hideContent();
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         window.triggerSpica = function() {
             try {
-                if (DEBUG) console.log('Triggering Spica...');
+                console.log('triggerSpica called'); // Added logging
                 interactionHandler.triggerSpecificStar('Spica');
             } catch (error) {
                 console.error('Spica trigger failed:', error);
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Start animation if scene is ready
         if (sceneSetup.scene && sceneSetup.camera) {
-            if (DEBUG) console.log('Starting animation loop');
+            console.log('Starting animation loop'); // Added logging
             animate();
         } else {
             throw new Error('Scene or camera not initialized');
@@ -102,6 +102,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             starSystem.cleanup();
             interactionHandler.cleanup();
         });
+        
+        console.log('Initialization complete'); // Added logging
     } catch (error) {
         console.error('Initialization failed:', error);
         document.body.innerHTML = `

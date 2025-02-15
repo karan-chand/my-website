@@ -21,7 +21,7 @@ export class UIManager {
                         <ul class="dropdown" role="menu">
                             <li role="none">
                                 <a href="#" id="spica-menu" role="menuitem">
-                                    spica - feb25 jazz & ragas [mixcloud]
+                                    spica - jazz & ragas [mixcloud]
                                 </a>
                             </li>
                         </ul>

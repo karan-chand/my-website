@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="KARAN.INK - Interactive Constellation Experience">
     <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' https://*.mixcloud.com;
+        default-src 'self' https://*.mixcloud.com https://*.cloudflareinsights.com;
         frame-src 'self' https://*.mixcloud.com https://www.mixcloud.com;
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com unpkg.com https://*.mixcloud.com;
-        style-src 'self' 'unsafe-inline';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' cdnjs.cloudflare.com unpkg.com https://*.mixcloud.com https://*.cloudflareinsights.com;
+        style-src 'self' 'unsafe-inline' https://fonts.boron.ink;
+        font-src 'self' https://fonts.boron.ink;
         img-src 'self' data: https://*.mixcloud.com;
-        connect-src 'self' https://*.mixcloud.com https://*.cloudflareinsights.com;
-        object-src 'none';
-        frame-ancestors 'self';">
+        connect-src 'self' https://*.mixcloud.com https://*.cloudflareinsights.com wss://*.mixcloud.com;
+        frame-ancestors 'self';
+        worker-src 'self' blob:;">
     <meta name="theme-color" content="#000000">
     <meta name="author" content="Karan">
     <title>KARAN.INK</title>

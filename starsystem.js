@@ -154,24 +154,36 @@ export class StarSystem {
     }
 
     showMixcloud(url) {
-        if (!url) return;
+        console.log('showMixcloud called with URL:', url);
     
         const container = document.getElementById('mixcloud-container');
         const wrapper = container?.querySelector('.mixcloud-wrapper');
-        if (!container || !wrapper) return;
-    
-        wrapper.innerHTML = `<iframe 
-            width="100%" 
-            height="120" 
-            src="${url}" 
-            frameborder="0">
-        </iframe>`;
         
+        if (!container || !wrapper) {
+            console.error('Container or wrapper not found');
+            return;
+        }
+    
+        // Clear wrapper
+        wrapper.innerHTML = '';
+        
+        // Create iframe element
+        const iframe = document.createElement('iframe');
+        iframe.width = '100%';
+        iframe.height = '120';
+        iframe.src = url;
+        iframe.frameBorder = '0';
+        
+        // Add to wrapper
+        wrapper.appendChild(iframe);
+        
+        // Show container
         container.style.display = 'block';
         container.classList.add('visible');
         
-        // Log to confirm execution
-        console.log('Mixcloud player shown:', url);
+        console.log('Mixcloud iframe created with src:', url);
+        console.log('Container visible:', container.style.display);
+        console.log('Wrapper contents:', wrapper.innerHTML);
     }
 
     hideMixcloud() {

@@ -13,14 +13,14 @@ export class UIManager {
         console.log('Creating base structure');
         const header = document.createElement('header');
         header.innerHTML = `
-            <h1 onclick="window.resetPage()" tabindex="0" role="button" aria-label="Reset view">KARAN.INK</h1>
+            <h1 tabindex="0" role="button" aria-label="Reset view">KARAN.INK</h1>
             <nav role="navigation" aria-label="Main navigation">
                 <ul>
                     <li>
                         <a href="#" class="nav-link" aria-haspopup="true" aria-expanded="false">stars</a>
                         <ul class="dropdown" role="menu">
                             <li role="none">
-                                <a href="#" id="spica-menu" onclick="window.triggerSpica()" role="menuitem">
+                                <a href="#" id="spica-menu" role="menuitem">
                                     spica - feb25 jazz & ragas [mixcloud]
                                 </a>
                             </li>
@@ -48,20 +48,28 @@ export class UIManager {
             document.body.appendChild(cursor);
         }
 
-        console.log('Base structure created, checking spica-menu:', document.getElementById('spica-menu'));
+        console.log('Base structure created');
     }
 
     setupEventListeners() {
         console.log('Setting up event listeners');
-        const dropdownTriggers = document.querySelectorAll('nav ul li');
         
+        // Add title click handler
+        const title = document.querySelector('header h1');
+        title.addEventListener('click', () => {
+            console.log('Title clicked');
+            if (typeof window.resetPage === 'function') {
+                window.resetPage();
+            }
+        });
+
+        // Setup dropdown handlers
+        const dropdownTriggers = document.querySelectorAll('nav ul li');
         dropdownTriggers.forEach(trigger => {
             const dropdown = trigger.querySelector('.dropdown');
             const link = trigger.querySelector('.nav-link');
-            const spicaLink = trigger.querySelector('#spica-menu');
             
-            console.log('Found spicaLink:', spicaLink);
-            
+            // Setup dropdown visibility functions
             const showDropdown = () => {
                 if (dropdown) {
                     console.log('Showing dropdown');
@@ -87,11 +95,13 @@ export class UIManager {
                     });
                 }
             };
-    
-            // Handle Spica link click
+
+            // Setup Spica click handler
+            const spicaLink = document.getElementById('spica-menu');
             if (spicaLink) {
+                console.log('Setting up Spica click handler');
                 spicaLink.addEventListener('click', (e) => {
-                    console.log('Spica link clicked');
+                    console.log('Spica clicked');
                     e.preventDefault();
                     e.stopPropagation();
                     if (typeof window.triggerSpica === 'function') {
@@ -99,14 +109,15 @@ export class UIManager {
                         window.triggerSpica();
                         hideDropdown();
                     } else {
-                        console.error('triggerSpica function not found on window');
+                        console.error('triggerSpica not found');
                     }
                 });
             }
     
+            // Setup touch/mouse handlers
             if (this.touchDevice) {
                 trigger.addEventListener('click', (e) => {
-                    console.log('Touch device click');
+                    console.log('Touch click');
                     e.preventDefault();
                     const isVisible = dropdown.style.display === 'block';
                     isVisible ? hideDropdown() : showDropdown();
@@ -127,15 +138,6 @@ export class UIManager {
                     hideDropdown();
                 }
             });
-        });
-    
-        // Title keyboard handling
-        const title = document.querySelector('header h1');
-        title.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                window.resetPage();
-            }
         });
 
         console.log('Event listeners setup complete');

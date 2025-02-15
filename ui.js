@@ -30,20 +30,12 @@ export class UIManager {
             </nav>
         `;
 
-        const starName = document.createElement('div');
-        starName.id = 'star-name';
-        starName.className = 'static-text';
-        starName.style.opacity = '0';
-        starName.style.pointerEvents = 'none';
-        starName.setAttribute('aria-hidden', 'true');
-
         const cursor = document.createElement('div');
         cursor.id = 'custom-cursor';
         cursor.className = 'custom-cursor';
         cursor.setAttribute('aria-hidden', 'true');
 
         document.body.appendChild(header);
-        document.body.appendChild(starName);
         if (!this.touchDevice) {
             document.body.appendChild(cursor);
         }

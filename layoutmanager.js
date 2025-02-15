@@ -174,7 +174,7 @@ export class LayoutManager {
             }
     
             const text = await response.text();
-            const processedText = '\n\n\n' + text  // Add 3 blank lines at the top
+            const processedText = '\n\n' + text  // Add 2 blank lines at the top
                 .split('\n')
                 .map(line => line.trim())
                 .join('\n')

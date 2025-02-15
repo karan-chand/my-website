@@ -48,23 +48,67 @@ export class StarSystem {
     }
 
     initializeMixcloudContainer() {
+        // First remove any existing container
+        const existingContainer = document.getElementById('mixcloud-container');
+        if (existingContainer) {
+            existingContainer.remove();
+        }
+    
         const container = document.createElement('div');
         container.id = 'mixcloud-container';
-        container.style.display = 'none';
+        container.style.cssText = `
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background-color: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1200;
+            display: none;
+        `;
         
         const wrapper = document.createElement('div');
         wrapper.className = 'mixcloud-wrapper';
+        wrapper.style.cssText = `
+            position: absolute;
+            left: 40px;
+            right: 0;
+            top: 0;
+            height: 120px;
+            z-index: 1201;
+        `;
         
         const closeButton = document.createElement('button');
         closeButton.className = 'mixcloud-close-btn';
         closeButton.innerHTML = '×';
         closeButton.setAttribute('aria-label', 'Close player');
+        closeButton.style.cssText = `
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 1203;
+        `;
+        
         closeButton.addEventListener('click', () => {
-            window.resetPage();
+            if (typeof window.resetPage === 'function') {
+                window.resetPage();
+            }
         });
-
-        container.append(wrapper, closeButton);
+    
+        container.appendChild(wrapper);
+        container.appendChild(closeButton);
         document.body.appendChild(container);
+    
+        console.log('Mixcloud container initialized:', container);
+        console.log('Wrapper created:', wrapper);
+        console.log('Close button added:', closeButton);
     }
 
     createStars() {
@@ -170,10 +214,17 @@ export class StarSystem {
         // Clear wrapper
         wrapper.innerHTML = '';
         
-        // Create iframe
+        // Create iframe with explicit styles
         const iframe = document.createElement('iframe');
-        iframe.width = '100%';
-        iframe.height = '120';
+        iframe.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            border: none;
+            z-index: 1202;
+        `;
         iframe.src = url;
         iframe.frameBorder = '0';
         
@@ -183,9 +234,10 @@ export class StarSystem {
         wrapper.appendChild(iframe);
         console.log('Iframe added to wrapper');
         
-        // Show container
+        // Explicitly show container with all needed styles
         container.style.display = 'block';
         container.classList.add('visible');
+        container.style.opacity = '1';
         
         console.log('Container now visible');
         console.log('Final wrapper contents:', wrapper.innerHTML);

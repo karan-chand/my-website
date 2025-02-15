@@ -8,7 +8,7 @@ export const starData = [
         name: 'α Virginis known as Spica',
         x: -0.6396, y: -2.586, z: -1.29181,
         size: 1.0,
-        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Fkaranchand%2Fkaran-chand-spica%2F',
+        link: 'https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&mini=1&feed=%2Fkaranchand%2Fkaran-chand-spica%2F',
         textPath: './text/spica.txt'
     },
     { name: 'β Virginis known as Zavijava', x: 5.5248, y: 0.3765216, z: 0.0, size: 0.3 },
@@ -154,10 +154,13 @@ export class StarSystem {
     }
 
     showMixcloud(url) {
-        console.log('showMixcloud called with URL:', url);
+        console.log('Showing Mixcloud with URL:', url);
     
         const container = document.getElementById('mixcloud-container');
         const wrapper = container?.querySelector('.mixcloud-wrapper');
+        
+        console.log('Container:', container);
+        console.log('Wrapper:', wrapper);
         
         if (!container || !wrapper) {
             console.error('Container or wrapper not found');
@@ -167,24 +170,25 @@ export class StarSystem {
         // Clear wrapper
         wrapper.innerHTML = '';
         
-        // Create iframe element
+        // Create iframe with simpler attributes first
         const iframe = document.createElement('iframe');
         iframe.width = '100%';
         iframe.height = '120';
         iframe.src = url;
-        iframe.frameBorder = '0';
-        iframe.crossOrigin = 'anonymous';
-        iframe.setAttribute('allow', 'autoplay');
-        iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-presentation allow-popups');
+        iframe.style.border = 'none';
         
-        // Add to DOM
+        console.log('Created iframe:', iframe);
+        
+        // Add to wrapper
         wrapper.appendChild(iframe);
+        console.log('Iframe added to wrapper');
         
         // Show container
         container.style.display = 'block';
         container.classList.add('visible');
         
-        console.log('Iframe created with URL:', url);
+        console.log('Container now visible');
+        console.log('Final wrapper contents:', wrapper.innerHTML);
     }
 
     hideMixcloud() {

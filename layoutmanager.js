@@ -174,11 +174,9 @@ export class LayoutManager {
             }
     
             const text = await response.text();
-            // Process the text to ensure consistent indentation
             const processedText = text
                 .split('\n')
                 .map(line => line.trim())  // Remove existing indentation
-                .map(line => `    ${line}`)  // Add consistent indentation to all lines
                 .join('\n')
                 .trim();  // Remove any extra whitespace at start/end
             

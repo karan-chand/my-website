@@ -3,12 +3,14 @@ const gsap = window.gsap;
 
 export class UIManager {
     constructor() {
+        console.log('Initializing UIManager');
         this.appendBaseStructure();
         this.setupEventListeners();
         this.touchDevice = 'ontouchstart' in window;
     }
 
     appendBaseStructure() {
+        console.log('Creating base structure');
         const header = document.createElement('header');
         header.innerHTML = `
             <h1 onclick="window.resetPage()" tabindex="0" role="button" aria-label="Reset view">KARAN.INK</h1>
@@ -45,9 +47,12 @@ export class UIManager {
         if (!this.touchDevice) {
             document.body.appendChild(cursor);
         }
+
+        console.log('Base structure created, checking spica-menu:', document.getElementById('spica-menu'));
     }
 
     setupEventListeners() {
+        console.log('Setting up event listeners');
         const dropdownTriggers = document.querySelectorAll('nav ul li');
         
         dropdownTriggers.forEach(trigger => {
@@ -55,8 +60,11 @@ export class UIManager {
             const link = trigger.querySelector('.nav-link');
             const spicaLink = trigger.querySelector('#spica-menu');
             
+            console.log('Found spicaLink:', spicaLink);
+            
             const showDropdown = () => {
                 if (dropdown) {
+                    console.log('Showing dropdown');
                     dropdown.style.display = 'block';
                     link.setAttribute('aria-expanded', 'true');
                     gsap.fromTo(dropdown, 
@@ -68,6 +76,7 @@ export class UIManager {
     
             const hideDropdown = () => {
                 if (dropdown) {
+                    console.log('Hiding dropdown');
                     link.setAttribute('aria-expanded', 'false');
                     gsap.to(dropdown, {
                         opacity: 0,
@@ -82,17 +91,22 @@ export class UIManager {
             // Handle Spica link click
             if (spicaLink) {
                 spicaLink.addEventListener('click', (e) => {
+                    console.log('Spica link clicked');
                     e.preventDefault();
                     e.stopPropagation();
                     if (typeof window.triggerSpica === 'function') {
+                        console.log('Calling triggerSpica');
                         window.triggerSpica();
                         hideDropdown();
+                    } else {
+                        console.error('triggerSpica function not found on window');
                     }
                 });
             }
     
             if (this.touchDevice) {
                 trigger.addEventListener('click', (e) => {
+                    console.log('Touch device click');
                     e.preventDefault();
                     const isVisible = dropdown.style.display === 'block';
                     isVisible ? hideDropdown() : showDropdown();
@@ -105,6 +119,7 @@ export class UIManager {
             // Keyboard navigation
             trigger.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
+                    console.log('Keyboard trigger');
                     e.preventDefault();
                     showDropdown();
                 }
@@ -122,9 +137,12 @@ export class UIManager {
                 window.resetPage();
             }
         });
+
+        console.log('Event listeners setup complete');
     }
 
     cleanup() {
+        console.log('Cleaning up UI');
         const cursor = document.getElementById('custom-cursor');
         if (cursor) {
             cursor.remove();

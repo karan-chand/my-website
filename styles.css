@@ -99,6 +99,11 @@ body, html {
     font-family: 'Halyard Text', Arial, sans-serif;
     line-height: 1.6;
     white-space: pre-wrap;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
 }
 
 .handle {

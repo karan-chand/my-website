@@ -176,9 +176,9 @@ export class LayoutManager {
             const text = await response.text();
             const processedText = text
                 .split('\n')
-                .map(line => line.trim())  // Remove existing indentation
+                .map(line => line.trim())
                 .join('\n')
-                .trim();  // Remove any extra whitespace at start/end
+                .trim();
             
             this.layout.textInner.innerHTML = `<div style="font-family: 'Halyard Text', Arial, sans-serif; line-height: 1.6; white-space: pre-wrap">${processedText}</div>`;
             

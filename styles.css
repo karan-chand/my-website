@@ -269,10 +269,11 @@ nav ul .dropdown li a:hover {
     left: 0;
     width: 100%;
     height: 120px;
-    background-color: rgba(0, 0, 0, 0.95);  /* Nearly black background */
+    background-color: rgba(0, 0, 0, 0.95);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 1200;
     display: none;
+    transform: translateZ(0); /* Force hardware acceleration */
 }
 
 #mixcloud-container.visible {
@@ -285,8 +286,8 @@ nav ul .dropdown li a:hover {
     right: 0;
     top: 0;
     height: 120px;
-    background-color: rgba(0, 255, 255, 0.2);  /* Cyan for visibility on dark background */
-    overflow: visible;  /* Changed from hidden */
+    /* Remove the debug background color */
+    /* background-color: rgba(0, 255, 255, 0.2); */
     z-index: 1201;
 }
 
@@ -295,10 +296,9 @@ nav ul .dropdown li a:hover {
     top: 0;
     left: 0;
     width: 100%;
-    height: 120px;
+    height: 100%;
     border: none;
     z-index: 1202;
-    display: block;
 }
 
 .mixcloud-close-btn {

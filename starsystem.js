@@ -154,8 +154,13 @@ export class StarSystem {
     }
 
     showMixcloud(url) {
+        console.log('Showing Mixcloud with URL:', url);
+        
         const container = document.getElementById('mixcloud-container');
         const wrapper = container?.querySelector('.mixcloud-wrapper');
+        
+        console.log('Container:', container);
+        console.log('Wrapper:', wrapper);
         
         if (!container || !wrapper) {
             console.error('Container or wrapper not found');
@@ -165,19 +170,25 @@ export class StarSystem {
         // Clear wrapper
         wrapper.innerHTML = '';
         
-        // Create iframe exactly as Mixcloud provides it
+        // Create iframe
         const iframe = document.createElement('iframe');
         iframe.width = '100%';
         iframe.height = '120';
         iframe.src = url;
         iframe.frameBorder = '0';
         
+        console.log('Created iframe:', iframe);
+        
         // Add to wrapper
         wrapper.appendChild(iframe);
+        console.log('Iframe added to wrapper');
         
         // Show container
         container.style.display = 'block';
         container.classList.add('visible');
+        
+        console.log('Container now visible');
+        console.log('Final wrapper contents:', wrapper.innerHTML);
     }
 
     hideMixcloud() {

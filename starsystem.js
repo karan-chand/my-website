@@ -173,17 +173,18 @@ export class StarSystem {
         iframe.height = '120';
         iframe.src = url;
         iframe.frameBorder = '0';
+        iframe.crossOrigin = 'anonymous';
+        iframe.setAttribute('allow', 'autoplay');
+        iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-presentation allow-popups');
         
-        // Add to wrapper
+        // Add to DOM
         wrapper.appendChild(iframe);
         
         // Show container
         container.style.display = 'block';
         container.classList.add('visible');
         
-        console.log('Mixcloud iframe created with src:', url);
-        console.log('Container visible:', container.style.display);
-        console.log('Wrapper contents:', wrapper.innerHTML);
+        console.log('Iframe created with URL:', url);
     }
 
     hideMixcloud() {

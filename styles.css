@@ -354,18 +354,6 @@ nav ul .dropdown li a:hover {
     }
 }
 
-/* Star Name Display */
-.static-text {
-    position: fixed;
-    top: 10px;
-    right: 20px;
-    color: white;
-    font-size: 18px;
-    z-index: 1250;
-    opacity: 0;
-    pointer-events: none;
-}
-
 /* Media Queries */
 @media (max-width: 768px) {
     header {

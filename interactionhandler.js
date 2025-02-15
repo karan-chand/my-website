@@ -169,11 +169,11 @@ export class InteractionHandler {
                 const starData = this.starSystem.starMeshes.find(
                     star => star.mesh === starGroup
                 );
-                this.starSystem.handleHover(starGroup, this.starNameElement);
+                this.starSystem.handleHover(starGroup);
                 this.tooltipManager.update(event, starData);
                 document.body.style.cursor = 'pointer';
             } else {
-                this.starSystem.clearHover(this.starNameElement);
+                this.starSystem.clearHover();
                 this.tooltipManager.hide();
                 document.body.style.cursor = 'default';
             }

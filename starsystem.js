@@ -172,8 +172,8 @@ export class StarSystem {
         }
     }
 
-    handleHover(hoveredMesh, starNameElement) {
-        if (!hoveredMesh || !starNameElement) return;
+    handleHover(hoveredMesh) {
+        if (!hoveredMesh) return;
 
         const hoveredStarData = this.starMeshes.find(star => star.mesh === hoveredMesh);
         
@@ -181,9 +181,14 @@ export class StarSystem {
             this.resetPreviousHover();
             this.applyHoverEffect(hoveredMesh);
             this.currentlyHoveredStar = hoveredMesh;
-            starNameElement.textContent = hoveredStarData.name;
-            starNameElement.style.opacity = '1';
         }
+    }
+
+    clearHover() {
+        if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
+        
+        this.resetPreviousHover();
+        this.currentlyHoveredStar = null;
     }
 
     clearHover(starNameElement) {

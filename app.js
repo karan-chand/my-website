@@ -107,9 +107,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Initialization failed:', error);
         document.body.innerHTML = `
-            <div style="color: white; text-align: center; padding: 20px;">
-                Unable to initialize application. Please ensure your browser supports WebGL and JavaScript.
-                <br>Error: ${error.message}
+            <div style="
+                color: white; 
+                text-align: center; 
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                box-sizing: border-box;
+            ">
+                <div style="max-width: 800px;">
+                    <h2 style="margin-bottom: 20px;">if U are seeing this the code is broken... check back later!</h2>
+                    
+                    <div style="margin: 30px 0;">
+                        <img 
+                            src="images/140.96.jpg" 
+                            alt="Error Image" 
+                            style="
+                                max-width: 100%;
+                                height: auto;
+                                display: block;
+                                margin: 0 auto;
+                                border-radius: 4px;
+                                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+                            "
+                            onerror="this.style.display='none'; console.error('Failed to load error image');"
+                        />
+                    </div>
+                    
+                    <div style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 15px;
+                        border-radius: 5px;
+                        margin-top: 20px;
+                        font-family: monospace;
+                        text-align: left;
+                    ">Error: ${error.message}</div>
+                    
+                    <button onclick="window.location.reload()" style="
+                        background: #00ffcc;
+                        color: black;
+                        border: none;
+                        padding: 10px 20px;
+                        margin-top: 30px;
+                        cursor: pointer;
+                        border-radius: 4px;
+                    ">Try Again</button>
+                </div>
             </div>
         `;
     }

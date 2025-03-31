@@ -119,7 +119,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 box-sizing: border-box;
             ">
                 <div style="max-width: 800px;">
-                    <h2 style="margin-bottom: 20px;">if U are seeing this the code is broken... check back later!</h2>
+                    <div style="
+                        background: rgba(255,255,255,0.1);
+                        padding: 20px;
+                        border-radius: 5px;
+                        margin-bottom: 30px;
+                        font-family: monospace;
+                        text-align: center;
+                    ">
+                        <h2 style="margin: 0 0 10px 0;">If you are seeing this the code is broken. Check back later!</h2>
+                        <p style="margin: 10px 0 0 0;">Error: ${error.message}</p>
+                    </div>
                     
                     <div style="margin: 30px 0;">
                         <img 
@@ -137,21 +147,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         />
                     </div>
                     
-                    <div style="
-                        background: rgba(255,255,255,0.1);
-                        padding: 15px;
-                        border-radius: 5px;
-                        margin-top: 20px;
-                        font-family: monospace;
-                        text-align: left;
-                    ">Error: ${error.message}</div>
-                    
                     <button onclick="window.location.reload()" style="
                         background: #00ffcc;
                         color: black;
                         border: none;
                         padding: 10px 20px;
-                        margin-top: 30px;
+                        margin-top: 20px;
                         cursor: pointer;
                         border-radius: 4px;
                     ">Try Again</button>

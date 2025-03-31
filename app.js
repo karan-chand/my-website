@@ -127,8 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         font-family: monospace;
                         text-align: center;
                     ">
-                        <h2 style="margin: 0 0 10px 0;">If you are seeing this the code is broken. Check back later!</h2>
-                        <p style="margin: 10px 0 0 0;">Error: ${error.message}</p>
+                        <h2 style="margin: 0 0 10px 0;">if U are seeing this the code is broken. check back later!</h2>
                     </div>
                     
                     <div style="margin: 30px 0;">

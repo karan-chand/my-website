@@ -21,7 +21,7 @@ export class UIManager {
                         <ul class="dropdown" role="menu">
                             <li role="none">
                                 <a href="#" id="spica-menu" role="menuitem">
-                                    spica — jazz and ragas mix
+                                    α — south asian classical and jazz mix
                                 </a>
                             </li>
                         </ul>

@@ -29,14 +29,14 @@ export const starData = [
 export class StarSystem {
     constructor(scene) {
         if (!scene) throw new Error('Scene is required for StarSystem initialization');
-        
+
         this.scene = scene;
         this.starMeshes = [];
         this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
         this.disposables = new Set();
-        
+
         this.initializeGeometries();
         this.initializeMixcloudContainer();
     }
@@ -48,67 +48,31 @@ export class StarSystem {
     }
 
     initializeMixcloudContainer() {
-        // First remove any existing container
         const existingContainer = document.getElementById('mixcloud-container');
         if (existingContainer) {
             existingContainer.remove();
         }
-    
+
         const container = document.createElement('div');
         container.id = 'mixcloud-container';
-        container.style.cssText = `
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 120px;
-            background-color: rgba(0, 0, 0, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 1200;
-            display: none;
-        `;
-        
+
         const wrapper = document.createElement('div');
         wrapper.className = 'mixcloud-wrapper';
-        wrapper.style.cssText = `
-            position: absolute;
-            left: 40px;
-            right: 0;
-            top: 0;
-            height: 120px;
-            z-index: 1201;
-        `;
-        
+
         const closeButton = document.createElement('button');
         closeButton.className = 'mixcloud-close-btn';
         closeButton.innerHTML = '×';
         closeButton.setAttribute('aria-label', 'Close player');
-        closeButton.style.cssText = `
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 32px;
-            cursor: pointer;
-            z-index: 1203;
-        `;
-        
+
         closeButton.addEventListener('click', () => {
             if (typeof window.resetPage === 'function') {
                 window.resetPage();
             }
         });
-    
+
         container.appendChild(wrapper);
         container.appendChild(closeButton);
         document.body.appendChild(container);
-    
-        console.log('Mixcloud container initialized:', container);
-        console.log('Wrapper created:', wrapper);
-        console.log('Close button added:', closeButton);
     }
 
     createStars() {
@@ -148,23 +112,23 @@ export class StarSystem {
 
             const starMesh = new THREE.Mesh(this.starGeometry, material);
             const glowMesh = new THREE.Mesh(this.glowGeometry, glowMaterial);
-            
+
             const scale = star.size || 1;
             starMesh.scale.setScalar(scale);
             glowMesh.scale.setScalar(scale);
 
             const group = new THREE.Group();
             group.add(starMesh, glowMesh);
-            
+
             group.position.set(
                 star.x * STAR_CONFIG.scaleMultiplier,
                 star.y * STAR_CONFIG.scaleMultiplier,
                 star.z * STAR_CONFIG.scaleMultiplier
             );
-            
+
             group.userData = { starMesh, glowMesh };
             this.disposables.add(material, glowMaterial);
-            
+
             return group;
         } catch (error) {
             console.error('Error creating star mesh:', error);
@@ -176,7 +140,7 @@ export class StarSystem {
         if (!hoveredMesh) return;
 
         const hoveredStarData = this.starMeshes.find(star => star.mesh === hoveredMesh);
-        
+
         if (this.currentlyHoveredStar !== hoveredMesh && hoveredStarData) {
             this.resetPreviousHover();
             this.applyHoverEffect(hoveredMesh);
@@ -186,83 +150,42 @@ export class StarSystem {
 
     clearHover() {
         if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
-        
-        this.resetPreviousHover();
-        this.currentlyHoveredStar = null;
-    }
 
-    clearHover(starNameElement) {
-        if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
-        
         this.resetPreviousHover();
-        if (starNameElement) {
-            starNameElement.textContent = '♍︎';
-            starNameElement.style.opacity = '1';
-        }
         this.currentlyHoveredStar = null;
     }
 
     showMixcloud(url) {
-        console.log('Showing Mixcloud with URL:', url);
-        
         const container = document.getElementById('mixcloud-container');
         const wrapper = container?.querySelector('.mixcloud-wrapper');
-        
-        console.log('Container:', container);
-        console.log('Wrapper:', wrapper);
-        
+
         if (!container || !wrapper) {
-            console.error('Container or wrapper not found');
+            console.error('Mixcloud container or wrapper not found');
             return;
         }
-    
-        // Clear wrapper
+
         wrapper.innerHTML = '';
-        
-        // Create iframe with explicit styles
+
         const iframe = document.createElement('iframe');
-        iframe.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 120px;
-            border: none;
-            z-index: 1202;
-        `;
         iframe.src = url;
         iframe.frameBorder = '0';
-        
-        console.log('Created iframe:', iframe);
-        
-        // Add to wrapper
         wrapper.appendChild(iframe);
-        console.log('Iframe added to wrapper');
-        
-        // Explicitly show container with all needed styles
-        container.style.display = 'block';
+
         container.classList.add('visible');
-        container.style.opacity = '1';
-        
-        console.log('Container now visible');
-        console.log('Final wrapper contents:', wrapper.innerHTML);
     }
 
     hideMixcloud() {
         const container = document.getElementById('mixcloud-container');
         if (!container) return;
-        
-        // First remove the visible class
+
         container.classList.remove('visible');
-        
-        // Wait for any CSS transitions to complete
+
         setTimeout(() => {
-            container.style.display = 'none';
             const wrapper = container.querySelector('.mixcloud-wrapper');
             if (wrapper) {
                 wrapper.innerHTML = '';
             }
-        }, 300); // Match your CSS transition duration
+        }, 300);
     }
 
     startPulse(mesh) {
@@ -303,9 +226,9 @@ export class StarSystem {
         if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
 
         const { starMesh } = this.currentlyHoveredStar.userData;
-        
+
         gsap.killTweensOf(starMesh.material);
-        
+
         gsap.to(starMesh.material, {
             emissiveIntensity: STAR_CONFIG.defaultIntensity,
             duration: ANIMATION_CONFIG.defaultDuration,
@@ -327,7 +250,7 @@ export class StarSystem {
 
     resetAllStars() {
         this.stopPulse();
-        
+
         this.starMeshes.forEach(({ mesh }) => {
             const { starMesh } = mesh.userData;
             gsap.killTweensOf(starMesh.material);
@@ -339,22 +262,16 @@ export class StarSystem {
         this.hideMixcloud();
     }
 
-    findStarByName(name) {
-        return this.starMeshes.find(star => 
-            star.name.toLowerCase().includes(name.toLowerCase())
-        );
-    }
-
     cleanup() {
         this.resetAllStars();
-        
+
         this.disposables.forEach(item => {
             if (item?.dispose) item.dispose();
         });
-        
+
         this.disposables.clear();
         this.starMeshes = [];
-        
+
         document.getElementById('mixcloud-container')?.remove();
     }
 }

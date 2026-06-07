@@ -1,10 +1,9 @@
-/* Font declarations */
+/* ---------- Fonts ---------- */
 @font-face {
     font-family: 'Stanley Regular';
     src: local('Stanley Regular'),
          url('/fonts/Stanley\ Regular.woff2') format('woff2'),
-         url('/fonts/Stanley\ Regular.woff') format('woff'),
-         url('/fonts/Stanley\ Regular.ttf') format('truetype');
+         url('/fonts/Stanley\ Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -15,270 +14,162 @@
     font-family: 'Halyard Text';
     src: local('Halyard Text'),
          url('/fonts/Halyard\ Text\ Regular.woff2') format('woff2'),
-         url('/fonts/Halyard\ Text\ Regular.woff') format('woff'),
-         url('/fonts/Halyard\ Text\ Regular.ttf') format('truetype');
+         url('/fonts/Halyard\ Text\ Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
     text-rendering: optimizeLegibility;
 }
 
-@font-face {
-    font-family: 'Freight Micro W01 Semibold It';
-    src: url('/fonts/Freight Micro W01 Semibold It.woff2') format('woff2'),
-         url('/fonts/Freight Micro W01 Semibold It.woff') format('woff'),
-         url('/fonts/Freight Micro W01 Semibold It.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* CSS Reset and Base Styles */
+/* ---------- Reset / tokens ---------- */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body, html {
+:root {
+    --bg: #ffffff;
+    --ink: #111111;
+    --muted: #6b6b6b;
+    --box: #000000;
+    --line: rgba(0, 0, 0, 0.10);
+}
+
+html, body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--ink);
     font-family: 'Halyard Text', Arial, sans-serif;
-    margin: 0;
-    height: 100%;
-    overflow: hidden;
-    background-color: black;
-    color: white;
-    line-height: 1.5;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Layout System */
-.layout-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    z-index: 1100;
-}
-
-.constellation-view {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: height 0.3s ease-out;
-}
-
-.constellation-view canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.text-content {
-    position: relative;
-    width: 100%;
-    height: 0;
-    background: rgba(0, 0, 0, 0.95);
-    color: white;
+body {
+    overflow-x: hidden;
     overflow-y: auto;
-    transition: height 0.3s ease-out;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1150;
+    transition: padding-bottom 0.3s ease;
 }
 
-.text-content-inner {
-    padding: 20px 20px 80px 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    font-family: 'Halyard Text', Arial, sans-serif;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    pointer-events: none;
+/* reserve room for the fixed Mixcloud bar when it's open */
+body.player-open {
+    padding-bottom: 140px;
 }
 
-.handle {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
-    cursor: ns-resize;
-    transition: background-color 0.3s ease;
+/* ---------- Header / wordmark ---------- */
+.site-header {
+    display: flex;
+    justify-content: center;
+    padding: 28px 20px 10px;
 }
 
-.handle:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.expand-collapse {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    color: #00ffcc;
-    cursor: pointer;
-    padding: 8px;
-    font-family: 'Halyard Text', Arial, sans-serif;
-    font-size: 14px;
-    transition: opacity 0.3s ease;
-    z-index: 1151;
-}
-
-.expand-collapse:hover {
-    opacity: 0.8;
-}
-
-/* Header and Navigation */
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 20px 0;
-    text-align: center;
-    z-index: 1300;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 100%);
-}
-
-header h1 {
-    font-size: 30px;
-    font-weight: normal;
-    color: white;
+.wordmark {
     font-family: 'Stanley Regular', Arial, sans-serif;
-    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
     cursor: pointer;
+    user-select: none;
     transition: opacity 0.3s ease;
 }
 
-header h1:hover {
-    opacity: 0.8;
+.wordmark:hover,
+.wordmark:focus-visible {
+    opacity: 0.55;
+    outline: none;
 }
 
-/* Navigation Styles */
-nav {
-    margin-top: 10px;
+/* ---------- Page ---------- */
+.page {
+    width: 100%;
+    padding: 0 20px;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: inline-block;
+/* ---------- Framed constellation card ---------- */
+.star-box {
     position: relative;
+    width: min(900px, 100%);
+    height: min(68vh, 580px);
+    margin: 14px auto 0;
+    background: var(--box);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    overflow: hidden;
 }
 
-nav ul li {
-    display: inline-block;
-    position: relative;
-}
-
-nav ul li > a {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-    padding: 10px 15px;
-    display: inline-block;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-nav ul li > a:hover {
-    color: #00ffcc;
-}
-
-/* Dropdown arrow */
-nav ul li > a::after {
-    content: '⌄';
-    font-size: 12px;
-    color: grey;
-    margin-left: 5px;
-    display: inline-block;
-    text-align: center;
-    width: 12px;
-    transition: transform 0.3s ease;
-}
-
-nav ul li:hover > a::after {
-    transform: rotateX(180deg);
-}
-
-nav ul .dropdown li a::after {
-    display: none;
-}
-
-/* Dropdown Menu */
-nav ul .dropdown {
-    display: none;
+.star-box canvas {
     position: absolute;
-    left: 50%;
-    top: 100%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.95);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    z-index: 1301;
-    width: 90vw;
-    max-width: 300px;
-    padding: 8px 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ---------- Post (revealed on star click) ---------- */
+.post {
+    width: min(680px, 100%);
+    margin: 0 auto;
+    padding: 0 4px;
+    max-height: 0;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    overflow: hidden;
+    transition: opacity 0.45s ease, max-height 0.45s ease, margin 0.45s ease;
 }
 
-nav ul li:hover .dropdown {
-    display: block;
+.post.visible {
+    max-height: 6000px;
     opacity: 1;
+    margin: 44px auto 96px;
 }
 
-nav ul .dropdown li {
-    display: block;
-    padding: 0;
-    text-align: left;
-    width: 100%;
+.post .post-title {
+    font-family: 'Stanley Regular', Arial, sans-serif;
+    font-weight: normal;
+    font-size: 30px;
+    line-height: 1.15;
+    margin-bottom: 26px;
 }
 
-nav ul .dropdown li a {
-    padding: 12px 20px;
-    display: block;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
+.post .track {
+    display: flex;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
 }
 
-nav ul .dropdown li a:hover {
-    background: rgba(0, 255, 204, 0.1);
-    color: #00ffcc;
+.post .track:last-child {
+    border-bottom: none;
 }
 
-/* Mixcloud Player Container */
+.post .track .ts {
+    flex: 0 0 auto;
+    min-width: 46px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.post .track .t {
+    color: var(--ink);
+}
+
+.post p {
+    margin: 12px 0;
+}
+
+/* ---------- Mixcloud player (fixed bottom bar) ---------- */
 #mixcloud-container {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 120px;
-    background-color: rgba(0, 0, 0, 0.95);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #000;
+    border-top: 1px solid var(--line);
     z-index: 1200;
     display: none;
-    transform: translateZ(0); /* Force hardware acceleration */
 }
 
 #mixcloud-container.visible {
@@ -287,61 +178,54 @@ nav ul .dropdown li a:hover {
 
 .mixcloud-wrapper {
     position: absolute;
-    left: 40px;
+    left: 44px;
     right: 0;
     top: 0;
     height: 120px;
-    /* Remove the debug background color */
-    /* background-color: rgba(0, 255, 255, 0.2); */
-    z-index: 1201;
 }
 
 .mixcloud-wrapper iframe {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     border: none;
-    z-index: 1202;
 }
 
 .mixcloud-close-btn {
     position: absolute;
-    left: 10px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    background-color: transparent;
+    background: transparent;
     border: none;
     color: #fff;
-    font-size: 32px;
+    font-size: 30px;
     line-height: 1;
     cursor: pointer;
-    z-index: 1203;
     padding: 5px;
     transition: opacity 0.3s ease;
 }
 
 .mixcloud-close-btn:hover {
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 .mixcloud-close-btn:focus {
     outline: none;
 }
 
-/* Custom Cursor */
+/* ---------- Custom cursor (blend mode reads on black + white) ---------- */
 @media (hover: hover) {
     .custom-cursor {
         width: 10px;
         height: 10px;
-        background-color: rgba(255, 102, 0, 0.8);
+        background-color: rgba(255, 255, 255, 0.9);
         position: fixed;
         pointer-events: none;
         z-index: 9999;
         border-radius: 50%;
         transform: translate(-50%, -50%);
-        transition: width 0.3s ease, height 0.3s ease;
         mix-blend-mode: difference;
     }
 
@@ -353,64 +237,37 @@ nav ul .dropdown li a:hover {
         transform: translate(-50%, -50%);
         width: 20px;
         height: 20px;
-        border: 1px solid rgba(255, 102, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.4);
         border-radius: 50%;
-        transition: all 0.3s ease;
     }
 }
 
-/* Media Queries */
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
-    header {
-        padding: 10px 0;
-        background: rgba(0,0,0,0.8);
+    .site-header {
+        padding: 18px 16px 8px;
     }
 
-    header h1 {
-        font-size: 24px;
+    .wordmark {
+        font-size: 20px;
     }
 
-    nav ul .dropdown {
-        width: 90vw;
-        max-width: none;
-        left: 50%;
-        transform: translateX(-50%);
+    .page {
+        padding: 0 14px;
     }
 
-    .text-content-inner {
-        padding: 15px 15px 80px 15px;
+    .star-box {
+        height: min(58vh, 460px);
+        border-radius: 0;
     }
 
-    .expand-collapse {
-        top: 15px;
-        right: 15px;
+    .post.visible {
+        margin: 32px auto 88px;
     }
 
-    #mixcloud-container {
-        width: 100%;
-    }
-
-    .mixcloud-close-btn {
-        font-size: 24px;
-        left: 8px;
+    .post .post-title {
+        font-size: 26px;
     }
 }
 
-/* Animation Classes */
-.fade-in {
-    animation: fadeIn 0.3s ease forwards;
-}
-
-.fade-out {
-    animation: fadeOut 0.3s ease forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
+/* ---------- Reduced motion --------

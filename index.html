@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#ffffff">
     <meta name="author" content="Karan">
+    <meta name="description" content="Karan — an interactive Virgo constellation. Click a star to read its post and hear the mix.">
     <title>KARAN.INK</title>
-    
+
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="data:,">
-    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20fill='%23000'/%3E%3Cpath%20d='M16%205l2.2%208.8L27%2016l-8.8%202.2L16%2027l-2.2-8.8L5%2016l8.8-2.2z'%20fill='%23fff'/%3E%3C/svg%3E">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-    
-    <!-- Change to jsdelivr CDN which has better CORS headers -->
+
+    <!-- jsDelivr CDN: better CORS headers -->
     <script type="importmap">
         {
             "imports": {
@@ -27,7 +28,18 @@
 </head>
 <body>
     <noscript>You need to enable JavaScript to run this application.</noscript>
-    <canvas id="virgo-constellation" aria-label="Interactive Virgo constellation visualization"></canvas>
+
+    <header class="site-header">
+        <span class="wordmark" tabindex="0" role="button" aria-label="Reset view">KARAN.INK</span>
+    </header>
+
+    <main class="page">
+        <div class="star-box" id="star-box">
+            <canvas id="virgo-constellation" aria-label="Interactive Virgo constellation visualization"></canvas>
+        </div>
+        <article class="post" id="post" aria-live="polite"></article>
+    </main>
+
     <script type="module" src="app.js"></script>
 </body>
 </html>

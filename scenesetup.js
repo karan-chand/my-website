@@ -9,18 +9,26 @@ import { CAMERA_CONFIG, CONTROLS_CONFIG, BLOOM_CONFIG, ANIMATION_CONFIG } from '
 export class SceneSetup {
     constructor() {
         try {
-            this.disposables = new Set(); // Move this to the top
+            this.disposables = new Set();
             this.setupScene();
             this.setupCamera();
             this.setupRenderer();
             this.setupPostProcessing();
             this.setupControls();
             this.setupResizeHandler();
-            this.setupPerformanceMonitor();
         } catch (error) {
             console.error('Scene setup failed:', error);
             throw error;
         }
+    }
+
+    // Size the render target to the framed star-box, not the window.
+    getSize() {
+        const canvas = document.getElementById('virgo-constellation');
+        const box = canvas?.parentElement || canvas;
+        const width = box?.clientWidth || window.innerWidth;
+        const height = box?.clientHeight || window.innerHeight;
+        return { width: Math.max(1, width), height: Math.max(1, height) };
     }
 
     setupScene() {
@@ -30,32 +38,35 @@ export class SceneSetup {
     }
 
     setupCamera() {
+        const { width, height } = this.getSize();
         this.camera = new THREE.PerspectiveCamera(
-            CAMERA_CONFIG.fov, 
-            window.innerWidth / window.innerHeight,
+            CAMERA_CONFIG.fov,
+            width / height,
             CAMERA_CONFIG.near,
             CAMERA_CONFIG.far
         );
-        
+
         const { x, y, z } = CAMERA_CONFIG.defaultPosition;
         this.camera.position.set(x, y, z);
     }
 
     setupRenderer() {
         try {
-            this.renderer = new THREE.WebGLRenderer({ 
-                canvas: document.getElementById('virgo-constellation'), 
+            this.renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('virgo-constellation'),
                 antialias: true,
                 powerPreference: "high-performance",
                 stencil: false,
                 depth: true
             });
-            
+
             if (!this.renderer) {
                 throw new Error('WebGL renderer creation failed');
             }
 
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            const { width, height } = this.getSize();
+            // updateStyle = false: CSS keeps the canvas filling the box.
+            this.renderer.setSize(width, height, false);
             this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             this.renderer.setClearColor(0x000000);
             this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -70,18 +81,20 @@ export class SceneSetup {
     setupPostProcessing() {
         try {
             this.composer = new EffectComposer(this.renderer);
-            
+
             const renderPass = new RenderPass(this.scene, this.camera);
             this.composer.addPass(renderPass);
 
+            const { width, height } = this.getSize();
             this.bloomPass = new UnrealBloomPass(
-                new THREE.Vector2(window.innerWidth, window.innerHeight),
+                new THREE.Vector2(width, height),
                 BLOOM_CONFIG.defaultStrength,
                 BLOOM_CONFIG.defaultRadius,
                 BLOOM_CONFIG.defaultThreshold
             );
             this.composer.addPass(this.bloomPass);
 
+            this.composer.setSize(width, height);
             this.composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             this.disposables.add(this.composer);
         } catch (error) {
@@ -109,57 +122,35 @@ export class SceneSetup {
         this.mouse = new THREE.Vector2();
     }
 
-    setupResizeHandler() {
-        this.resizeHandler = () => {
-            try {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                const pixelRatio = Math.min(window.devicePixelRatio, 2);
+    resize() {
+        try {
+            const { width, height } = this.getSize();
+            const pixelRatio = Math.min(window.devicePixelRatio, 2);
 
-                this.camera.aspect = width / height;
-                this.camera.updateProjectionMatrix();
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
 
-                this.renderer.setSize(width, height);
-                this.renderer.setPixelRatio(pixelRatio);
+            this.renderer.setSize(width, height, false);
+            this.renderer.setPixelRatio(pixelRatio);
 
-                this.composer.setSize(width, height);
-                this.composer.setPixelRatio(pixelRatio);
-            } catch (error) {
-                console.error('Resize handling failed:', error);
-            }
-        };
-
-        window.addEventListener('resize', this.resizeHandler);
+            this.composer.setSize(width, height);
+            this.composer.setPixelRatio(pixelRatio);
+        } catch (error) {
+            console.error('Resize handling failed:', error);
+        }
     }
 
-    setupPerformanceMonitor() {
-        this.lastTime = performance.now();
-        this.frameCount = 0;
-        this.fps = 60;
-        
-        this.adjustQuality = () => {
-            const currentTime = performance.now();
-            this.frameCount++;
+    setupResizeHandler() {
+        this.resizeHandler = () => this.resize();
+        window.addEventListener('resize', this.resizeHandler);
 
-            if (currentTime - this.lastTime >= 1000) {
-                this.fps = this.frameCount;
-                this.frameCount = 0;
-                this.lastTime = currentTime;
-
-                if (this.fps < 30) {
-                    this.renderer.setPixelRatio(1);
-                    this.composer.setPixelRatio(1);
-                    this.bloomPass.strength *= 0.9;
-                } else if (this.fps > 55 && window.devicePixelRatio > 1) {
-                    const newPixelRatio = Math.min(
-                        this.renderer.getPixelRatio() + 0.1,
-                        Math.min(window.devicePixelRatio, 2)
-                    );
-                    this.renderer.setPixelRatio(newPixelRatio);
-                    this.composer.setPixelRatio(newPixelRatio);
-                }
-            }
-        };
+        // The box is sized with vh/vw, so observe it directly for changes
+        // the window 'resize' event might miss (e.g. mobile toolbar collapse).
+        const box = document.getElementById('star-box');
+        if (box && typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.resize());
+            this.resizeObserver.observe(box);
+        }
     }
 
     resetCamera() {
@@ -183,17 +174,20 @@ export class SceneSetup {
 
     cleanup() {
         window.removeEventListener('resize', this.resizeHandler);
-        
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+        }
+
         this.controls.dispose();
-        
+
         this.disposables.forEach(item => {
             if (item && typeof item.dispose === 'function') {
                 item.dispose();
             }
         });
-        
+
         this.disposables.clear();
-        
+
         if (this.renderer && this.renderer.domElement) {
             this.renderer.domElement.remove();
         }

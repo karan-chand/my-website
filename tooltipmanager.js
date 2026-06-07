@@ -9,19 +9,17 @@ export class TooltipManager {
         tooltip.className = 'star-tooltip';
         tooltip.style.cssText = `
             position: fixed;
-            background: rgba(50, 50, 50, 0.95);
-            padding: 12px;
+            background: rgba(20, 20, 20, 0.92);
+            padding: 10px 12px;
             border-radius: 4px;
             font-family: 'Halyard Text', Arial, sans-serif;
-            font-size: 14px;
-            color: white;
+            font-size: 13px;
+            color: #ffffff;
             pointer-events: none;
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.2s ease;
             backdrop-filter: blur(4px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            width: auto;
             white-space: nowrap;
         `;
         document.body.appendChild(tooltip);
@@ -33,45 +31,39 @@ export class TooltipManager {
             this.hide();
             return;
         }
-    
+
         const padding = 15;
         const x = event.clientX + padding;
         const y = event.clientY + padding;
-    
+
+        const name = starData.name.toLowerCase();
         const hasAudio = !!starData.link;
         const hasText = !!starData.textPath;
-        const containsColor = hasAudio || hasText ? '#00ffcc' : '#ff4444';
-        
-        let containsText = 'contains: ';
-        if (starData.name.includes('Spica')) {
-            containsText += 'feb25 jazz & ragas [mixcloud]';
-        } else if (hasAudio && hasText) {
-            containsText += `${starData.name.toLowerCase()} mix, ${this.getFileName(starData.textPath)}`;
-        } else if (hasAudio) {
-            containsText += `${starData.name.toLowerCase()} mix`;
-        } else if (hasText) {
-            containsText += this.getFileName(starData.textPath);
-        } else {
-            containsText += 'nothing for now';
+        const live = hasAudio || hasText;
+
+        // Inert stars just name themselves (the real star); they make no promise.
+        let html = `star: ${name}`;
+        if (live) {
+            let contains = 'contains: ';
+            if (name.includes('spica')) {
+                contains += 'feb25 jazz & ragas [mixcloud]';
+            } else if (hasAudio && hasText) {
+                contains += `${name} mix, ${this.getFileName(starData.textPath)}`;
+            } else if (hasAudio) {
+                contains += `${name} mix`;
+            } else {
+                contains += this.getFileName(starData.textPath);
+            }
+            html += `<br><span style="color:#cdd6cf">${contains}</span>`;
         }
-    
-        this.tooltip.innerHTML = `
-            star: ${starData.name.toLowerCase()}<br>
-            <span style="color: ${containsColor}">${containsText}</span>
-        `;
-    
-        const tooltipRect = this.tooltip.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-    
-        const finalX = x + tooltipRect.width > viewportWidth 
-            ? event.clientX - tooltipRect.width - padding 
-            : x;
-    
-        const finalY = y + tooltipRect.height > viewportHeight 
-            ? event.clientY - tooltipRect.height - padding 
-            : y;
-    
+        this.tooltip.innerHTML = html;
+
+        const rect = this.tooltip.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const finalX = x + rect.width > vw ? event.clientX - rect.width - padding : x;
+        const finalY = y + rect.height > vh ? event.clientY - rect.height - padding : y;
+
         this.tooltip.style.transform = `translate(${finalX}px, ${finalY}px)`;
         this.show();
     }

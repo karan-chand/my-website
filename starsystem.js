@@ -35,6 +35,7 @@ export class StarSystem {
         this.currentlyHoveredStar = null;
         this.activeStar = null;
         this.pulseAnimation = null;
+        this.breaths = new Map();
         this.disposables = new Set();
 
         this.initializeGeometries();
@@ -78,14 +79,17 @@ export class StarSystem {
     createStars() {
         try {
             starData.forEach(star => {
-                const mesh = this.createStarMesh(star);
+                const live = !!(star.link || star.textPath);
+                const mesh = this.createStarMesh(star, live);
                 this.scene.add(mesh);
                 this.starMeshes.push({
                     mesh,
                     name: star.name,
                     link: star.link || '',
-                    textPath: star.textPath || ''
+                    textPath: star.textPath || '',
+                    live
                 });
+                if (live) this.startBreath(mesh);
             });
         } catch (error) {
             console.error('Error creating stars:', error);
@@ -93,12 +97,18 @@ export class StarSystem {
         }
     }
 
-    createStarMesh(star) {
+    createStarMesh(star, live) {
         try {
+            const scale = star.size || 0.3;
+            // Faithful magnitude: fainter (smaller) stars glow dimmer.
+            const restIntensity = live
+                ? STAR_CONFIG.resting.liveMin
+                : STAR_CONFIG.resting.inertBase * scale;
+
             const material = new THREE.MeshStandardMaterial({
                 color: STAR_CONFIG.defaultColor,
                 emissive: STAR_CONFIG.emissiveColor,
-                emissiveIntensity: STAR_CONFIG.defaultIntensity,
+                emissiveIntensity: restIntensity,
                 metalness: 0.1,
                 roughness: 0.2
             });
@@ -106,14 +116,13 @@ export class StarSystem {
             const glowMaterial = new THREE.MeshBasicMaterial({
                 color: STAR_CONFIG.defaultColor,
                 transparent: true,
-                opacity: 0.15,
+                opacity: live ? 0.30 : Math.max(0.05, 0.14 * scale),
                 side: THREE.BackSide
             });
 
             const starMesh = new THREE.Mesh(this.starGeometry, material);
             const glowMesh = new THREE.Mesh(this.glowGeometry, glowMaterial);
 
-            const scale = star.size || 1;
             starMesh.scale.setScalar(scale);
             glowMesh.scale.setScalar(scale);
 
@@ -126,7 +135,7 @@ export class StarSystem {
                 star.z * STAR_CONFIG.scaleMultiplier
             );
 
-            group.userData = { starMesh, glowMesh };
+            group.userData = { starMesh, glowMesh, live, restIntensity };
             this.disposables.add(material, glowMaterial);
 
             return group;
@@ -136,24 +145,123 @@ export class StarSystem {
         }
     }
 
-    handleHover(hoveredMesh) {
-        if (!hoveredMesh) return;
+    // --- resting / breathing -------------------------------------------------
 
-        const hoveredStarData = this.starMeshes.find(star => star.mesh === hoveredMesh);
+    startBreath(group) {
+        if (!group?.userData?.starMesh?.material) return;
+        this.killBreath(group);
+        const { starMesh } = group.userData;
+        const tween = gsap.to(starMesh.material, {
+            emissiveIntensity: STAR_CONFIG.resting.liveMax,
+            duration: STAR_CONFIG.resting.breathDuration,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true
+        });
+        this.breaths.set(group, tween);
+    }
 
-        if (this.currentlyHoveredStar !== hoveredMesh && hoveredStarData) {
+    killBreath(group) {
+        const tween = this.breaths.get(group);
+        if (tween) {
+            tween.kill();
+            this.breaths.delete(group);
+        }
+    }
+
+    applyRest(group) {
+        if (!group?.userData?.starMesh?.material) return;
+        const { starMesh, live, restIntensity } = group.userData;
+        this.killBreath(group);
+        gsap.killTweensOf(starMesh.material);
+        if (live) {
+            starMesh.material.emissiveIntensity = STAR_CONFIG.resting.liveMin;
+            this.startBreath(group);
+        } else {
+            starMesh.material.emissiveIntensity = restIntensity;
+        }
+    }
+
+    // --- hover (live stars only) ---------------------------------------------
+
+    handleHover(group) {
+        if (!group?.userData?.live) return;
+
+        if (this.currentlyHoveredStar !== group) {
             this.resetPreviousHover();
-            this.applyHoverEffect(hoveredMesh);
-            this.currentlyHoveredStar = hoveredMesh;
+            this.applyHoverEffect(group);
+            this.currentlyHoveredStar = group;
         }
     }
 
     clearHover() {
         if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
-
         this.resetPreviousHover();
         this.currentlyHoveredStar = null;
     }
+
+    applyHoverEffect(group) {
+        if (!group?.userData?.starMesh?.material) return;
+        const { starMesh } = group.userData;
+        this.killBreath(group);
+        gsap.killTweensOf(starMesh.material);
+        gsap.to(starMesh.material, {
+            emissiveIntensity: STAR_CONFIG.resting.hover,
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: 'power2.inOut'
+        });
+    }
+
+    resetPreviousHover() {
+        if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
+        this.applyRest(this.currentlyHoveredStar);
+    }
+
+    // --- active (clicked) pulse ----------------------------------------------
+
+    startPulse(group) {
+        if (!group?.userData?.starMesh?.material) return;
+        this.stopPulse();
+        this.killBreath(group);
+
+        const { material: starMaterial } = group.userData.starMesh;
+        gsap.killTweensOf(starMaterial);
+
+        gsap.to(starMaterial, {
+            emissiveIntensity: STAR_CONFIG.resting.hover,
+            duration: ANIMATION_CONFIG.defaultDuration,
+            ease: 'power2.inOut',
+            onComplete: () => {
+                this.pulseAnimation = gsap.to(starMaterial, {
+                    emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
+                    duration: STAR_CONFIG.pulseConfig.duration,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'sine.inOut'
+                });
+            }
+        });
+    }
+
+    stopPulse(group = this.activeStar) {
+        if (this.pulseAnimation) {
+            this.pulseAnimation.kill();
+            this.pulseAnimation = null;
+        }
+        if (group?.userData?.starMesh?.material) {
+            this.applyRest(group);
+        }
+    }
+
+    resetAllStars() {
+        this.stopPulse();
+        this.starMeshes.forEach(({ mesh }) => this.applyRest(mesh));
+        this.activeStar = null;
+        this.currentlyHoveredStar = null;
+        this.hideMixcloud();
+    }
+
+    // --- mixcloud player -----------------------------------------------------
 
     showMixcloud(url) {
         const container = document.getElementById('mixcloud-container');
@@ -188,81 +296,9 @@ export class StarSystem {
         }, 300);
     }
 
-    startPulse(mesh) {
-        if (!mesh?.userData?.starMesh?.material) return;
-
-        this.stopPulse();
-
-        const { material: starMaterial } = mesh.userData.starMesh;
-
-        gsap.to(starMaterial, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.clickIntensityMultiplier,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut",
-            onComplete: () => {
-                this.pulseAnimation = gsap.to(starMaterial, {
-                    emissiveIntensity: STAR_CONFIG.pulseConfig.maxIntensity,
-                    duration: STAR_CONFIG.pulseConfig.duration,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: "sine.inOut"
-                });
-            }
-        });
-    }
-
-    stopPulse(mesh = this.activeStar) {
-        if (this.pulseAnimation) {
-            this.pulseAnimation.kill();
-            this.pulseAnimation = null;
-        }
-
-        if (mesh?.userData?.starMesh?.material) {
-            mesh.userData.starMesh.material.emissiveIntensity = STAR_CONFIG.defaultIntensity;
-        }
-    }
-
-    resetPreviousHover() {
-        if (!this.currentlyHoveredStar || this.currentlyHoveredStar === this.activeStar) return;
-
-        const { starMesh } = this.currentlyHoveredStar.userData;
-
-        gsap.killTweensOf(starMesh.material);
-
-        gsap.to(starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut"
-        });
-    }
-
-    applyHoverEffect(mesh) {
-        if (!mesh?.userData) return;
-
-        const { starMesh } = mesh.userData;
-
-        gsap.to(starMesh.material, {
-            emissiveIntensity: STAR_CONFIG.defaultIntensity * STAR_CONFIG.hoverIntensityMultiplier,
-            duration: ANIMATION_CONFIG.defaultDuration,
-            ease: "power2.inOut"
-        });
-    }
-
-    resetAllStars() {
-        this.stopPulse();
-
-        this.starMeshes.forEach(({ mesh }) => {
-            const { starMesh } = mesh.userData;
-            gsap.killTweensOf(starMesh.material);
-            starMesh.material.emissiveIntensity = STAR_CONFIG.defaultIntensity;
-        });
-
-        this.activeStar = null;
-        this.currentlyHoveredStar = null;
-        this.hideMixcloud();
-    }
-
     cleanup() {
+        this.breaths.forEach(tween => tween.kill());
+        this.breaths.clear();
         this.resetAllStars();
 
         this.disposables.forEach(item => {

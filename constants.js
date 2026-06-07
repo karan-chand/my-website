@@ -1,13 +1,19 @@
 // constants.js
 export const STAR_CONFIG = {
-    defaultIntensity: 0.4,
-    hoverIntensityMultiplier: 2.5,
-    clickIntensityMultiplier: 3.0,
     scaleMultiplier: 5,
     defaultColor: 0xe0e0ff,
     emissiveColor: 0xffffff,
+    // Brightness model. Inert stars glow at their true (faint) magnitude so the
+    // real constellation stays legible; live stars sit brighter and breathe.
+    resting: {
+        inertBase: 0.30,      // inert intensity = inertBase * magnitude(size)
+        liveMin: 0.85,        // live star resting trough
+        liveMax: 1.25,        // live star resting peak (breath)
+        hover: 2.2,           // live star intensity on hover
+        breathDuration: 2.8
+    },
     pulseConfig: {
-        maxIntensity: 3.0,
+        maxIntensity: 3.0,    // active (clicked) star pulse
         duration: 1.2
     }
 };

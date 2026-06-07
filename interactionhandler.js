@@ -131,9 +131,19 @@ export class InteractionHandler {
                 const starData = this.starSystem.starMeshes.find(
                     star => star.mesh === starGroup
                 );
-                this.starSystem.handleHover(starGroup);
-                this.tooltipManager.update(event, starData);
-                document.body.style.cursor = 'pointer';
+                const live = !!(starData && (starData.link || starData.textPath));
+
+                if (live) {
+                    // A door: flare, name + contents, and a pointer cursor.
+                    this.starSystem.handleHover(starGroup);
+                    this.tooltipManager.update(event, starData);
+                    document.body.style.cursor = 'pointer';
+                } else {
+                    // Just sky: name it, but make no promise and offer no button.
+                    this.starSystem.clearHover();
+                    this.tooltipManager.update(event, starData);
+                    document.body.style.cursor = 'default';
+                }
             } else {
                 this.starSystem.clearHover();
                 this.tooltipManager.hide();

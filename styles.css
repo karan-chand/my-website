@@ -146,12 +146,6 @@ h1, h2, h3 {
   margin: 0;
 }
 
-.divider {
-  border: 0;
-  border-top: 1px solid var(--ink);
-  margin: 2.5rem 0 3rem;
-}
-
 .series-meta {
   font-weight: 400;
   font-size: 0.9375rem;

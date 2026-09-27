@@ -1,0 +1,7 @@
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
+
+# Full-resolution scans — masters stay local, not in the repo
+Photographs/

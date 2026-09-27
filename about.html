@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karan Chand — About</title>
+<meta name="description" content="Karan Chand, medium format photographer based in the West Midlands.">
+<meta name="author" content="Karan Chand">
+<link rel="preload" href="fonts/CormorantUpright-Light.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="wordmark"><a href="index.html">Karan Chand</a></p>
+    <nav>
+      <a href="index.html">photographs</a>
+      <a href="about.html" aria-current="page">about</a>
+    </nav>
+  </header>
+
+  <main class="prose">
+
+    <h1 class="page-title">About</h1>
+
+    <p class="intro">
+      Karan Chand is
+      <select aria-label="what">
+        <option>an angel</option>
+        <option>a wraith</option>
+        <option selected>an artist</option>
+      </select>
+      based
+      <select aria-label="where">
+        <option selected>in the West Midlands</option>
+        <option>online</option>
+        <option>beyond reach</option>
+      </select>,
+      focussing on
+      <select aria-label="focus">
+        <option>sleep</option>
+        <option>care</option>
+        <option>unlearning &amp; rebuilding</option>
+        <option>not living in fantasy</option>
+        <option selected>creating things</option>
+        <option>chopping wood &amp; carrying water</option>
+      </select>.
+      <span class="ruler" aria-hidden="true"></span>
+    </p>
+    <p><button class="shuffle" type="button" hidden><span class="shuffle-mark" aria-hidden="true">&#x292E;&#xFE0E;</span> shuffle</button></p>
+
+    <section class="section">
+      <h2 class="section-title">Contact</h2>
+      <p>
+        <a href="mailto:karan0chand@gmail.com">karan0chand@gmail.com</a><br>
+        West Midlands, United Kingdom
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="colophon">
+    <p>Karan Chand · West Midlands, UK · <a href="mailto:karan0chand@gmail.com">email</a></p>
+  </footer>
+
+</div>
+
+<script>
+  var picks = document.querySelectorAll('.intro select');
+  var ruler = document.querySelector('.intro .ruler');
+  var shuffle = document.querySelector('.shuffle');
+
+  function fit(s) {
+    ruler.textContent = s.options[s.selectedIndex].text;
+    s.style.width = (ruler.offsetWidth + 2) + 'px';
+  }
+
+  function fitAll() {
+    picks.forEach(fit);
+  }
+
+  function current() {
+    return Array.prototype.map.call(picks, function (s) { return s.selectedIndex; }).join();
+  }
+
+  shuffle.addEventListener('click', function () {
+    var before = current();
+    do {
+      picks.forEach(function (s) {
+        s.selectedIndex = Math.floor(Math.random() * s.options.length);
+      });
+    } while (current() === before);
+    fitAll();
+  });
+
+  picks.forEach(function (s) {
+    s.addEventListener('change', function () { fit(s); });
+  });
+
+  shuffle.hidden = false;
+  fitAll();
+  if (document.fonts) document.fonts.ready.then(fitAll);
+</script>
+
+</body>
+</html>

@@ -139,6 +139,13 @@ h1, h2, h3 {
   margin-bottom: 0.6rem;
 }
 
+.note {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  max-width: var(--measure);
+  margin: 0;
+}
+
 .series-meta {
   font-weight: 400;
   font-size: 0.9375rem;
@@ -276,7 +283,7 @@ figcaption {
   body { font-size: 1.25rem; }
   .masthead { padding-top: 2.25rem; margin-bottom: 2.5rem; }
   .page-title { font-size: 2rem; }
-  .lede, .intro, .series-title { font-size: 1.3125rem; }
+  .lede, .intro, .series-title, .note { font-size: 1.3125rem; }
 }
 
 @media print {

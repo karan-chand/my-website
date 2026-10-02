@@ -37,6 +37,15 @@
 
     pick.addEventListener('change', update);
 
+    // "about" or the name, clicked while already here: fade back instead of reloading
+    document.querySelectorAll('a[href="index.html"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        if (!pick.value || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        reset();
+      });
+    });
+
     // back button restores the old page as it was; start blank again
     window.addEventListener('pageshow', function (e) {
       if (e.persisted) reset();

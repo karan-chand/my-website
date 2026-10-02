@@ -2,17 +2,18 @@
 
 Karan Chand, photographs.
 
-Plain static site on GitHub Pages. No build, no dependencies. One small script on the about page for the shuffle button (the page works without it).
+Plain static site on GitHub Pages. No build, no dependencies. One small script, `site.js`: picking "a photographer" on the home page turns the site charcoal and shows the photographs tab. The home page always starts on "select". The photographs page is always charcoal. Without JS the tab just shows.
 
-- `index.html` - photographs
-- `about.html` - about + contact
+- `index.html` - home / about, the "Karan Chand is ..." dropdown
+- `photographs.html` - photographs
 - `styles.css`
+- `site.js`
 - `fonts/` - Cormorant Upright, self-hosted (SIL OFL, see `fonts/OFL.txt`)
 - `images/`
 
 ## Adding photos
 
-Copy a `<figure>` in `index.html`. Captions go: stock, format, camera, place, year.
+Copy a `<figure>` in `photographs.html`. Captions go: stock, format, camera, place, year.
 Fill in `alt`, `width` and `height`.
 
 New series: copy a `<section class="series">` block.

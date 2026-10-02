@@ -15,7 +15,7 @@
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   --bg: #fbfaf8;
   --ink: #16150f;
@@ -29,13 +29,18 @@
   --gap: 2rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121110;
-    --ink: #ece9e2;
-    --muted: #8d887d;
-    --rule: #2c2a26;
-  }
+/* charcoal, once "a photographer" is chosen */
+:root.is-photographer {
+  color-scheme: dark;
+  --bg: #1c1b19;
+  --ink: #ece9e2;
+  --muted: #9a958a;
+  --rule: #34322e;
+}
+
+body,
+body * {
+  transition: background-color 0.5s, color 0.5s, border-color 0.5s, text-decoration-color 0.5s;
 }
 
 *,
@@ -93,6 +98,17 @@ body {
   font-size: 1.0625rem;
   letter-spacing: 0.08em;
   text-transform: lowercase;
+}
+
+.js .tab-photographs {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0.5s, color 0.5s, text-decoration-color 0.5s;
+}
+
+.is-photographer .tab-photographs {
+  opacity: 1;
+  visibility: visible;
 }
 
 .masthead nav a[aria-current="page"] {
@@ -212,9 +228,58 @@ figcaption {
 
 .intro select:hover { border-bottom-color: currentColor; }
 
+/* empty box with a chevron until something is chosen */
+.intro select:invalid {
+  width: 4.5em;
+  height: 1.15em;
+  min-height: 0;
+  padding: 0;
+  vertical-align: -0.2em;
+  border: 1px solid var(--muted);
+  border-radius: 2px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236f6b60' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat right 0.45em center / 0.55em auto;
+}
+
+.intro select:invalid:hover { border-color: var(--ink); }
+
 .intro option {
   background: var(--bg);
   color: var(--ink);
+}
+
+/* the open list, in the site's own type, where the browser allows it
+   (Chrome, Edge). Other browsers fall back to their own list. */
+@supports (appearance: base-select) {
+  .intro select,
+  .intro select::picker(select) { appearance: base-select; }
+
+  .intro select::picker-icon { display: none; }
+
+  .intro select::picker(select) {
+    font: inherit;
+    font-size: 1.25rem;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    border-radius: 2px;
+    padding: 0.3em 0;
+    margin-top: 0.35em;
+    box-shadow: none;
+  }
+
+  .intro option {
+    min-height: 1.6em;
+    padding: 0.1em 1em;
+    letter-spacing: 0.02em;
+  }
+
+  .intro option::checkmark { display: none; }
+
+  .intro option:hover,
+  .intro option:focus-visible {
+    background: var(--rule);
+    outline: 0;
+  }
 }
 
 .ruler {
@@ -223,38 +288,6 @@ figcaption {
   white-space: pre;
 }
 
-.shuffle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  font: inherit;
-  font-weight: 400;
-  font-size: 0.875rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink);
-  background: none;
-  border: 1px solid var(--muted);
-  border-radius: 3px;
-  padding: 0.45em 1em 0.4em 0.85em;
-  cursor: pointer;
-}
-
-.shuffle[hidden] { display: none; }
-
-.shuffle-mark {
-  font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "Noto Sans Math", "DejaVu Sans", sans-serif;
-  font-size: 1.35em;
-  line-height: 1;
-  letter-spacing: 0;
-}
-
-.shuffle:hover { border-color: var(--ink); }
-
-.shuffle:active { transform: translateY(1px); }
-
-.section { margin: 3rem 0 3.5rem; }
-
 .section-title {
   font-size: 0.9375rem;
   font-weight: 400;
@@ -262,18 +295,6 @@ figcaption {
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 1rem;
-}
-
-/* footer */
-
-.colophon {
-  border-top: 1px solid var(--rule);
-  padding-top: 1.25rem;
-  margin-top: 4rem;
-  font-weight: 400;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
-  color: var(--muted);
 }
 
 /* mobile */
@@ -286,10 +307,16 @@ figcaption {
   .lede, .intro, .series-title, .note { font-size: 1.3125rem; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  body,
+  body *,
+  .js .tab-photographs { transition: none; }
+}
+
 @media print {
-  :root { --bg: #fff; --ink: #000; --muted: #444; --rule: #bbb; }
+  :root, :root.is-photographer { --bg: #fff; --ink: #000; --muted: #444; --rule: #bbb; }
   body { font-size: 11pt; padding: 0; }
-  .masthead nav, .shuffle { display: none; }
+  .masthead nav { display: none; }
   .intro select { border: 0; }
   figure { break-inside: avoid; }
 }
